@@ -24,21 +24,6 @@ pub struct DiscoveryReport {
 pub struct DiscoveryEngine;
 
 impl DiscoveryEngine {
-    /// Scans the system for known AI CLIs, version control systems, and package managers and aggregates the results into a discovery report.
-    ///
-    —
-    /// # Returns
-    ///
-    /// A `DiscoveryReport` containing the timestamped results with detected tools grouped into `ai_clis`, `vcs`, and `package_managers`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// // Run the async scan and assert it returns a report with the expected sections.
-    /// let rt = tokio::runtime::Runtime::new().unwrap();
-    /// let report = rt.block_on(crate::system::discovery::DiscoveryEngine::scan()).unwrap();
-    /// assert!(report.ai_clis.len() + report.vcs.len() + report.package_managers.len() > 0);
-    /// ```
     pub async fn scan() -> Result<DiscoveryReport> {
         let ai_clis = vec!["gemini", "claude", "qwen", "ollama"];
         let vcs = vec!["git"];
@@ -66,32 +51,6 @@ impl DiscoveryEngine {
         Ok(report)
     }
 
-    /// Persist a discovery report as pretty-printed JSON at the user's config location.
-    ///
-    /// The report is written to `discovery.json` inside the application config directory
-    /// (typically `~/.config/bl1nk-agents-manager/discovery.json`). The function ensures
-    /// the config directory exists, serializes the report to pretty JSON, and writes the file.
-    /// Returns an error if the config directory cannot be determined or created, if serialization fails,
-    /// or if the file cannot be written.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use chrono::Utc;
-    /// use tokio::runtime::Runtime;
-    ///
-    /// let report = DiscoveryReport {
-    ///     timestamp: Utc::now(),
-    ///     ai_clis: vec![],
-    ///     vcs: vec![],
-    ///     package_managers: vec![],
-    /// };
-    ///
-    /// let rt = Runtime::new().unwrap();
-    /// rt.block_on(async {
-    ///     DiscoveryEngine::save(&report).unwrap();
-    /// });
-    /// ```
     pub async fn save(report: &DiscoveryReport) -> Result<()> {
         let config_dir = Self::get_config_dir()?;
         fs::create_dir_all(&config_dir).await
@@ -108,25 +67,6 @@ impl DiscoveryEngine {
         Ok(())
     }
 
-    /// Returns the path to the user's configuration directory for the manager.
-    ///
-    /// The function attempts to read the `HOME` environment variable and falls back
-    /// to `USERPROFILE` on Windows. On success it returns `<home>/.config/bl1nk-agents-manager`.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if neither `HOME` nor `USERPROFILE` is set in the environment.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::env;
-    /// use std::path::PathBuf;
-    /// // Set a deterministic HOME for the example
-    /// env::set_var("HOME", "/tmp/testhome");
-    /// let dir = crate::system::discovery::get_config_dir().unwrap();
-    /// assert_eq!(dir, PathBuf::from("/tmp/testhome").join(".config/bl1nk-agents-manager"));
-    /// ```
     fn get_config_dir() -> Result<PathBuf> {
         let home = std::env::var("HOME")
             .or_else(|_| std::env::var("USERPROFILE"))
@@ -135,22 +75,6 @@ impl DiscoveryEngine {
         Ok(PathBuf::from(home).join(".config/bl1nk-agents-manager"))
     }
 
-    /// Builds a ToolInfo for the given tool name by locating its binary and probing its version.
-    ///
-    /// If the tool's binary is found, `available` will be `true`, `path` will contain the first
-    /// discovered binary path as a string, and `version` will contain the output of a version probe
-    /// if one could be determined; otherwise `available` is `false` and `version` and `path` are `None`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use crate::system::discovery::DiscoveryEngine;
-    /// # #[tokio::test]
-    /// # async fn _example_check_tool() {
-    /// let info = DiscoveryEngine::check_tool("git").await;
-    /// assert_eq!(info.name, "git");
-    /// # }
-    /// ```
     async fn check_tool(name: &str) -> ToolInfo {
         let path = Self::find_binary(name).await;
         let available = path.is_some();
@@ -168,28 +92,6 @@ impl DiscoveryEngine {
         }
     }
 
-    /// Locate an executable by name in the system PATH and return its first matching path.
-    ///
-    /// Uses the platform-appropriate lookup command (`which` on Unix-like systems, `where` on Windows)
-    /// and returns the first path when multiple matches are reported.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// // Synchronously run the async helper to demonstrate usage in docs.
-    /// let path_opt = tokio::runtime::Runtime::new()
-    ///     .unwrap()
-    ///     .block_on(async { crate::system::discovery::find_binary("git").await });
-    ///
-    /// match path_opt {
-    ///     Some(p) => println!("Found: {}", p.display()),
-    ///     None => println!("Not found"),
-    /// }
-    /// ```
-    ///
-    /// # Returns
-    ///
-    /// `Some(PathBuf)` with the first matching executable path, `None` if no executable was found.
     async fn find_binary(name: &str) -> Option<PathBuf> {
         let cmd = if cfg!(windows) { "where" } else { "which" };
         let output = Command::new(cmd).arg(name).output().await.ok()?;
@@ -205,22 +107,6 @@ impl DiscoveryEngine {
         None
     }
 
-    /// Attempts to determine a binary's version by running it with common version flags.
-    ///
-    /// Tries `--version` first, then `-v`, and returns the first non-empty stdout output as a trimmed string. Returns `None` if neither flag produces a usable version string or if the process cannot be executed.
-    ///
-    /// # Examples
-    ///
-    /// ```no_run
-    /// use std::path::PathBuf;
-    /// # async {
-    /// let path = PathBuf::from("/usr/bin/git");
-    /// let version = tokio::runtime::Runtime::new().unwrap().block_on(async {
-    ///     crate::system::discovery::get_version(&path).await
-    /// });
-    /// println!("version: {:?}", version);
-    /// # };
-    /// ```
     async fn get_version(path: &PathBuf) -> Option<String> {
         // Most tools support --version
         let output = Command::new(path).arg("--version").output().await.ok()?;

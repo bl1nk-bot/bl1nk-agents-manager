@@ -123,7 +123,7 @@ mod tests {
         let config = RateLimitingConfig {
             strategy: "round-robin".to_string(),
             track_usage: true,
-            usage_db_path: None, // แก้ไขให้เป็น Option ตาม config.rs
+            usage_db_path: "/tmp/test.db".to_string(),
         };
 
         let mut tracker = RateLimitTracker::new(config);
@@ -148,7 +148,7 @@ mod tests {
         let config = RateLimitingConfig {
             strategy: "round-robin".to_string(),
             track_usage: true,
-            usage_db_path: None,
+            usage_db_path: "/tmp/test.db".to_string(),
         };
 
         let mut tracker = RateLimitTracker::new(config);
@@ -178,7 +178,7 @@ mod tests {
         let config = RateLimitingConfig {
             strategy: "round-robin".to_string(),
             track_usage: false, // ปิดการติดตาม
-            usage_db_path: None,
+            usage_db_path: "/tmp/test.db".to_string(),
         };
 
         let mut tracker = RateLimitTracker::new(config);
