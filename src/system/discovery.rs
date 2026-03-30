@@ -23,6 +23,27 @@ pub struct DiscoveryReport {
 
 pub struct DiscoveryEngine;
 
+impl DiscoveryReport {
+    pub fn is_tool_available(&self, name: &str) -> bool {
+        self.ai_clis.iter().any(|t| t.name == name && t.available)
+            || self.vcs.iter().any(|t| t.name == name && t.available)
+            || self.package_managers.iter().any(|t| t.name == name && t.available)
+    }
+
+    pub async fn load() -> Result<Self> {
+        let config_dir = DiscoveryEngine::get_config_dir()?;
+        let report_path = config_dir.join("discovery.json");
+
+        let content = fs::read_to_string(&report_path).await
+            .with_context(|| format!("Failed to read discovery report from: {:?}", report_path))?;
+
+        let report: DiscoveryReport = serde_json::from_str(&content)
+            .context("Failed to deserialize discovery report")?;
+
+        Ok(report)
+    }
+}
+
 impl DiscoveryEngine {
     pub async fn scan() -> Result<DiscoveryReport> {
         let ai_clis = vec!["gemini", "claude", "qwen", "ollama"];

@@ -48,6 +48,10 @@ pub struct AgentConfig {
     pub priority: u8,
     #[serde(default)]
     pub enabled: bool,
+    #[serde(default)]
+    pub requires: Vec<String>,
+    #[serde(default)]
+    pub cost: u16,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -212,6 +216,8 @@ impl Config {
             ],
             priority: 200,
             enabled: true,
+            requires: Vec::new(),
+            cost: 0,
         };
 
         // Check if already exists
