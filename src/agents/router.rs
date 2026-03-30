@@ -211,6 +211,8 @@ mod tests {
             capabilities: capabilities.iter().map(|s| s.to_string()).collect(),
             priority,
             enabled: true,
+            requires: Vec::new(),
+            cost: 0,
         }
     }
 

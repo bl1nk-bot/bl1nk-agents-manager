@@ -1,13 +1,27 @@
 use crate::config::AgentConfig;
+use crate::system::discovery::DiscoveryReport;
 use std::collections::HashMap;
 use anyhow::{Result, Context};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum AgentAvailability {
+    Ready,
+    MissingTools(Vec<String>),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AgentState {
+    pub config: AgentConfig,
+    pub availability: AgentAvailability,
+}
 
 pub struct AgentRegistry {
-    agents: HashMap<String, AgentConfig>,
+    agents: HashMap<String, AgentState>,
     active_tasks: HashMap<String, TaskInfo>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)] // เพิ่ม PartialEq, Eq เพื่อให้ง่ายต่อการ assert ในเทสต์
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TaskInfo {
     pub task_id: String,
     pub agent_id: String,
@@ -15,7 +29,7 @@ pub struct TaskInfo {
     pub status: TaskStatus,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)] // เพิ่ม PartialEq, Eq เพื่อให้ง่ายต่อการ assert ในเทสต์
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TaskStatus {
     Pending,
     Running,
@@ -24,11 +38,12 @@ pub enum TaskStatus {
 }
 
 impl AgentRegistry {
-    pub fn new(agents: Vec<AgentConfig>) -> Self {
-        let agents_map = agents
-            .into_iter()
-            .map(|agent| (agent.id.clone(), agent))
-            .collect();
+    pub fn new(agents: Vec<AgentConfig>, report: Option<&DiscoveryReport>) -> Self {
+        let mut agents_map = HashMap::new();
+        for config in agents {
+            let availability = Self::calculate_availability(&config, report);
+            agents_map.insert(config.id.clone(), AgentState { config, availability });
+        }
 
         Self {
             agents: agents_map,
@@ -36,8 +51,43 @@ impl AgentRegistry {
         }
     }
 
+    pub fn update_availability(&mut self, report: &DiscoveryReport) {
+        for state in self.agents.values_mut() {
+            state.availability = Self::calculate_availability(&state.config, Some(report));
+        }
+    }
+
+    fn calculate_availability(config: &AgentConfig, report: Option<&DiscoveryReport>) -> AgentAvailability {
+        if config.requires.is_empty() {
+            return AgentAvailability::Ready;
+        }
+
+        if let Some(report) = report {
+            let mut missing = Vec::new();
+            for tool in &config.requires {
+                if !report.is_tool_available(tool) {
+                    missing.push(tool.clone());
+                }
+            }
+
+            if missing.is_empty() {
+                AgentAvailability::Ready
+            } else {
+                AgentAvailability::MissingTools(missing)
+            }
+        } else {
+            // No report yet, assume missing if tools are required
+            AgentAvailability::MissingTools(config.requires.clone())
+        }
+    }
+
     /// Get agent by ID
     pub fn get_agent(&self, id: &str) -> Option<&AgentConfig> {
+        self.agents.get(id).map(|s| &s.config)
+    }
+
+    /// Get agent state by ID
+    pub fn get_agent_state(&self, id: &str) -> Option<&AgentState> {
         self.agents.get(id)
     }
 
@@ -45,7 +95,8 @@ impl AgentRegistry {
     pub fn get_agents_by_capability(&self, capability: &str) -> Vec<&AgentConfig> {
         self.agents
             .values()
-            .filter(|agent| agent.capabilities.contains(&capability.to_string()))
+            .filter(|state| state.config.capabilities.contains(&capability.to_string()))
+            .map(|state| &state.config)
             .collect()
     }
 
@@ -54,11 +105,40 @@ impl AgentRegistry {
         self.agents.keys().cloned().collect()
     }
 
-    /// Get all agents sorted by priority (higher first)
+    /// Get all agents sorted by readiness, priority (higher first), and cost (lower first)
     pub fn get_agents_by_priority(&self) -> Vec<&AgentConfig> {
-        let mut agents: Vec<&AgentConfig> = self.agents.values().collect();
-        agents.sort_by(|a, b| b.priority.cmp(&a.priority));
-        agents
+        self.get_agents_sorted()
+            .into_iter()
+            .map(|s| &s.config)
+            .collect()
+    }
+
+    /// Get all agent states sorted by readiness, priority, and cost
+    pub fn get_agents_sorted(&self) -> Vec<&AgentState> {
+        let mut states: Vec<&AgentState> = self.agents.values().collect();
+
+        states.sort_by(|a, b| {
+            // 1. Readiness (Ready first)
+            let a_ready = matches!(a.availability, AgentAvailability::Ready);
+            let b_ready = matches!(b.availability, AgentAvailability::Ready);
+
+            match (a_ready, b_ready) {
+                (true, false) => return std::cmp::Ordering::Less,
+                (false, true) => return std::cmp::Ordering::Greater,
+                _ => {}
+            }
+
+            // 2. Priority (higher first)
+            match b.config.priority.cmp(&a.config.priority) {
+                std::cmp::Ordering::Equal => {
+                    // 3. Cost (lower first)
+                    a.config.cost.cmp(&b.config.cost)
+                }
+                ord => ord,
+            }
+        });
+
+        states
     }
 
     /// Register a new task
@@ -108,19 +188,22 @@ mod tests {
                 capabilities: vec!["cli-task".to_string()],
                 priority: 1,
                 enabled: true,
+                requires: Vec::new(),
+                cost: 0,
             },
-            // --- ส่วนที่เพิ่มเข้ามา: เพิ่ม Internal Agent ในชุดข้อมูลเทสต์ ---
             AgentConfig {
                 id: "internal-pmat".to_string(),
                 name: "Internal PMAT Agent".to_string(),
                 agent_type: "internal".to_string(),
-                command: Some("pmat-internal".to_string()), // command ยังคงมีประโยชน์ในการระบุตัวตน
+                command: Some("pmat-internal".to_string()),
                 args: None,
                 extension_name: None,
                 rate_limit: RateLimit::default(),
                 capabilities: vec!["code-analysis".to_string()],
-                priority: 10, // ให้ priority สูงกว่า
+                priority: 10,
                 enabled: true,
+                requires: Vec::new(),
+                cost: 0,
             },
         ]
     }
@@ -128,7 +211,7 @@ mod tests {
     #[test]
     fn test_agent_registry_creation() {
         let agents = create_test_agents();
-        let registry = AgentRegistry::new(agents);
+        let registry = AgentRegistry::new(agents, None);
 
         assert_eq!(registry.list_agent_ids().len(), 2);
         assert!(registry.get_agent("cli-agent").is_some());
@@ -138,7 +221,7 @@ mod tests {
     #[test]
     fn test_get_agents_by_priority() {
         let agents = create_test_agents();
-        let registry = AgentRegistry::new(agents);
+        let registry = AgentRegistry::new(agents, None);
         let sorted_agents = registry.get_agents_by_priority();
 
         assert_eq!(sorted_agents.len(), 2);
@@ -150,7 +233,7 @@ mod tests {
     #[test]
     fn test_get_agents_by_capability() {
         let agents = create_test_agents();
-        let registry = AgentRegistry::new(agents);
+        let registry = AgentRegistry::new(agents, None);
 
         let cli_agents = registry.get_agents_by_capability("cli-task");
         assert_eq!(cli_agents.len(), 1);
@@ -165,9 +248,58 @@ mod tests {
     }
 
     #[test]
+    fn test_agent_availability_and_sorting() {
+        use crate::system::discovery::ToolInfo;
+        use chrono::Utc;
+
+        let mut agents = create_test_agents();
+        // Add an agent that requires a missing tool
+        agents.push(AgentConfig {
+            id: "missing-tool-agent".to_string(),
+            name: "Missing Tool Agent".to_string(),
+            agent_type: "cli".to_string(),
+            command: Some("missing".to_string()),
+            args: None,
+            extension_name: None,
+            rate_limit: RateLimit::default(),
+            capabilities: vec!["missing-task".to_string()],
+            priority: 100, // High priority but missing tool
+            enabled: true,
+            requires: vec!["non-existent-tool".to_string()],
+            cost: 0,
+        });
+
+        let report = DiscoveryReport {
+            timestamp: Utc::now(),
+            ai_clis: vec![ToolInfo {
+                name: "test-cli".to_string(),
+                version: None,
+                available: true,
+                path: None,
+            }],
+            vcs: vec![],
+            package_managers: vec![],
+        };
+
+        let registry = AgentRegistry::new(agents, Some(&report));
+
+        let sorted = registry.get_agents_by_priority();
+
+        // Even though missing-tool-agent has highest priority (100),
+        // it should be last because it's not Ready.
+        // Ready agents are internal-pmat (priority 10) and cli-agent (priority 1)
+        assert_eq!(sorted[0].id, "internal-pmat");
+        assert_eq!(sorted[1].id, "cli-agent");
+        assert_eq!(sorted[2].id, "missing-tool-agent");
+
+        let state = registry.get_agent_state("missing-tool-agent").unwrap();
+        assert!(matches!(state.availability, AgentAvailability::MissingTools(_)));
+    }
+
+    #[test]
     fn test_task_management() {
         let agents = create_test_agents();
-        let mut registry = AgentRegistry::new(agents);
+        let mut registry = AgentRegistry::new(agents, None);
 
         let task_info = TaskInfo {
             task_id: "task-123".to_string(),

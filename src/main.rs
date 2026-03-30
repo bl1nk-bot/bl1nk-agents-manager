@@ -72,17 +72,21 @@ async fn main() -> Result<()> {
 
     // Perform system discovery
     tracing::info!("🔍 Scanning system resources...");
-    match system::discovery::DiscoveryEngine::scan().await {
+    let report = match system::discovery::DiscoveryEngine::scan().await {
         Ok(report) => {
             if let Err(e) = system::discovery::DiscoveryEngine::save(&report).await {
                 tracing::error!("❌ Failed to save discovery report: {}", e);
             }
+            Some(report)
         }
-        Err(e) => tracing::error!("❌ System discovery failed: {}", e),
-    }
+        Err(e) => {
+            tracing::error!("❌ System discovery failed: {}", e);
+            None
+        }
+    };
 
     // Initialize the orchestrator
-    let orchestrator = mcp::Orchestrator::new(config).await?;
+    let orchestrator = mcp::Orchestrator::new(config, report).await?;
 
     // Run the MCP server
     tracing::info!("🎧 Starting MCP server on stdio");
