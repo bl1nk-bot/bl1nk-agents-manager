@@ -3,6 +3,7 @@ mod mcp;
 mod agents;
 mod rate_limit;
 mod system;
+mod persistence;
 
 use anyhow::Result;
 use clap::Parser;

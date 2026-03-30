@@ -1,13 +1,16 @@
 use crate::config::{RateLimitingConfig, RateLimit}; // เพิ่ม RateLimit เข้ามา
 use std::collections::HashMap;
 use chrono::{DateTime, Utc, Duration};
+use serde::{Deserialize, Serialize};
+use crate::persistence::{Persistence, StorageLocation};
 
 pub struct RateLimitTracker {
     config: RateLimitingConfig,
     usage: HashMap<String, AgentUsage>,
+    persistence: Option<Persistence>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 struct AgentUsage {
     requests_today: u32,
     requests_this_minute: u32,
@@ -45,10 +48,41 @@ impl AgentUsage {
 
 impl RateLimitTracker {
     pub fn new(config: RateLimitingConfig) -> Self {
+        let persistence = if config.track_usage {
+            Persistence::new(StorageLocation::Global).ok()
+        } else {
+            None
+        };
+
         Self {
             config,
             usage: HashMap::new(),
+            persistence,
         }
+    }
+
+    pub async fn load_usage(&mut self) -> anyhow::Result<()> {
+        if let Some(ref p) = self.persistence {
+            match p.load_json::<HashMap<String, AgentUsage>>(&self.config.usage_db_path).await {
+                Ok(usage) => {
+                    self.usage = usage;
+                    Ok(())
+                }
+                Err(e) => {
+                    tracing::warn!("Failed to load rate limit usage: {}. Starting fresh.", e);
+                    Ok(())
+                }
+            }
+        } else {
+            Ok(())
+        }
+    }
+
+    pub async fn flush_usage(&self) -> anyhow::Result<()> {
+        if let Some(ref p) = self.persistence {
+            p.save_json(&self.config.usage_db_path, &self.usage).await?;
+        }
+        Ok(())
     }
 
     /// Check if agent can make a request and increment counter if yes.
@@ -59,42 +93,49 @@ impl RateLimitTracker {
             return true;
         }
 
-        let usage = self.usage
-            .entry(agent_id.to_string())
-            .or_insert_with(AgentUsage::new);
+        let (can_proceed, daily_limit, minute_limit, requests_today, requests_this_minute) = {
+            let usage = self.usage
+                .entry(agent_id.to_string())
+                .or_insert_with(AgentUsage::new);
 
-        usage.reset_if_needed();
+            usage.reset_if_needed();
 
-        // --- ส่วนที่แก้ไข: ใช้ค่า limit จากพารามิเตอร์ที่ส่งเข้ามา ---
-        let daily_limit = agent_limit.requests_per_day;
-        let minute_limit = agent_limit.requests_per_minute;
+            // --- ส่วนที่แก้ไข: ใช้ค่า limit จากพารามิเตอร์ที่ส่งเข้ามา ---
+            let daily_limit = agent_limit.requests_per_day;
+            let minute_limit = agent_limit.requests_per_minute;
 
-        if usage.requests_today >= daily_limit {
-            tracing::warn!(
-                "Agent {} hit daily rate limit ({} requests)", 
-                agent_id, daily_limit
-            );
+            if usage.requests_today >= daily_limit {
+                tracing::warn!(
+                    "Agent {} hit daily rate limit ({} requests)",
+                    agent_id, daily_limit
+                );
+                (false, daily_limit, minute_limit, usage.requests_today, usage.requests_this_minute)
+            } else if usage.requests_this_minute >= minute_limit {
+                tracing::warn!(
+                    "Agent {} hit per-minute rate limit ({} requests)",
+                    agent_id, minute_limit
+                );
+                (false, daily_limit, minute_limit, usage.requests_today, usage.requests_this_minute)
+            } else {
+                // Increment counters
+                usage.requests_today += 1;
+                usage.requests_this_minute += 1;
+                (true, daily_limit, minute_limit, usage.requests_today, usage.requests_this_minute)
+            }
+
+        };
+
+        if !can_proceed {
             return false;
         }
 
-        if usage.requests_this_minute >= minute_limit {
-            tracing::warn!(
-                "Agent {} hit per-minute rate limit ({} requests)", 
-                agent_id, minute_limit
-            );
-            return false;
-        }
-
-        // Increment counters
-        usage.requests_today += 1;
-        usage.requests_this_minute += 1;
 
         tracing::debug!(
             "Agent {} usage: {}/{} per day, {}/{} per minute",
             agent_id,
-            usage.requests_today,
+            requests_today,
             daily_limit,
-            usage.requests_this_minute,
+            requests_this_minute,
             minute_limit
         );
 
