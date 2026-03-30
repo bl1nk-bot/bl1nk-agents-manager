@@ -1,0 +1,27 @@
+[server]
+host = "127.0.0.1"
+port = 3000
+
+[main_agent]
+name = "gemini"
+type = "gemini-cli"
+
+[[agents]]
+id = "test-agent"
+name = "Test"
+type = "cli"
+command = "test"
+capabilities = ["test"]
+enabled = true
+
+[routing]
+rules = []
+
+[rate_limiting]
+strategy = "round-robin"
+track_usage = true
+usage_db_path = "/tmp/usage.db"
+
+[logging]
+level = "info"
+output = "stdout"

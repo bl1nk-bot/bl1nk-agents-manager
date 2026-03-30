@@ -107,6 +107,7 @@ mod tests {
                 rate_limit: RateLimit::default(),
                 capabilities: vec!["cli-task".to_string()],
                 priority: 1,
+                enabled: true,
             },
             // --- ส่วนที่เพิ่มเข้ามา: เพิ่ม Internal Agent ในชุดข้อมูลเทสต์ ---
             AgentConfig {
@@ -119,6 +120,7 @@ mod tests {
                 rate_limit: RateLimit::default(),
                 capabilities: vec!["code-analysis".to_string()],
                 priority: 10, // ให้ priority สูงกว่า
+                enabled: true,
             },
         ]
     }

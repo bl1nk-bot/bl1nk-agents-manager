@@ -2,6 +2,7 @@ mod config;
 mod mcp;
 mod agents;
 mod rate_limit;
+mod system;
 
 use anyhow::Result;
 use clap::Parser;
@@ -68,6 +69,17 @@ async fn main() -> Result<()> {
 
     // Log routing tier
     tracing::info!("📊 Routing tier: {:?}", config.routing.tier);
+
+    // Perform system discovery
+    tracing::info!("🔍 Scanning system resources...");
+    match system::discovery::DiscoveryEngine::scan().await {
+        Ok(report) => {
+            if let Err(e) = system::discovery::DiscoveryEngine::save(&report).await {
+                tracing::error!("❌ Failed to save discovery report: {}", e);
+            }
+        }
+        Err(e) => tracing::error!("❌ System discovery failed: {}", e),
+    }
 
     // Initialize the orchestrator
     let orchestrator = mcp::Orchestrator::new(config).await?;
