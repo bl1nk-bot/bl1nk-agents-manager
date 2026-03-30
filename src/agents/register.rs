@@ -95,6 +95,20 @@ mod tests {
     use super::*;
     use crate::config::RateLimit;
 
+    /// Creates a small set of test AgentConfig instances used by unit tests.
+    ///
+    /// Returns a vector containing two agents:
+    /// - a CLI agent with capability `cli-task` and priority 1
+    /// - an internal agent with capability `code-analysis` and priority 10
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let agents = create_test_agents();
+    /// assert_eq!(agents.len(), 2);
+    /// assert!(agents.iter().any(|a| a.id == "cli-agent"));
+    /// assert!(agents.iter().any(|a| a.id == "internal-pmat"));
+    /// ```
     fn create_test_agents() -> Vec<AgentConfig> {
         vec![
             AgentConfig {
