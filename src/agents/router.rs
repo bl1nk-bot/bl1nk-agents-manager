@@ -92,7 +92,13 @@ impl AgentRouter {
             .find(|s| s.config.id == selected_agent.id)
             .ok_or_else(|| anyhow::anyhow!("Selected agent state not found"))?;
 
-        let capable_agents = self.filter_capable_agents(task_type, &agent_configs)
+        let ready_agent_configs: Vec<&AgentConfig> = agent_states
+            .iter()
+            .filter(|s| matches!(s.availability, AgentAvailability::Ready))
+            .map(|s| &s.config)
+            .collect();
+
+        let capable_agents = self.filter_capable_agents(task_type, &ready_agent_configs)
             .into_iter()
             .map(|a| a.id.clone())
             .collect();
