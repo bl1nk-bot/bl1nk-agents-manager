@@ -135,7 +135,8 @@ impl AgentRouter {
         // Check if matched via rule
         let matched_rule = self.routing_config.rules.iter()
             .filter(|r| r.enabled && self.rule_matches(r, task_type, prompt))
-            .find(|r| r.preferred_agents.contains(&agent.id));
+            .filter(|r| r.preferred_agents.contains(&agent.id))
+            .max_by_key(|r| r.priority);
 
         if let Some(rule) = matched_rule {
             reasons.push(format!("Matched routing rule for '{}' (priority {})", task_type, rule.priority));
