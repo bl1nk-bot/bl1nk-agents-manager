@@ -87,11 +87,6 @@ impl RateLimitTracker {
             Ok(())
         }
     }
-            }
-        } else {
-            Ok(())
-        }
-    }
 
     pub async fn flush_usage(&self) -> anyhow::Result<()> {
         if let Some(ref p) = self.persistence {
