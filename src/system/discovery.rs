@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use tokio::process::Command;
 use std::path::PathBuf;
-use tokio::fs;
 use anyhow::{Result, Context};
+use crate::persistence::{Persistence, StorageLocation};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolInfo {
@@ -31,16 +31,8 @@ impl DiscoveryReport {
     }
 
     pub async fn load() -> Result<Self> {
-        let config_dir = DiscoveryEngine::get_config_dir()?;
-        let report_path = config_dir.join("discovery.json");
-
-        let content = fs::read_to_string(&report_path).await
-            .with_context(|| format!("Failed to read discovery report from: {:?}", report_path))?;
-
-        let report: DiscoveryReport = serde_json::from_str(&content)
-            .context("Failed to deserialize discovery report")?;
-
-        Ok(report)
+        let persistence = Persistence::new(StorageLocation::Global)?;
+        persistence.load_json("discovery.json").await
     }
 }
 
@@ -73,27 +65,11 @@ impl DiscoveryEngine {
     }
 
     pub async fn save(report: &DiscoveryReport) -> Result<()> {
-        let config_dir = Self::get_config_dir()?;
-        fs::create_dir_all(&config_dir).await
-            .with_context(|| format!("Failed to create config directory: {:?}", config_dir))?;
+        let persistence = Persistence::new(StorageLocation::Global)?;
+        persistence.save_json("discovery.json", report).await?;
 
-        let report_path = config_dir.join("discovery.json");
-        let content = serde_json::to_string_pretty(report)
-            .context("Failed to serialize discovery report")?;
-
-        fs::write(&report_path, content).await
-            .with_context(|| format!("Failed to write discovery report to: {:?}", report_path))?;
-
-        tracing::info!("✅ Discovery report saved to: {:?}", report_path);
+        tracing::info!("✅ Discovery report saved to global storage");
         Ok(())
-    }
-
-    fn get_config_dir() -> Result<PathBuf> {
-        let home = std::env::var("HOME")
-            .or_else(|_| std::env::var("USERPROFILE"))
-            .context("Could not find home directory")?;
-
-        Ok(PathBuf::from(home).join(".config/bl1nk-agents-manager"))
     }
 
     async fn check_tool(name: &str) -> ToolInfo {

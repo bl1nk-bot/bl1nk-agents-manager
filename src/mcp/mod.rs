@@ -77,9 +77,11 @@ impl Orchestrator {
             AgentRegistry::new(config.agents.clone(), report.as_ref())
         ));
 
-        let rate_limiter = Arc::new(RwLock::new(
-            RateLimitTracker::new(config.rate_limiting.clone())
-        ));
+        let mut tracker = RateLimitTracker::new(config.rate_limiting.clone());
+        if let Err(e) = tracker.load_usage().await {
+            tracing::error!("❌ Failed to load rate limit usage: {}", e);
+        }
+        let rate_limiter = Arc::new(RwLock::new(tracker));
 
         let executor = Arc::new(
             AgentExecutor::new(
@@ -100,6 +102,7 @@ impl Orchestrator {
     pub async fn run_stdio(self) -> Result<()> {
         let executor = self.executor.clone();
         let agent_registry = self.agent_registry.clone();
+        let rate_limiter = self.rate_limiter.clone();
 
         // Build MCP server with typed tools
         let server = ServerBuilder::new()
@@ -139,6 +142,13 @@ impl Orchestrator {
 
         // Run the MCP server on stdio
         server.run_stdio().await?;
+
+        // Flush usage on shutdown
+        let rate_limiter = rate_limiter.read().await;
+        if let Err(e) = rate_limiter.flush_usage().await {
+            tracing::error!("❌ Failed to flush rate limit usage on shutdown: {}", e);
+        }
+
         Ok(())
     }
 }
