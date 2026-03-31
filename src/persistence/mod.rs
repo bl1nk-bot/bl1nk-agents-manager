@@ -62,7 +62,9 @@ impl Persistence {
                 .with_context(|| format!("Failed to create directory: {:?}", parent))?;
         }
 
-        let temp_path = path.with_extension("tmp");
+        let mut temp_name = path.as_os_str().to_os_string();
+        temp_name.push(".tmp");
+        let temp_path = PathBuf::from(temp_name);
         fs::write(&temp_path, content).await
             .with_context(|| format!("Failed to write to temporary file: {:?}", temp_path))?;
 
