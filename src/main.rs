@@ -193,7 +193,9 @@ async fn run_interactive_delegate(
             let agent_id = agent_input.trim();
 
             let confirmed_id = if let Ok(idx) = agent_id.parse::<usize>() {
-                proposal.capable_agents.get(idx - 1).cloned().unwrap_or(agent_id.to_string())
+                            idx.checked_sub(1)
+                                .and_then(|i| proposal.capable_agents.get(i).cloned())
+                                .unwrap_or_else(|| agent_id.to_string())
             } else {
                 agent_id.to_string()
             };
