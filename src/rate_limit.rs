@@ -69,14 +69,17 @@ impl RateLimitTracker {
 
     pub async fn load_usage(&mut self) -> anyhow::Result<()> {
         if let Some(ref p) = self.persistence {
-            match p.load_json::<HashMap<String, AgentUsage>>(&self.config.usage_db_path).await {
+            match p
+                .load_json::<HashMap<String, AgentUsage>>(&self.config.usage_db_path)
+                .await
+            {
                 Ok(usage) => {
                     self.usage = usage;
                     Ok(())
                 }
                 Err(e) => {
                     tracing::warn!("Failed to load rate limit usage: {}. Starting fresh.", e);
-                    Ok(())
+                    Err(e)
                 }
             }
         } else {
