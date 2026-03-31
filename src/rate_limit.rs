@@ -79,8 +79,14 @@ impl RateLimitTracker {
                 }
                 Err(e) => {
                     tracing::warn!("Failed to load rate limit usage: {}. Starting fresh.", e);
-                    Err(e)
+                    self.usage.clear();
+                    Ok(())
                 }
+            }
+        } else {
+            Ok(())
+        }
+    }
             }
         } else {
             Ok(())
