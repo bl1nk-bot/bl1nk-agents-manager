@@ -74,6 +74,8 @@ impl Persistence {
             fs::remove_file(path).await
                 .with_context(|| format!("Failed to remove existing file: {:?}", path))?;
         }
+
+        fs::rename(&temp_path, path).await
             .with_context(|| format!("Failed to rename {:?} to {:?}", temp_path, path))?;
 
         Ok(())
