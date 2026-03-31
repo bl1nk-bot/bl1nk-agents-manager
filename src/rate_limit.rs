@@ -49,7 +49,13 @@ impl AgentUsage {
 impl RateLimitTracker {
     pub fn new(config: RateLimitingConfig) -> Self {
         let persistence = if config.track_usage {
-            Persistence::new(StorageLocation::Global).ok()
+            match Persistence::new(StorageLocation::Global) {
+                Ok(p) => Some(p),
+                Err(e) => {
+                    tracing::warn!("Failed to initialize persistence: {}. Usage tracking disabled.", e);
+                    None
+                }
+            }
         } else {
             None
         };
