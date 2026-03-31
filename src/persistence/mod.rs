@@ -68,7 +68,12 @@ impl Persistence {
         fs::write(&temp_path, content).await
             .with_context(|| format!("Failed to write to temporary file: {:?}", temp_path))?;
 
-        fs::rename(&temp_path, path).await
+        // On Windows, rename fails if the destination already exists, so remove it first.
+        #[cfg(windows)]
+        if path.exists() {
+            fs::remove_file(path).await
+                .with_context(|| format!("Failed to remove existing file: {:?}", path))?;
+        }
             .with_context(|| format!("Failed to rename {:?} to {:?}", temp_path, path))?;
 
         Ok(())
