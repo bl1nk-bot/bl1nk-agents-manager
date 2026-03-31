@@ -72,7 +72,7 @@ impl AgentExecutor {
         };
 
         let agent_id = agent_config.id.clone();
-        let status = if proposal.is_some() {
+        let status = if args.interactive {
             TaskStatus::AwaitingApproval
         } else {
             TaskStatus::Pending
