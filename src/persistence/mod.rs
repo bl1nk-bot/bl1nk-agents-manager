@@ -62,8 +62,12 @@ impl Persistence {
                 .with_context(|| format!("Failed to create directory: {:?}", parent))?;
         }
 
+        let nonce = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
         let mut temp_name = path.as_os_str().to_os_string();
-        temp_name.push(".tmp");
+        temp_name.push(format!(".{}.{}.tmp", std::process::id(), nonce));
         let temp_path = PathBuf::from(temp_name);
         fs::write(&temp_path, content).await
             .with_context(|| format!("Failed to write to temporary file: {:?}", temp_path))?;
