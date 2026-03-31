@@ -26,15 +26,23 @@ impl Persistence {
         Ok(Self { base_path })
     }
 
+    fn validate_relative_path(&self, relative_path: &str) -> Result<PathBuf> {
+        let path = Path::new(relative_path);
+        if path.is_absolute() {
+            return Err(anyhow::anyhow!("relative_path must not be an absolute path: {}", relative_path));
+        }
+        Ok(self.base_path.join(relative_path))
+    }
+
     pub async fn save_json<T: Serialize>(&self, relative_path: &str, data: &T) -> Result<()> {
-        let path = self.base_path.join(relative_path);
+        let path = self.validate_relative_path(relative_path)?;
         let content = serde_json::to_string_pretty(data)
             .context("Failed to serialize to JSON")?;
         self.atomic_write(&path, content).await
     }
 
     pub async fn load_json<T: DeserializeOwned>(&self, relative_path: &str) -> Result<T> {
-        let path = self.base_path.join(relative_path);
+        let path = self.validate_relative_path(relative_path)?;
         let content = fs::read_to_string(&path).await
             .with_context(|| format!("Failed to read file: {:?}", path))?;
         serde_json::from_str(&content)
@@ -42,14 +50,14 @@ impl Persistence {
     }
 
     pub async fn save_toml<T: Serialize>(&self, relative_path: &str, data: &T) -> Result<()> {
-        let path = self.base_path.join(relative_path);
+        let path = self.validate_relative_path(relative_path)?;
         let content = toml::to_string_pretty(data)
             .context("Failed to serialize to TOML")?;
         self.atomic_write(&path, content).await
     }
 
     pub async fn load_toml<T: DeserializeOwned>(&self, relative_path: &str) -> Result<T> {
-        let path = self.base_path.join(relative_path);
+        let path = self.validate_relative_path(relative_path)?;
         let content = fs::read_to_string(&path).await
             .with_context(|| format!("Failed to read file: {:?}", path))?;
         toml::from_str(&content)
@@ -69,19 +77,27 @@ impl Persistence {
         let mut temp_name = path.as_os_str().to_os_string();
         temp_name.push(format!(".{}.{}.tmp", std::process::id(), nonce));
         let temp_path = PathBuf::from(temp_name);
+
         fs::write(&temp_path, content).await
             .with_context(|| format!("Failed to write to temporary file: {:?}", temp_path))?;
 
-        // On Windows, rename fails if the destination already exists, so remove it first.
-        #[cfg(windows)]
-        if path.exists() {
-            fs::remove_file(path).await
-                .with_context(|| format!("Failed to remove existing file: {:?}", path))?;
+        let result = async {
+            // On Windows, rename fails if the destination already exists, so remove it first.
+            #[cfg(windows)]
+            if fs::try_exists(path).await.unwrap_or(false) {
+                fs::remove_file(path).await
+                    .with_context(|| format!("Failed to remove existing file: {:?}", path))?;
+            }
+
+            fs::rename(&temp_path, path).await
+                .with_context(|| format!("Failed to rename {:?} to {:?}", temp_path, path))?;
+            Ok(())
+        }.await;
+
+        if result.is_err() {
+            let _ = fs::remove_file(&temp_path).await;
         }
 
-        fs::rename(&temp_path, path).await
-            .with_context(|| format!("Failed to rename {:?} to {:?}", temp_path, path))?;
-
-        Ok(())
+        result
     }
 }

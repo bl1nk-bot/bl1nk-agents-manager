@@ -140,8 +140,19 @@ impl Orchestrator {
             )
             .build()?;
 
-        // Run the MCP server on stdio
-        server.run_stdio().await?;
+        // Run the MCP server on stdio with signal handling for clean shutdown
+        let server_handle = server.run_stdio();
+
+        tokio::select! {
+            result = server_handle => {
+                if let Err(e) = result {
+                    tracing::error!("❌ MCP server error: {}", e);
+                }
+            }
+            _ = tokio::signal::ctrl_c() => {
+                tracing::info!("Received Ctrl-C, shutting down...");
+            }
+        }
 
         // Flush usage on shutdown
         let rate_limiter = rate_limiter.read().await;
