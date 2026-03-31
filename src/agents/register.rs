@@ -1,5 +1,6 @@
 use crate::config::AgentConfig;
 use crate::system::discovery::DiscoveryReport;
+use crate::agents::router::PlanProposal;
 use std::collections::HashMap;
 use anyhow::{Result, Context};
 use serde::{Deserialize, Serialize};
@@ -21,17 +22,22 @@ pub struct AgentRegistry {
     active_tasks: HashMap<String, TaskInfo>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct TaskInfo {
     pub task_id: String,
     pub agent_id: String,
     pub task_type: String,
     pub status: TaskStatus,
+    pub proposal: Option<PlanProposal>,
+    pub prompt: String,
+    pub context: Option<serde_json::Value>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum TaskStatus {
     Pending,
+    AwaitingApproval,
     Running,
     Completed,
     Failed,
@@ -158,14 +164,19 @@ impl AgentRegistry {
     pub fn active_task_count(&self) -> usize {
         self.active_tasks
             .values()
-            .filter(|task| matches!(task.status, TaskStatus::Running | TaskStatus::Pending))
+            .filter(|task| matches!(task.status, TaskStatus::Running | TaskStatus::Pending | TaskStatus::AwaitingApproval))
             .count()
+    }
+
+    /// Get task by ID
+    pub fn get_task(&self, task_id: &str) -> Option<&TaskInfo> {
+        self.active_tasks.get(task_id)
     }
 
     /// Remove completed/failed tasks (cleanup)
     pub fn cleanup_finished_tasks(&mut self) {
         self.active_tasks.retain(|_, task| {
-            matches!(task.status, TaskStatus::Running | TaskStatus::Pending)
+            matches!(task.status, TaskStatus::Running | TaskStatus::Pending | TaskStatus::AwaitingApproval)
         });
     }
 }
@@ -320,6 +331,9 @@ mod tests {
             agent_id: "internal-pmat".to_string(),
             task_type: "code-analysis".to_string(),
             status: TaskStatus::Pending,
+            proposal: None,
+            prompt: "test".to_string(),
+            context: None,
         };
 
         registry.register_task(task_info.clone());

@@ -28,6 +28,10 @@ pub struct DelegateTaskArgs {
     #[schemars(description = "Optional agent ID to use (auto-selects if not provided)")]
     pub agent_id: Option<String>,
 
+    #[schemars(description = "Request a resource-aware plan proposal before execution")]
+    #[serde(default)]
+    pub interactive: bool,
+
     #[schemars(description = "Run as background task")]
     #[serde(default)]
     pub background: bool,
@@ -42,6 +46,14 @@ pub struct DelegateTaskOutput {
     pub agent_id: String,
     pub status: String,
     pub result: Option<String>,
+    pub proposal: Option<crate::agents::router::PlanProposal>,
+}
+
+/// Arguments for approving a task
+#[derive(Debug, Deserialize, Serialize, JsonSchema)]
+pub struct ApproveTaskArgs {
+    pub task_id: String,
+    pub confirmed_agent_id: Option<String>,
 }
 
 /// Arguments for querying agent status
@@ -97,6 +109,14 @@ impl Orchestrator {
         })
     }
 
+    pub async fn delegate_task_internal(&self, args: DelegateTaskArgs) -> pmcp::Result<DelegateTaskOutput> {
+        self.executor.delegate_task(args).await
+    }
+
+    pub async fn approve_task_internal(&self, task_id: String, confirmed_agent_id: Option<String>) -> pmcp::Result<DelegateTaskOutput> {
+        self.executor.approve_task(task_id, confirmed_agent_id).await
+    }
+
     pub async fn run_stdio(self) -> Result<()> {
         let executor = self.executor.clone();
         let agent_registry = self.agent_registry.clone();
@@ -119,6 +139,21 @@ impl Orchestrator {
                     }
                 })
                 .with_description("Delegate a task to an appropriate sub-agent")
+            )
+            // Tool: Approve task
+            .tool(
+                "approve_task",
+                TypedTool::new("approve_task", {
+                    let executor = executor.clone();
+                    move |args: ApproveTaskArgs, _extra: RequestHandlerExtra| {
+                        let executor = executor.clone();
+                        Box::pin(async move {
+                            let output = executor.approve_task(args.task_id, args.confirmed_agent_id).await?;
+                            Ok(serde_json::to_value(output)?)
+                        })
+                    }
+                })
+                .with_description("Approve and execute a task awaiting approval")
             )
             // Tool: Query agent status
             .tool(

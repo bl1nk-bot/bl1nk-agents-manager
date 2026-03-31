@@ -32,6 +32,23 @@ struct Args {
     /// Run in daemon mode (background)
     #[arg(short, long)]
     daemon: bool,
+
+    #[command(subcommand)]
+    command: Option<Commands>,
+}
+
+#[derive(clap::Subcommand, Debug)]
+enum Commands {
+    /// Delegate a task to an agent (CLI interactive mode)
+    Delegate {
+        /// Type of task
+        #[arg(short, long)]
+        task_type: String,
+
+        /// Prompt for the agent
+        #[arg(short, long)]
+        prompt: String,
+    },
 }
 
 /// Application entry point that parses CLI arguments, initializes logging, loads configuration,
@@ -100,11 +117,105 @@ async fn main() -> Result<()> {
     // Initialize the orchestrator
     let orchestrator = mcp::Orchestrator::new(config, report).await?;
 
-    // Run the MCP server
-    tracing::info!("🎧 Starting MCP server on stdio");
-    tracing::info!("Host: {} | Port: {}", args.host, args.port);
+    if let Some(cmd) = args.command {
+        match cmd {
+            Commands::Delegate { task_type, prompt } => {
+                run_interactive_delegate(orchestrator, task_type, prompt).await?;
+            }
+        }
+    } else {
+        // Run the MCP server
+        tracing::info!("🎧 Starting MCP server on stdio");
+        tracing::info!("Host: {} | Port: {}", args.host, args.port);
+
+        orchestrator.run_stdio().await?;
+    }
+
+    Ok(())
+}
+
+async fn run_interactive_delegate(
+    orchestrator: mcp::Orchestrator,
+    task_type: String,
+    prompt: String,
+) -> Result<()> {
+    use std::io::{self, Write};
+    use crate::mcp::DelegateTaskArgs;
+
+    println!("🧠 Routing task: '{}'", task_type);
     
-    orchestrator.run_stdio().await?;
+    let args = DelegateTaskArgs {
+        task_type,
+        prompt,
+        agent_id: None,
+        interactive: true,
+        background: false,
+        context: None,
+    };
+
+    let output = orchestrator.delegate_task_internal(args).await?;
+
+    if let Some(proposal) = output.proposal {
+        println!("\n╔═══════════════════════════════════════════════════════════════════════════╗");
+        println!("║ 🤖 PROPOSED PLAN                                                          ║");
+        println!("╠═══════════════════════════════════════════════════════════════════════════╣");
+        println!("║ Agent:  {:<65} ║", proposal.agent_id);
+        println!("║ Name:   {:<65} ║", proposal.agent_name);
+        println!("║ Cost:   {:<65?} ║", proposal.cost_category);
+        println!("║ Status: {:<65} ║", proposal.availability);
+        println!("╠═══════════════════════════════════════════════════════════════════════════╣");
+        println!("║ REASONING:                                                                ║");
+        for line in textwrap::wrap(&proposal.reasoning, 73) {
+            println!("║ {:<73} ║", line);
+        }
+        println!("╚═══════════════════════════════════════════════════════════════════════════╝");
+
+        print!("\nProceed? [Y/n/modify]: ");
+        io::stdout().flush()?;
+
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)?;
+        let choice = input.trim().to_lowercase();
+
+        if choice == "n" || choice == "no" {
+            println!("❌ Task cancelled.");
+            return Ok(());
+        } else if choice == "modify" || choice == "m" {
+            println!("\nAvailable Capable Agents:");
+            for (i, agent) in proposal.capable_agents.iter().enumerate() {
+                println!("  {}. {}", i + 1, agent);
+            }
+            print!("\nEnter agent ID or number: ");
+            io::stdout().flush()?;
+
+            let mut agent_input = String::new();
+            io::stdin().read_line(&mut agent_input)?;
+            let agent_id = agent_input.trim();
+
+            let confirmed_id = if let Ok(idx) = agent_id.parse::<usize>() {
+                proposal.capable_agents.get(idx - 1).cloned().unwrap_or(agent_id.to_string())
+            } else {
+                agent_id.to_string()
+            };
+
+            println!("🚀 Executing with agent: {}", confirmed_id);
+            let final_output = orchestrator.approve_task_internal(output.task_id, Some(confirmed_id)).await?;
+            if let Some(res) = final_output.result {
+                println!("\n✅ Result:\n{}", res);
+            }
+        } else {
+            println!("🚀 Executing plan...");
+            let final_output = orchestrator.approve_task_internal(output.task_id, None).await?;
+            if let Some(res) = final_output.result {
+                println!("\n✅ Result:\n{}", res);
+            }
+        }
+    } else {
+        println!("✅ Task executed directly.");
+        if let Some(res) = output.result {
+            println!("\nResult:\n{}", res);
+        }
+    }
 
     Ok(())
 }
