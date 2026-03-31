@@ -173,13 +173,8 @@ impl AgentExecutor {
             .ok_or_else(|| pmcp::Error::validation(format!("Agent not found: {}", agent_id)))?
             .clone();
 
-        // Update task with confirmed agent and status
-        task.agent_id = agent_id.clone();
-        task.status = TaskStatus::Pending;
-        registry.register_task(task.clone());
+        // Check rate limit for confirmed agent before changing task state
         drop(registry);
-
-        // Check rate limit for confirmed agent
         let mut rate_limiter = self.rate_limiter.write().await;
         if !rate_limiter.check_and_increment(&agent_id, &agent_config.rate_limit).await {
             return Err(pmcp::Error::internal(
@@ -187,6 +182,13 @@ impl AgentExecutor {
             ));
         }
         drop(rate_limiter);
+
+        // Update task with confirmed agent and status
+        let mut registry = self.agent_registry.write().await;
+        task.agent_id = agent_id.clone();
+        task.status = TaskStatus::Pending;
+        registry.register_task(task.clone());
+        drop(registry);
 
         // Execute task (currently only synchronous approval supported for simplicity)
         let result = self.execute_agent_task(
