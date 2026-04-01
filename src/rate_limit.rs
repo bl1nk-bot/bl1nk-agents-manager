@@ -71,7 +71,12 @@ impl RateLimitTracker {
         if let Some(ref p) = self.persistence {
             // Validate that usage_db_path is not absolute to avoid bypassing Global storage
             if std::path::Path::new(&self.config.usage_db_path).is_absolute() {
-                anyhow::bail!("usage_db_path must not be an absolute path: {}", self.config.usage_db_path);
+                tracing::warn!(
+                    "Absolute usage_db_path is not supported for global persistence: {}. Starting fresh.",
+                    self.config.usage_db_path
+                );
+                self.usage.clear();
+                return Ok(());
             }
 
             match p
