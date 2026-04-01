@@ -89,9 +89,14 @@ impl Persistence {
         let result = async {
             // On Windows, rename fails if the destination already exists, so remove it first.
             #[cfg(windows)]
-            if fs::try_exists(path).await.unwrap_or(false) {
-                fs::remove_file(path).await
-                    .with_context(|| format!("Failed to remove existing file: {:?}", path))?;
+            {
+                match fs::remove_file(path).await {
+                    Ok(()) => {}
+                    Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+                    Err(e) => {
+                        return Err(e).with_context(|| format!("Failed to remove existing file: {:?}", path));
+                    }
+                }
             }
 
             fs::rename(&temp_path, path).await
