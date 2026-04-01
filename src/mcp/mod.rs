@@ -143,15 +143,28 @@ impl Orchestrator {
         // Run the MCP server on stdio with signal handling for clean shutdown
         let server_handle = server.run_stdio();
 
+        let mut server_error = None;
         tokio::select! {
             result = server_handle => {
                 if let Err(e) = result {
                     tracing::error!("❌ MCP server error: {}", e);
+                    server_error = Some(e);
                 }
             }
             _ = tokio::signal::ctrl_c() => {
                 tracing::info!("Received Ctrl-C, shutting down...");
             }
+        }
+
+        // Flush usage on shutdown
+        let rate_limiter = rate_limiter.read().await;
+        if let Err(e) = rate_limiter.flush_usage().await {
+            tracing::error!("❌ Failed to flush rate limit usage on shutdown: {}", e);
+        }
+
+        match server_error {
+            Some(e) => Err(e.into()),
+            None => Ok(()),
         }
 
         // Flush usage on shutdown
