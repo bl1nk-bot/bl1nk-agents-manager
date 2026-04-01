@@ -1,6 +1,28 @@
 use crate::config::{AgentConfig, RoutingConfig, RoutingRule, RoutingTier};
+use crate::agents::register::{AgentState, AgentAvailability};
 use anyhow::Result;
 use std::cmp::Ordering;
+use serde::{Deserialize, Serialize};
+use schemars::JsonSchema;
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum CostCategory {
+    Free,
+    Cheap,
+    Expensive,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct PlanProposal {
+    pub agent_id: String,
+    pub agent_name: String,
+    pub task_type: String,
+    pub cost_category: CostCategory,
+    pub reasoning: String,
+    pub availability: String,
+    pub capable_agents: Vec<String>,
+}
 
 pub struct AgentRouter {
     routing_config: RoutingConfig,
@@ -54,6 +76,91 @@ impl<'a> Ord for ScoredRule<'a> {
 impl AgentRouter {
     pub fn new(routing_config: RoutingConfig) -> Self {
         Self { routing_config }
+    }
+
+    /// Create a resource-aware plan proposal
+    pub fn create_proposal(
+        &self,
+        task_type: &str,
+        prompt: &str,
+        agent_states: &[&AgentState],
+    ) -> Result<PlanProposal> {
+        let agent_configs: Vec<&AgentConfig> = agent_states.iter().map(|s| &s.config).collect();
+        let selected_agent = self.select_agent(task_type, prompt, &agent_configs)?;
+
+        let state = agent_states.iter()
+            .find(|s| s.config.id == selected_agent.id)
+            .ok_or_else(|| anyhow::anyhow!("Selected agent state not found"))?;
+
+        let ready_agent_configs: Vec<&AgentConfig> = agent_states
+            .iter()
+            .filter(|s| matches!(s.availability, AgentAvailability::Ready))
+            .map(|s| &s.config)
+            .collect();
+
+        let capable_agents = self.filter_capable_agents(task_type, &ready_agent_configs)
+            .into_iter()
+            .map(|a| a.id.clone())
+            .collect();
+
+        let cost_category = if selected_agent.cost == 0 {
+            CostCategory::Free
+        } else if selected_agent.cost < 500 {
+            CostCategory::Cheap
+        } else {
+            CostCategory::Expensive
+        };
+
+        let availability = match &state.availability {
+            AgentAvailability::Ready => "Ready".to_string(),
+            AgentAvailability::MissingTools(tools) => format!("Missing Tools: {}", tools.join(", ")),
+        };
+
+        let reasoning = self.determine_reasoning(task_type, prompt, selected_agent, &state.availability);
+
+        Ok(PlanProposal {
+            agent_id: selected_agent.id.clone(),
+            agent_name: selected_agent.name.clone(),
+            task_type: task_type.to_string(),
+            cost_category,
+            reasoning,
+            availability,
+            capable_agents,
+        })
+    }
+
+    fn determine_reasoning(
+        &self,
+        task_type: &str,
+        prompt: &str,
+        agent: &AgentConfig,
+        availability: &AgentAvailability,
+    ) -> String {
+        let mut reasons = Vec::new();
+
+        // Check if matched via rule
+        let matched_rule = self.routing_config.rules.iter()
+            .filter(|r| r.enabled && self.rule_matches(r, task_type, prompt))
+            .filter(|r| r.preferred_agents.contains(&agent.id))
+            .max_by_key(|r| r.priority);
+
+        if let Some(rule) = matched_rule {
+            reasons.push(format!("Matched routing rule for '{}' (priority {})", task_type, rule.priority));
+        } else {
+            reasons.push(format!("Selected via priority fallback (priority {})", agent.priority));
+        }
+
+        if matches!(availability, AgentAvailability::Ready) {
+            reasons.push("Agent is ready with all required tools".to_string());
+        } else {
+            reasons.push("NOTE: Agent is missing some tools but was still the best choice".to_string());
+        }
+
+        if agent.cost == 0 {
+            reasons.push("Chosen for zero cost".to_string());
+        }
+
+        reasons.join(". ")
     }
 
     /// Select the best agent using tiered priority system
@@ -290,5 +397,28 @@ mod tests {
         
         // Falls back to priority
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn test_create_proposal() {
+        let routing_config = RoutingConfig {
+            tier: RoutingTier::Default,
+            rules: vec![],
+        };
+        let router = AgentRouter::new(routing_config);
+
+        let agent = create_test_agent("test-agent", vec!["test"], 1);
+        let state = AgentState {
+            config: agent.clone(),
+            availability: AgentAvailability::Ready,
+        };
+
+        let states = vec![&state];
+        let proposal = router.create_proposal("test", "hello", &states).unwrap();
+
+        assert_eq!(proposal.agent_id, "test-agent");
+        assert_eq!(proposal.cost_category, CostCategory::Free);
+        assert!(proposal.reasoning.contains("Selected via priority fallback"));
+        assert_eq!(proposal.availability, "Ready");
     }
 }

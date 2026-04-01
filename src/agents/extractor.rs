@@ -41,24 +41,42 @@ impl AgentExecutor {
         // Generate task ID
         let task_id = Uuid::new_v4().to_string();
 
-        // Select agent
+        // Select agent or Generate Proposal
         let registry = self.agent_registry.read().await;
 
-        let agent_config = if let Some(agent_id) = &args.agent_id {
-            registry.get_agent(agent_id)
+        let (agent_config, proposal) = if let Some(agent_id) = &args.agent_id {
+            let config = registry.get_agent(agent_id)
                 .ok_or_else(|| pmcp::Error::validation(format!("Agent not found: {}", agent_id)))?
-                .clone()
+                .clone();
+            (config, None)
         } else {
             // Auto-select based on task_type
-            let all_agents = registry.get_agents_by_priority();
-            let agent_refs: Vec<&AgentConfig> = all_agents.iter().copied().collect();
+            let agent_states = registry.get_agents_sorted();
 
-            self.router.select_agent(&args.task_type, &args.prompt, &agent_refs)
-                .map_err(|e| pmcp::Error::internal(e.to_string()))?
-                .clone()
+            if args.interactive {
+                let proposal = self.router.create_proposal(&args.task_type, &args.prompt, &agent_states)
+                    .map_err(|e| pmcp::Error::internal(e.to_string()))?;
+
+                let config = registry.get_agent(&proposal.agent_id)
+                    .ok_or_else(|| pmcp::Error::internal("Selected agent not found in registry"))?
+                    .clone();
+
+                (config, Some(proposal))
+            } else {
+                let agent_configs: Vec<&AgentConfig> = agent_states.iter().map(|s| &s.config).collect();
+                let config = self.router.select_agent(&args.task_type, &args.prompt, &agent_configs)
+                    .map_err(|e| pmcp::Error::internal(e.to_string()))?
+                    .clone();
+                (config, None)
+            }
         };
 
         let agent_id = agent_config.id.clone();
+        let status = if args.interactive {
+            TaskStatus::AwaitingApproval
+        } else {
+            TaskStatus::Pending
+        };
 
         // Register task
         drop(registry);
@@ -67,14 +85,25 @@ impl AgentExecutor {
             task_id: task_id.clone(),
             agent_id: agent_id.clone(),
             task_type: args.task_type.clone(),
-            status: TaskStatus::Pending,
+            status: status.clone(),
+            proposal: proposal.clone(),
+            prompt: args.prompt.clone(),
+            context: args.context.clone(),
         });
         drop(registry);
 
-        // --- ส่วนที่แก้ไข: อัปเดตการเรียกใช้ Rate Limiter ---
+        if status == TaskStatus::AwaitingApproval {
+            return Ok(DelegateTaskOutput {
+                task_id,
+                agent_id,
+                status: "awaiting_approval".to_string(),
+                result: None,
+                proposal,
+            });
+        }
+
         // Check rate limit
         let mut rate_limiter = self.rate_limiter.write().await;
-        // เราส่ง agent_config.rate_limit เข้าไปด้วย
         if !rate_limiter.check_and_increment(&agent_id, &agent_config.rate_limit).await {
             return Err(pmcp::Error::internal(
                 format!("Rate limit exceeded for agent: {}", agent_id)
@@ -107,6 +136,7 @@ impl AgentExecutor {
                 agent_id,
                 status: "pending".to_string(),
                 result: None,
+                proposal: None,
             })
         } else {
             // Execute synchronously
@@ -122,8 +152,59 @@ impl AgentExecutor {
                 agent_id,
                 status: "completed".to_string(),
                 result: Some(result),
+                proposal: None,
             })
         }
+    }
+
+    /// Approve and execute a task that is awaiting approval
+    pub async fn approve_task(&self, task_id: String, confirmed_agent_id: Option<String>) -> pmcp::Result<DelegateTaskOutput> {
+        let mut registry = self.agent_registry.write().await;
+        let mut task = registry.get_task(&task_id)
+            .ok_or_else(|| pmcp::Error::validation(format!("Task not found: {}", task_id)))?
+            .clone();
+
+        if task.status != TaskStatus::AwaitingApproval {
+            return Err(pmcp::Error::validation(format!("Task {} is not awaiting approval", task_id)));
+        }
+
+        let agent_id = confirmed_agent_id.unwrap_or(task.agent_id.clone());
+        let agent_config = registry.get_agent(&agent_id)
+            .ok_or_else(|| pmcp::Error::validation(format!("Agent not found: {}", agent_id)))?
+            .clone();
+
+        // Check rate limit for confirmed agent before changing task state
+        drop(registry);
+        let mut rate_limiter = self.rate_limiter.write().await;
+        if !rate_limiter.check_and_increment(&agent_id, &agent_config.rate_limit).await {
+            return Err(pmcp::Error::internal(
+                format!("Rate limit exceeded for agent: {}", agent_id)
+            ));
+        }
+        drop(rate_limiter);
+
+        // Update task with confirmed agent and status
+        let mut registry = self.agent_registry.write().await;
+        task.agent_id = agent_id.clone();
+        task.status = TaskStatus::Pending;
+        registry.register_task(task.clone());
+        drop(registry);
+
+        // Execute task (currently only synchronous approval supported for simplicity)
+        let result = self.execute_agent_task(
+            task_id.clone(),
+            agent_config,
+            task.prompt,
+            task.context,
+        ).await.map_err(|e| pmcp::Error::internal(e.to_string()))?;
+
+        Ok(DelegateTaskOutput {
+            task_id,
+            agent_id,
+            status: "completed".to_string(),
+            result: Some(result),
+            proposal: None,
+        })
     }
 
     /// Execute task on a specific agent using ACP protocol
