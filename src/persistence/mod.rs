@@ -28,10 +28,15 @@ impl Persistence {
 
     fn validate_relative_path(&self, relative_path: &str) -> Result<PathBuf> {
         let path = Path::new(relative_path);
-        if path.is_absolute() {
-            return Err(anyhow::anyhow!("relative_path must not be an absolute path: {}", relative_path));
+        if path.is_absolute()
+            || path.components().any(|c| matches!(c, std::path::Component::ParentDir | std::path::Component::Prefix(_)))
+        {
+            return Err(anyhow::anyhow!(
+                "relative_path must be a safe relative path within base directory: {}",
+                relative_path
+            ));
         }
-        Ok(self.base_path.join(relative_path))
+        Ok(self.base_path.join(path))
     }
 
     pub async fn save_json<T: Serialize>(&self, relative_path: &str, data: &T) -> Result<()> {
