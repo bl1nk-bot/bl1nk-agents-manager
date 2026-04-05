@@ -52,7 +52,7 @@ impl RateLimitTracker {
             match Persistence::new(StorageLocation::Global) {
                 Ok(p) => Some(p),
                 Err(e) => {
-                    tracing::warn!("Failed to initialize persistence: {}. Usage tracking disabled.", e);
+                    tracing::error!("Failed to initialize persistence: {}. Usage tracking disabled.", e);
                     None
                 }
             }
@@ -69,6 +69,16 @@ impl RateLimitTracker {
 
     pub async fn load_usage(&mut self) -> anyhow::Result<()> {
         if let Some(ref p) = self.persistence {
+            // Validate that usage_db_path is not absolute to avoid bypassing Global storage
+            if std::path::Path::new(&self.config.usage_db_path).is_absolute() {
+                tracing::warn!(
+                    "Absolute usage_db_path is not supported for global persistence: {}. Starting fresh.",
+                    self.config.usage_db_path
+                );
+                self.usage.clear();
+                return Ok(());
+            }
+
             match p
                 .load_json::<HashMap<String, AgentUsage>>(&self.config.usage_db_path)
                 .await
@@ -90,6 +100,11 @@ impl RateLimitTracker {
 
     pub async fn flush_usage(&self) -> anyhow::Result<()> {
         if let Some(ref p) = self.persistence {
+            // Validate that usage_db_path is not absolute to avoid bypassing Global storage
+            if std::path::Path::new(&self.config.usage_db_path).is_absolute() {
+                anyhow::bail!("usage_db_path must not be an absolute path: {}", self.config.usage_db_path);
+            }
+
             p.save_json(&self.config.usage_db_path, &self.usage).await?;
         }
         Ok(())

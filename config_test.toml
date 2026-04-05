@@ -20,7 +20,7 @@ rules = []
 [rate_limiting]
 strategy = "round-robin"
 track_usage = true
-usage_db_path = "/tmp/usage_test.db"
+usage_db_path = "usage_test.db"
 
 [logging]
 level = "info"
