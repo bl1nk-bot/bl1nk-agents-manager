@@ -1,0 +1,38 @@
+# EditorConfig configuration for consistent coding style
+# https://EditorConfig.org
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+trim_trailing_whitespace = true
+
+# Rust source files
+[*.rs]
+indent_size = 4
+max_line_length = 100
+
+# Markdown files
+[*.md]
+indent_size = 2
+max_line_length = 80
+
+# Configuration files (TOML, JSON, YAML)
+[*.{toml,json,yaml,yml}]
+indent_size = 2
+
+# Shell scripts
+[*.sh]
+indent_size = 4
+
+# Documentation
+[*.{txt,md}]
+indent_size = 2
+
+# Makefiles
+[Makefile]
+indent_style = tab
+indent_size = 8
