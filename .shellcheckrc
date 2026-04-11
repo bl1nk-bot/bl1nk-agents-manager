@@ -1,0 +1,15 @@
+# ShellCheck configuration
+# https://www.shellcheck.net/
+
+# Disable specific checks
+disable=SC1090,SC1091
+
+# Source files to check
+shell=bash
+
+# Exclude these patterns from checks
+exclude=
+    ./scripts/agent_manager.py
+    ./scripts/validate_agents.py
+    ./scripts/fix_agents.py
+    ./scripts/test_integration.py

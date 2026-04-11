@@ -1,0 +1,23 @@
+# Rustfmt configuration
+# https://rust-lang.github.io/rustfmt/
+
+edition = "2021"
+max_width = 100
+tab_spaces = 4
+newline_style = "Unix"
+indent_style = "Block"
+indent_width = 4
+
+# Import organization
+reorder_imports = true
+merge_imports = true
+group_imports = "StdExternalCrate"
+
+# Code style
+where_style = "Mixed"
+wrap_match_arms = true
+match_arm_blocks = "Block"
+struct_lit_width = 100
+
+# Comments
+comment_width = 120

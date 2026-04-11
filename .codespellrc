@@ -1,0 +1,31 @@
+[codespell]
+# Ignore intentional misspellings used as examples and technical terms
+
+# numer - intentional example typo in add-educational-comments.prompt.md
+# wit - proper technical term/name (sardonic wit, Gilfoyle character trait)
+# aks - Azure Kubernetes Service (AKS) abbreviation
+# edn - Extensible Data Notation (Clojure data format)
+# ser - serialization abbreviation
+# ois - ObjectInputStream abbreviation in Java
+# gir - valid abbreviation/technical term
+# rouge - Rouge is a syntax highlighter (not "rogue")
+# categor - TypeScript template literal
+# aline - proper name (Aline Ávila, contributor)
+# ative - part of "Declarative Agents" in documentation
+# dateA, dateB - variable names used in sorting comparison functions
+# TE - HTTP transfer coding header
+# alle - Finnish word meaning "under/below" (not "all" or "alley")
+# vai - Finnish word meaning "or"
+# LOD - Level of Detail
+# InOut - template property
+# pixelX - template variable
+# aNULL - HTTPS configuration cipher string
+# Wee, Sherif - proper name (contributor names should not be flagged as typos)
+# queston - intentional misspelling example demonstrating typo detection
+# nin - MongoDB $nin operator in security instructions
+# Vertexes - FreeCAD shape sub-elements
+
+ignore-words-list = numer,wit,aks,edn,ser,ois,gir,rouge,categor,aline,ative,afterall,deques,dateA,dateB,TE,alle,vai,LOD,InOut,pixelX,aNULL,Wee,Sherif,queston,Vertexes,nin
+
+# Skip certain files and directories
+skip = .git,node_modules,package-lock.json,*.lock,target,website/build,website/.docusaurus

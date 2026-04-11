@@ -426,3 +426,115 @@ Before deploying:
 ---
 
 **Need help?** Check examples in `/examples` directory or open an issue.
+## Hooks and Event Handling
+
+The system supports hooks that can intercept and modify behavior at various points. As an agent developer, you can write custom hooks to extend functionality.
+
+### Available Hook Events
+
+- **PreToolUse**: Before a tool is used
+- **PostToolUse**: After a tool is used
+- **PostToolUseFailure**: After tool failure
+- **Stop**: Can stop execution
+- **SubagentStop**: Stops a subagent
+- **UserPromptSubmit**: When user submits a prompt
+- **PermissionRequest**: For permission handling
+
+### Hook Output Format
+
+Hooks should return JSON responses with the following structure:
+
+```json
+{
+  "decision": "allow|block|deny",
+  "reason": "Explanation of the decision",
+  "continue_execution": true|false,
+  "stop_reason": "Why execution stopped",
+  "suppress_output": true|false,
+  "system_message": "Message to display to user",
+  "hook_specific_output": {
+    "additionalContext": "Extra context for merging",
+    "decision": { /* For PermissionRequest hooks */ }
+  }
+}
+```
+
+### Hook Merging Logic
+
+Multiple hooks can be registered for the same event. Their outputs are merged using event-specific logic:
+
+- **OR Logic**: For tool use events, a "block" or "deny" decision from any hook wins
+- **PermissionRequest**: Specialized merging for decision objects and permissions
+- **Simple Merge**: For other events, latest values win with context concatenation
+
+### Example Hook
+
+```python
+#!/usr/bin/env python3
+import json
+import sys
+
+def handle_hook(event_name, payload):
+    """Process a hook event"""
+    if event_name == "PreToolUse":
+        tool_name = payload.get("tool_name")
+        if tool_name == "write_file" and "sensitive" in payload.get("file_path", ""):
+            return {
+                "decision": "deny",
+                "reason": "Cannot write to sensitive files",
+                "continue_execution": False,
+                "stop_reason": "Security policy violation"
+            }
+    return {
+        "decision": "allow",
+        "continue_execution": True
+    }
+
+def main():
+    for line in sys.stdin:
+        try:
+            request = json.loads(line)
+            response = handle_hook(
+                request.get("method"),
+                request.get("params", {})
+            )
+            print(json.dumps(response), flush=True)
+        except Exception as e:
+            error_response = {
+                "decision": "deny",
+                "reason": f"Error processing hook: {str(e)}",
+                "continue_execution": False
+            }
+            print(json.dumps(error_response), flush=True)
+            sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+```
+
+### Registering Hooks
+
+Hooks are registered in the system configuration. Each hook specifies:
+- Event name to listen for
+- Command to execute
+- Priority/order (optional)
+
+When the event occurs, all registered hooks are executed, and their results are aggregated.
+
+### Best Practices
+
+1. **Return early**: Return allow if no special handling needed
+2. **Be specific**: Only block when absolutely necessary
+3. **Provide clear reasons**: Help users understand decisions
+4. **Handle errors gracefully**: Never crash the hook process
+5. **Keep it fast**: Hooks should execute quickly to avoid latency
+
+### Common Use Cases
+
+- **Security policies**: Block unauthorized actions
+- **Audit logging**: Record all operations
+- **Context enrichment**: Add metadata to tool calls
+- **Dynamic routing**: Modify agent selection based on conditions
+
+---
+
