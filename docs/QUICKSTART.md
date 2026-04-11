@@ -18,26 +18,26 @@ cargo --version
 
 ```bash
 # Navigate to project directory
-cd gemini-mcp-proxy
+cd bl1nk-agents-manager
 
 # Install development tools (optional)
 make setup
 
 # Build the project
-make build
+make build-bundled
 ```
 
 ### Step 3: Configuration
 
 ```bash
 # Create config directory
-mkdir -p ~/.config/gemini-mcp-proxy
+mkdir -p ~/.config/bl1nk-agents-manager
 
 # Copy and customize config
-cp config.example.toml ~/.config/gemini-mcp-proxy/config.toml
+cp config.example.toml ~/.config/bl1nk-agents-manager/config.toml
 
 # Edit config to add your agents
-nano ~/.config/gemini-mcp-proxy/config.toml
+nano ~/.config/bl1nk-agents-manager/config.toml
 ```
 
 **Minimal working config:**
@@ -78,18 +78,21 @@ output = "stdout"
 ### Step 4: Run the Server
 
 ```bash
-# Run in development mode
-make run
+# Run with bundled PMAT (recommended)
+make run-bundled
+
+# Or in development mode
+make dev
 
 # Or with debug logging
-RUST_LOG=debug cargo run --release
+RUST_LOG=debug cargo run --release --features bundle-pmat
 ```
 
 Expected output:
 ```
-2025-01-28T00:00:00Z INFO  Starting Gemini MCP/ACP Orchestrator
-2025-01-28T00:00:00Z INFO  Loaded configuration with 1 agents
-2025-01-28T00:00:00Z INFO  Starting MCP server on stdio
+2026-04-11T00:00:00Z INFO  Starting BL1NK Agents Manager
+2026-04-11T00:00:00Z INFO  Loaded configuration with 3 agents
+2026-04-11T00:00:00Z INFO  Starting MCP server on stdio
 ```
 
 ### Step 5: Test with MCP Client
@@ -100,9 +103,15 @@ Create a test script `test-client.sh`:
 #!/bin/bash
 
 # Send MCP initialize request
-cat << 'EOF' | ./target/release/gemini-mcp-proxy
+cat << 'EOF' | ./target/release/bl1nk-agents-manager
 {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}
 EOF
+```
+
+Run test:
+```bash
+chmod +x test-client.sh
+./test-client.sh
 ```
 
 Run test:
@@ -119,14 +128,11 @@ chmod +x test-client.sh
 {
   "jsonrpc": "2.0",
   "id": 2,
-  "method": "tools/call",
+  "method": "delegate_task",
   "params": {
-    "name": "delegate_task",
-    "arguments": {
-      "task_type": "test",
-      "prompt": "Hello, agent!",
-      "background": false
-    }
+    "agent_id": "qwen-coder",
+    "prompt": "Hello, agent!",
+    "background": false
   }
 }
 ```
@@ -169,31 +175,25 @@ chmod +x test-client.sh
 
 ```bash
 # Run as MCP server
-gemini-mcp-proxy
+bl1nk-agents-manager
 
 # Gemini CLI connects via stdio
 ```
 
 ### Option 2: MCP Config
 
-Add to Gemini CLI configuration (e.g., `~/.config/gemini-cli/mcp.json`):
+Add to your MCP client configuration:
 
 ```json
 {
   "mcpServers": {
-    "gemini-proxy": {
-      "command": "/path/to/gemini-mcp-proxy",
+    "bl1nk-proxy": {
+      "command": "/path/to/bl1nk-agents-manager",
       "args": [],
       "transport": "stdio"
     }
   }
 }
-```
-
-Then use from Gemini:
-```
-User: "Use gemini-proxy to delegate this task to qwen-coder"
-Gemini: [calls delegate_task via MCP]
 ```
 
 ## Troubleshooting
@@ -210,8 +210,8 @@ source $HOME/.cargo/env
 
 ```bash
 # Create config
-mkdir -p ~/.config/gemini-mcp-proxy
-cp config.example.toml ~/.config/gemini-mcp-proxy/config.toml
+mkdir -p ~/.config/bl1nk-agents-manager
+cp config.example.toml ~/.config/bl1nk-agents-manager/config.toml
 ```
 
 ### Error: "Agent command not found"
@@ -225,7 +225,7 @@ Check:
 
 Reset usage database:
 ```bash
-rm ~/.config/gemini-mcp-proxy/usage.db
+rm ~/.config/bl1nk-agents-manager/usage.db
 ```
 
 ## Next Steps

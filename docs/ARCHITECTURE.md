@@ -2,8 +2,8 @@
 
 ## System Overview
 
-Gemini MCP Proxy is a **dual-protocol orchestrator** that bridges:
-- **MCP (Model Context Protocol)** - For Gemini CLI integration
+BL1NK Agents Manager is a **dual-protocol orchestrator** that bridges:
+- **MCP (Model Context Protocol)** - For AI assistant integration
 - **ACP (Agent Client Protocol)** - For sub-agent communication
 
 ## Core Principles
