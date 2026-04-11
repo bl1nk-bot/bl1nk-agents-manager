@@ -1,51 +1,38 @@
-# EditorConfig is awesome: https://EditorConfig.org
+# EditorConfig configuration for consistent coding style
+# https://EditorConfig.org
 
-# top-most EditorConfig file
 root = true
 
-# All files
 [*]
-indent_style = space
-indent_size = 2
-end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-# Markdown files
-[*.md]
-trim_trailing_whitespace = false
-max_line_length = off
-
-# JSON files
-[*.json]
-indent_size = 2
-
-# JavaScript files
-[*.js]
-indent_size = 2
-
-# Shell scripts
-[*.sh]
 end_of_line = lf
-
-# Windows scripts
-[*.{cmd,bat}]
-end_of_line = crlf
+insert_final_newline = true
+indent_style = space
+trim_trailing_whitespace = true
 
 # Rust source files
 [*.rs]
 indent_size = 4
 max_line_length = 100
 
-# Configuration files (TOML)
-[*.toml]
+# Markdown files
+[*.md]
+indent_size = 2
+max_line_length = 80
+
+# Configuration files (TOML, JSON, YAML)
+[*.{toml,json,yaml,yml}]
 indent_size = 2
 
-# YAML files
-[*.yml]
+# Shell scripts
+[*.sh]
+indent_size = 4
+
+# Documentation
+[*.{txt,md}]
 indent_size = 2
 
 # Makefiles
 [Makefile]
 indent_style = tab
+indent_size = 8
