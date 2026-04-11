@@ -5,8 +5,10 @@
 //! รองรับการเลือกเอเจนต์อัตโนมัติ การตรวจสอบ rate limit และการทำงานแบบ background
 //! รวมถึงการอนุมัติงานที่รอการยืนยัน (interactive mode)
 
-use crate::agents::{AgentConfig, AgentRegistry, AgentRouter, register::{TaskInfo, TaskStatus}};
-use crate::config::{RoutingConfig, RoutingTier};
+// นำเข้าจากโมดูล agents
+use crate::agents::{AgentRegistry, AgentRouter, register::{TaskInfo, TaskStatus}};
+// นำเข้าจากโมดูล config
+use crate::config::{AgentConfig, RoutingConfig, RoutingTier};
 use crate::mcp::{DelegateTaskArgs, DelegateTaskOutput};
 use crate::rate_limit::RateLimitTracker;
 use anyhow::{Context, Result, bail};
