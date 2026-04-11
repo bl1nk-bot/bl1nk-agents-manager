@@ -1,39 +1,37 @@
-# .gitattributes
-
-# Normalize text files to LF line endings
+# Set default behavior to automatically normalize line endings.
 * text=auto eol=lf
+
+# Explicitly declare text files to be normalized and converted to native line endings on checkout.
+*.md text eol=lf
+*.txt text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.ts text eol=lf
+*.sh text eol=lf
 
 # Rust source files
 *.rs text eol=lf
 
-# Markdown documentation
-*.md text eol=lf
-
 # Configuration files
 *.toml text eol=lf
-*.json text eol=lf
-*.yaml text eol=lf
-*.yml text eol=lf
 
-# Shell scripts
-*.sh text eol=lf
-*.bash text eol=lf
+# Windows-specific files that should retain CRLF line endings
+*.bat text eol=crlf
+*.cmd text eol=crlf
 
-# Git LFS (if needed in the future)
-# *.ppm -f lfs diff lfs merge lfs -text
-# *.zip -f lfs diff lfs merge lfs -text
+# Binary files that should not be modified
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.pdf binary
 
-# Documents
-*.pdf -text
-*.docx -text
-
-# Custom diff for specific file types
-*.rs diff=rust
-*.md diff=markdown
-
-# Merge strategies
-*.rs merge=union
-*.toml merge=union
-
-# Ignore changes to specific files in history (like logs)
-*.log -diff
+# GitHub workflows - treat lock files as linguist-generated and use merge=ours
+.github/workflows/*.lock.yml linguist-generated=true merge=ours
