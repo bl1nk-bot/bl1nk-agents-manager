@@ -175,8 +175,6 @@ impl HookAggregator {
             HookEventName::PermissionRequest => {
                 Self::merge_permission_request_outputs(outputs)
             }
-            // fallback สำหรับเหตุการณ์อื่น ๆ
-            _ => Self::merge_simple(outputs),
         };
 
         Some(merged)
