@@ -3,7 +3,12 @@
 ## Phase 1: Foundation - Registry Schema & Keyword Mapping [checkpoint: pending]
 
 ### 1.0 Task: Integrate bl1nk-keyword-validator
-- [ ] Task: Clone และวิเคราะห์ bl1nk-keyword-validator
+- [x] Task: Clone และวิเคราะห์ bl1nk-keyword-validator `#commit: 437d159`
+    - [x] โคลน `https://github.com/billlzzz26/bl1nk-keyword-validator` ลงใน `vendor/bl1nk-keyword-validator/`
+    - [x] วิเคราะห์โครงสร้าง: core/, cli/, schema.rs, validator.rs, search.rs
+    - [x] สรุป dependencies และ functionality ที่มีอยู่
+    - [x] เขียน analysis summary
+- [~] Task: Merge keyword validator เข้ากับโปรเจค
     - [ ] โคลน `https://github.com/billlzzz26/bl1nk-keyword-validator` ลงใน `vendor/bl1nk-keyword-validator/`
     - [ ] วิเคราะห์โครงสร้าง: core/, cli/, schema.rs, validator.rs, search.rs
     - [ ] สรุป dependencies และ functionality ที่มีอยู่

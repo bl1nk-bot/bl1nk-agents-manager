@@ -48,6 +48,9 @@ sha2 = "0.10"
 hex = "0.4"
 uuid = { version = "1.0", features = ["v4", "serde"] }
 
+# Keyword validation and search (จาก vendor)
+bl1nk-keyword-core = { path = "vendor/bl1nk-keyword-validator/core" }
+
 # Logging
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }

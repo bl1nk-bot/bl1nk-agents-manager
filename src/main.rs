@@ -5,6 +5,7 @@ mod rate_limit;
 mod system;
 mod persistence;
 mod hooks;
+mod registry;
 
 use anyhow::Result;
 use clap::Parser;
