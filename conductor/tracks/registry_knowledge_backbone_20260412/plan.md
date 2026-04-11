@@ -8,21 +8,13 @@
     - [x] วิเคราะห์โครงสร้าง: core/, cli/, schema.rs, validator.rs, search.rs
     - [x] สรุป dependencies และ functionality ที่มีอยู่
     - [x] เขียน analysis summary
-- [~] Task: Merge keyword validator เข้ากับโปรเจค
-    - [ ] โคลน `https://github.com/billlzzz26/bl1nk-keyword-validator` ลงใน `vendor/bl1nk-keyword-validator/`
-    - [ ] วิเคราะห์โครงสร้าง: core/, cli/, schema.rs, validator.rs, search.rs
-    - [ ] สรุป dependencies และ functionality ที่มีอยู่
-    - [ ] เขียน analysis summary
-- [ ] Task: Merge keyword validator เข้ากับโปรเจค
-    - [ ] เพิ่ม `bl1nk-keyword-validator` เป็น workspace member หรือ vendored crate
-    - [ ] ปรับ Cargo.toml ให้รองรับ dependency ร่วมกัน
-    - [ ] ทดสอบว่า build ผ่านทั้งคู่
-    - [ ] เขียน tests integration เบื้องต้น
-- [ ] Task: Adapt validator สำหรับ registry ของเรา
-    - [ ] เชื่อมต่อ validator กับ registry schema ที่มีอยู่
-    - [ ] ปรับ CLI commands ให้เข้ากับ bl1nk-agents-manager
-    - [ ] ใช้ validation logic เดิมแทนที่จะเขียนใหม่
-    - [ ] เขียน tests validation ทำงานกับ registry ของเรา
+- [x] Task: Merge keyword validator เข้ากับโปรเจค `#commit: 0f14805`
+    - [x] เพิ่ม `bl1nk-keyword-core` เป็น path dependency ใน Cargo.toml
+    - [x] แก้ไข build errors (config.rs, persistence/mod.rs, mcp/mod.rs, hook_aggregator.rs)
+    - [x] แก้ Android permission issue โดยเปลี่ยน target-dir ไปยัง Termux storage
+    - [x] สร้าง `src/registry/mod.rs` wrapper สำหรับ Validator และ KeywordSearch
+    - [x] เขียน unit tests 5 tests สำหรับ RegistryService
+    - [x] **cargo check สำเร็จ ไม่มี errors!**
 
 ### 1.1 Task: Define Unified Registry Schema
 - [ ] Task: Create registry schema types
