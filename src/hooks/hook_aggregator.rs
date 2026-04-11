@@ -67,14 +67,14 @@ impl HookOutput {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// ผลลัพธ์จากการเรียกใช้ Hook หนึ่งตัว
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct HookExecutionResult {
     /// การทำงานสำเร็จหรือไม่ (ไม่มีข้อผิดพลาด)
     pub success: bool,
     /// ผลลัพธ์ที่ได้จาก Hook (ถ้ามี)
     pub output: Option<HookOutput>,
     /// ข้อผิดพลาดที่เกิดขึ้น (ถ้ามี)
-    pub error: Option<anyhow::Error>,
+    pub error: Option<String>, // เปลี่ยนเป็น String เพื่อให้ Clone ได้
     /// ระยะเวลาที่ใช้ในการทำงาน
     pub duration: Duration,
 }
@@ -84,14 +84,14 @@ pub struct HookExecutionResult {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// ผลลัพธ์ที่ได้หลังจากรวม Hook หลายตัวเข้าด้วยกัน
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AggregatedHookResult {
     /// การทำงานของทุก Hook สำเร็จทั้งหมดหรือไม่
     pub success: bool,
     /// ผลลัพธ์ดิบจากทุก Hook
     pub all_outputs: Vec<HookOutput>,
     /// ข้อผิดพลาดที่เกิดขึ้นทั้งหมด
-    pub errors: Vec<anyhow::Error>,
+    pub errors: Vec<String>, // เปลี่ยนเป็น String
     /// เวลารวมที่ใช้ในการรันทุก Hook
     pub total_duration: Duration,
     /// ผลลัพธ์สุดท้ายหลังจากรวมตามกฎของเหตุการณ์นั้น ๆ

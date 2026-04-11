@@ -192,20 +192,15 @@ impl Orchestrator {
         }
 
         // Flush usage on shutdown
-        let rate_limiter = rate_limiter.read().await;
-        if let Err(e) = rate_limiter.flush_usage().await {
+        let rate_limiter_guard = self.rate_limiter.read().await;
+        if let Err(e) = rate_limiter_guard.flush_usage().await {
             tracing::error!("❌ Failed to flush rate limit usage on shutdown: {}", e);
         }
+        drop(rate_limiter_guard);
 
         match server_error {
-            Some(e) => Err(e.into()),
-            None => Ok(()),
-        }
-
-        // Flush usage on shutdown
-        let rate_limiter = rate_limiter.read().await;
-        if let Err(e) = rate_limiter.flush_usage().await {
-            tracing::error!("❌ Failed to flush rate limit usage on shutdown: {}", e);
+            Some(e) => return Err(e.into()),
+            None => {}
         }
 
         Ok(())

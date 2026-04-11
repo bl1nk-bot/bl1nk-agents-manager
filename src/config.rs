@@ -264,8 +264,10 @@ impl Config {
         if let Ok(home) = std::env::var("HOME").or_else(|_| std::env::var("USERPROFILE")) {
             let home_path = PathBuf::from(home);
             for fmt in &formats {
-                paths.push(home_path.join(format!(".config/bl1nk-agents-manager/config.{}", fmt)));
-                paths.push(home_path.join(format!(".{}.{}", name, fmt)));
+                for name in &filenames {
+                    paths.push(home_path.join(format!(".config/bl1nk-agents-manager/config.{}", fmt)));
+                    paths.push(home_path.join(format!(".{}.{}", name, fmt)));
+                }
             }
         }
         
