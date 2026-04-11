@@ -1,57 +1,23 @@
 # Rustfmt configuration
-edition = "2021"
-enum_discrim_align_threshold = 60
-verbose = false
+# https://rust-lang.github.io/rustfmt/
 
-# Formatting style
+edition = "2021"
+max_width = 100
+tab_spaces = 4
+newline_style = "Unix"
 indent_style = "Block"
 indent_width = 4
-max_width = 100
-merge_imports = true
-reorder_impl = true
+
+# Import organization
 reorder_imports = true
-reorder_imports_in_group = true
+merge_imports = true
 group_imports = "StdExternalCrate"
+
+# Code style
 where_style = "Mixed"
 wrap_match_arms = true
-use_try_shorthand = false
-use_field_name_shorthand = false
-force_explicit_counter_in_multiline_expressions = false
 match_arm_blocks = "Block"
-match_block_trailing_assignment = false
-imports_layout = "Mixed"
-item_scope_indent = "Block"
-keep_parens = "Preserve"
 struct_lit_width = 100
-struct_variant_width = 100
-type_punning = false
-unstable_formatting = false
-use_small_heuristic = "Max"
-width_heuristic = "Max"
 
 # Comments
 comment_width = 120
-format_code_in_doc_comment = true
-format_gen_derive = true
-format_macro_matchers = true
-format_macro_bodies = true
-format_nested_impls = true
-format_panic = true
-merge_derives = true
-remove_nested_env_fns = true
-space_before_colon = false
-space_after_colon = true
-space_around_attr_eq = true
-space_around_bounds_eq = true
-space_in_attr_filter = false
-spaces_around_ranges = false
-struct_field_align_threshold = 60
-take_attributes = ["crate", "cfg", "derive", "inline", "must_use", "allow", "warn", "deny", "forbid", "rustfmt", "rustfmt::skip", "test", "noqa", "cold", "default", "deprecated", "doc", "export", "link", "repr", "unsafe", "warn", "used", "rustc", "rustc::test", "rustc::require_const"]
-ignore_unsafe_in_fn = false
-match_arm_leading_pipes = "Preserve"
-reorder_impl_items = true
-reorder_value = true
-wrap_generics = true
-wrap_ret_type = true
-write_byte_unicode = false
-trailing_semicolon = true
