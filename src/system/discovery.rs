@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Utc};
 use tokio::process::Command;
 use std::path::PathBuf;
-use anyhow::{Result, Context};
+use anyhow::Result;
 use crate::persistence::{Persistence, StorageLocation};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

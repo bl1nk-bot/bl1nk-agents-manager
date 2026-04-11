@@ -13,16 +13,17 @@
 //   let results = service.search("visual-story", None);
 // =============================================================
 
-// TODO: เพิ่ม export types ที่จำเป็นจาก schema module
+// TODO: เพิ่ม export types ที่จำเป็นจาก schema module (ใช้ใน tests)
+#[cfg(test)]
 use bl1nk_keyword_core::schema::{
-    Metadata, KeywordGroup, FieldSchema, CustomFieldConfig, 
+    Metadata, KeywordGroup, FieldSchema, CustomFieldConfig,
     ValidationConfig, ValidationRules,
 };
 
 pub use bl1nk_keyword_core::{
     KeywordRegistry, KeywordSearch, Validator, 
     ValidationError, ValidatorError, SearchResult,
-    load_registry, save_registry, generate_markdown,
+    load_registry, generate_markdown,
 };
 
 /// RegistryService - wrapper สำหรับจัดการ keyword registry

@@ -11,6 +11,7 @@ repository = "https://github.com/billlzzz18/bl1nk-agents-manager"
 default = ["schema-generation"]
 schema-generation = ["pmcp/schema-generation"]
 proptest = ["dep:proptest"]
+bundle-pmat = []
 
 [dependencies]
 # Protocol implementations

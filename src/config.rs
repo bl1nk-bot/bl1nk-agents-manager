@@ -1,6 +1,6 @@
-use anyhow::{Context, Result, bail};
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -91,17 +91,14 @@ pub struct RoutingConfig {
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "lowercase")]
+#[derive(Default)]
 pub enum RoutingTier {
+    #[default]
     Default,
     User,
     Admin,
 }
 
-impl Default for RoutingTier {
-    fn default() -> Self {
-        RoutingTier::Default
-    }
-}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RoutingRule {

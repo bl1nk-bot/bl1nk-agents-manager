@@ -254,13 +254,12 @@ impl AgentRouter {
             .max_by_key(|a| a.priority)
             .copied()
             .ok_or_else(|| anyhow::anyhow!("No available agents"))
-            .map(|agent| {
+            .inspect(|agent| {
                 tracing::info!(
                     "✅ Selected agent '{}' by priority fallback (priority={})",
                     agent.id,
                     agent.priority
                 );
-                agent
             })
     }
 

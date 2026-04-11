@@ -2,7 +2,7 @@ use crate::config::Config;
 use crate::agents::{AgentRegistry, AgentExecutor};
 use crate::rate_limit::RateLimitTracker;
 use anyhow::Result;
-use pmcp::{ServerBuilder, TypedTool, RequestHandlerExtra, Error as McpError};
+use pmcp::{ServerBuilder, TypedTool, RequestHandlerExtra};
 use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use std::sync::Arc;
@@ -122,7 +122,7 @@ impl Orchestrator {
     pub async fn run_stdio(self) -> Result<()> {
         let executor = self.executor.clone();
         let agent_registry = self.agent_registry.clone();
-        let rate_limiter = self.rate_limiter.clone();
+        let _rate_limiter = self.rate_limiter.clone();
 
         // Build MCP server with typed tools
         let server = ServerBuilder::new()
@@ -198,10 +198,7 @@ impl Orchestrator {
         }
         drop(rate_limiter_guard);
 
-        match server_error {
-            Some(e) => return Err(e.into()),
-            None => {}
-        }
+        if let Some(e) = server_error { return Err(e.into()) }
 
         Ok(())
     }

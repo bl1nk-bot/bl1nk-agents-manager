@@ -159,7 +159,7 @@ impl AgentExecutor {
 
     /// Approve and execute a task that is awaiting approval
     pub async fn approve_task(&self, task_id: String, confirmed_agent_id: Option<String>) -> pmcp::Result<DelegateTaskOutput> {
-        let mut registry = self.agent_registry.write().await;
+        let registry = self.agent_registry.write().await;
         let mut task = registry.get_task(&task_id)
             .ok_or_else(|| pmcp::Error::validation(format!("Task not found: {}", task_id)))?
             .clone();
@@ -334,7 +334,7 @@ impl AgentExecutor {
     async fn execute_gemini_extension(
         &self,
         agent: &AgentConfig,
-        prompt: &str,
+        _prompt: &str,
     ) -> Result<String> {
         let extension_name = agent.extension_name.as_ref()
             .context("Extension agent requires extension_name")?;

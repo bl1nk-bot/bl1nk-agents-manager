@@ -15,11 +15,11 @@ use sha2::{Sha256, Digest};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum EvidenceType {
-    instruction,
-    explicit,
-    structure,
-    context,
-    assumption,
+    Instruction,
+    Explicit,
+    Structure,
+    Ctx,
+    Assumption,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -336,7 +336,7 @@ impl AgentCreator {
     }
 
     /// สร้าง system prompt ที่รวมเนื้อหาละเอียดเดิมและรูปแบบใหม่
-    fn create_system_prompt(&self, parsed: &ParsedRequirements, mode: &str, task_type: &str) -> Result<String> {
+    fn create_system_prompt(&self, parsed: &ParsedRequirements, mode: &str, _task_type: &str) -> Result<String> {
         let header = "system prompt\n\n";
 
         let rule_section = format!(
@@ -489,11 +489,11 @@ impl AgentCreator {
     fn default_permission_policy(&self) -> PermissionPolicy {
         PermissionPolicy {
             hierarchy: vec![
-                EvidenceType::instruction,
-                EvidenceType::explicit,
-                EvidenceType::structure,
-                EvidenceType::context,
-                EvidenceType::assumption,
+                EvidenceType::Instruction,
+                EvidenceType::Explicit,
+                EvidenceType::Structure,
+                EvidenceType::Ctx,
+                EvidenceType::Assumption,
             ],
             weight: Weight {
                 mode: 0.3,
