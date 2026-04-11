@@ -70,14 +70,28 @@ The proxy operates in two modes simultaneously:
 ### Layer 3: Agent Management
 
 ```rust
-┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
-│  AgentRegistry   │  │   AgentRouter    │  │  AgentExecutor   │
-├──────────────────┤  ├──────────────────┤  ├──────────────────┤
-│ • Agent configs  │  │ • Routing rules  │  │ • Spawn process  │
-│ • Task tracking  │  │ • Capability     │  │ • ACP protocol   │
-│ • Status updates │  │   matching       │  │ • Background     │
-└──────────────────┘  └──────────────────┘  └──────────────────┘
+┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
+│  AgentRegistry   │  │   AgentRouter    │  │  AgentExecutor   │  │  HookAggregator  │
+├──────────────────┤  ├──────────────────┤  ├──────────────────┤  ├──────────────────┤
+│ • Agent configs  │  │ • Routing rules  │  │ • Spawn process  │  │ • Hook execution │
+│ • Task tracking  │  │ • Capability     │  │ • ACP protocol   │  │ • Result merging │
+│ • Status updates │  │   matching       │  │ • Background     │  │ • Event handling │
+└──────────────────┘  └──────────────────┘  └──────────────────┘  └──────────────────┘
 ```
+
+### Hook Events
+
+The system supports several hook events that can intercept and modify behavior:
+
+- **PreToolUse**: Before a tool is used
+- **PostToolUse**: After a tool is used
+- **PostToolUseFailure**: After tool failure
+- **Stop**: To stop execution
+- **SubagentStop**: To stop a subagent
+- **UserPromptSubmit**: When user submits a prompt
+- **PermissionRequest**: For permission handling
+
+Hooks can return decisions (allow/block/deny), reasons, system messages, and hook-specific outputs that are merged according to event-specific logic.
 
 ### Layer 4: Rate Limiting
 
@@ -369,3 +383,52 @@ Both protocols use the same underlying JSON-RPC 2.0, making interoperability nat
 ---
 
 **Last updated**: 2025-01-28
+## Hook Aggregator
+
+The Hook Aggregator is a new component that allows intercepting and modifying behavior at various points in the system lifecycle. It provides a flexible way to extend functionality without modifying core logic.
+
+### Hook Events
+
+The system supports the following hook events:
+
+- **PreToolUse**: Triggered before a tool is used
+- **PostToolUse**: Triggered after a tool is used
+- **PostToolUseFailure**: Triggered after a tool fails
+- **Stop**: Can stop execution
+- **SubagentStop**: Stops a subagent
+- **UserPromptSubmit**: When user submits a prompt
+- **PermissionRequest**: For permission handling
+
+### Hook Output Merging
+
+Each hook returns a `HookOutput` structure containing decisions, reasons, and other metadata. The aggregator merges outputs from multiple hooks using event-specific logic:
+
+- **OR Logic**: For Pre/Post tool use events, a "block" or "deny" decision from any hook wins
+- **PermissionRequest**: Uses specialized merging for decision objects, updated inputs, and permissions
+- **Simple Merge**: For other events, uses the latest values with additional context concatenation
+
+### Integration Points
+
+Hooks can be registered to listen on specific events. The aggregator collects results and produces a final merged output that influences system behavior. This allows for:
+- Custom validation and authorization
+- Audit logging
+- Dynamic behavior modification
+- Policy enforcement
+
+### Example Use Cases
+
+1. **Security Policy Enforcement**: Deny certain tool uses based on custom rules
+2. **Audit Logging**: Record all tool usage with custom metadata
+3. **Context Enrichment**: Add additional context to tool calls
+4. **Dynamic Routing**: Modify agent selection based on hook decisions
+
+### Implementation
+
+The `HookAggregator` struct provides static methods for merging results. Hooks are executed asynchronously, and their results are collected and merged in the order they complete.
+
+### Future Enhancements
+
+- Hook prioritization and ordering
+- Asynchronous hook execution with timeouts
+- Hook-specific configuration via TOML
+- Metrics and observability for hook execution
