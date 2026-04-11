@@ -383,6 +383,9 @@ Both protocols use the same underlying JSON-RPC 2.0, making interoperability nat
 ---
 
 **Last updated**: 2025-01-28
+
+---
+
 ## Hook Aggregator
 
 The Hook Aggregator is a new component that allows intercepting and modifying behavior at various points in the system lifecycle. It provides a flexible way to extend functionality without modifying core logic.
