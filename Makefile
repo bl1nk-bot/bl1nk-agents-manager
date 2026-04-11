@@ -3,7 +3,7 @@
 # ==============================================================================
 
 # .PHONY tells make that these are not files, so it should always run the command.
-.PHONY: help build build-bundled build-full run dev test check fmt clippy clean install doc setup
+.PHONY: help build build-bundled build-full run dev test check fmt clippy clean install doc setup lint spellcheck all-check
 
 # --- Default Behavior ---
 # `make` or `make all` will run the default build.
@@ -32,6 +32,9 @@ help:
 	@echo "  check                 - Run cargo check for quick compilation checks."
 	@echo "  fmt                   - Format all code according to project style."
 	@echo "  clippy                - Run clippy linter to find potential issues (with strict warnings)."
+	@echo "  lint                  - Run all linting tools (fmt + check + clippy)."
+	@echo "  spellcheck            - Run codespell to check for spelling errors."
+	@echo "  all-check             - Run all checks (lint + spellcheck + test)."
 	@echo ""
 	@echo "Deployment & Cleanup:"
 	@echo "  install               - Install the standard release binary to ~/.local/bin."
@@ -97,6 +100,26 @@ fmt:
 clippy:
 	@echo "Running clippy linter..."
 	cargo clippy --all-features -- -D warnings
+
+# Run all linting tools (fmt + clippy + check)
+lint:
+	@echo "Running all linters..."
+	@echo "--- Running cargo fmt ---"
+	cargo fmt --all --check
+	@echo "--- Running cargo check ---"
+	cargo check --all-features
+	@echo "--- Running cargo clippy ---"
+	cargo clippy --all-features -- -D warnings
+	@echo "Lint check complete!"
+
+# Spell check using codespell
+spellcheck:
+	@echo "Running spell check..."
+	@command -v codespell >/dev/null 2>&1 && codespell --config .codespellrc . || echo "codespell not installed, skipping..."
+
+# Run all checks (lint + spellcheck + test)
+all-check: lint spellcheck test
+	@echo "All checks passed!"
 
 
 # --- Installation and Cleanup ---
