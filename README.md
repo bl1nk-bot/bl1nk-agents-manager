@@ -1,190 +1,299 @@
-# 🤖 Gemini Agents Manager Extension
+# 🤖 BL1NK Agents Manager
 
 ![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
-![Python](https://img.shields.io/badge/python-3.8+-yellow.svg)
+![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)
 
-> **Turn your Gemini CLI into a Multi-Persona AI Team.**
+> **Intelligent MCP/ACP Orchestrator with Bundled PMAT Support**
 
-This extension transforms the generic Gemini CLI assistant into a specialized workforce. It allows you to manage, switch, and maintain a library of **"System Agents"**—specialized system prompts designed for specific domains like Architecture, Coding, Writing, or Entertainment.
-
-By swapping the underlying persona, you ensure that the AI follows strict behavioral rules, output formats, and domain-specific best practices, significantly reducing hallucinations and improving task performance.
+A high-performance Rust-based orchestrator that bridges MCP (Model Context Protocol) for Gemini CLI integration with ACP (Agent Client Protocol) for sub-agent communication.
 
 ---
 
 ## 📖 Table of Contents
 
 - [Features](#-features)
+- [Architecture](#-architecture)
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
-- [Available Agents](#-available-agents)
-- [Core Agent Profiles](#-core-agent-profiles)
 - [Configuration](#-configuration)
 - [Development](#-development)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
+- [Documentation](#-documentation)
 - [License](#-license)
 
 ---
 
 ## ✨ Features
 
-*   **📚 Curated Agent Library:** Access 40+ pre-built, high-quality agents including Software Architect, Code Generator, Pirate, Yoda, and more.
-*   **🐍 Python-Powered Core:** Robust management logic handled by efficient Python scripts for listing, finding, and inspecting agents.
-*   **✅ Automated Integrity:** Built-in validation suite and auto-fixers ensure your agent library remains clean, structured, and error-free.
-*   **🏗️ Structured XML Personas:** Top-tier agents use advanced XML-based prompting strategies to enforce strict operational boundaries and output formats.
-*   **🧠 Orchestrator Mode:** Includes a "Team Lead" agent capable of analyzing tasks and recommending the best expert for the job.
+*   **Dual-Protocol Support**: Operates as both MCP Server and ACP Client simultaneously
+*   **Intelligent Routing**: Task-aware agent selection with priority-based fallback
+*   **Hook System**: Extensible hooks for PreToolUse, PostToolUse, PermissionRequest, and more
+*   **Rate Limiting**: Per-agent quota tracking (requests/minute and requests/day)
+*   **Background Tasks**: Async execution with task tracking
+*   **Type Safety**: JSON Schema generation with compile-time validation
+*   **PMAT Bundled**: Built-in context analysis with optional bundled PMAT
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Gemini MCP Proxy                          │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 1: MCP Server (PMCP)                                │
+│  └── TypedTools, JSON-RPC 2.0, stdio transport            │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 2: Rate Limiting                                    │
+│  └── Per-agent quota tracking, concurrent task management  │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 3: Agent Management                                  │
+│  ├── AgentRegistry     │ AgentRouter    │ AgentExecutor   │
+│  └── HookAggregator                                           │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 4: Protocol Adapters                                 │
+│  └── ACP Client │ External Agents (CLI processes)           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Core Modules
+
+| Module | Purpose |
+|--------|---------|
+| `src/mcp/` | MCP server implementation using PMCP SDK |
+| `src/agents/` | Agent registry, routing, and execution |
+| `src/hooks/` | Hook aggregator for event handling |
+| `src/permissions/` | Permission management and rule parsing |
+| `src/persistence/` | Task and state persistence |
+| `src/system/` | System discovery and resource management |
 
 ---
 
 ## 📦 Installation
 
-This extension is designed to be installed directly into your Gemini CLI extensions directory.
-
 ### Prerequisites
-*   Gemini CLI installed and configured.
-*   Python 3.8 or higher installed on your system.
 
-### Setup
-1.  Navigate to your extensions directory:
-    ```bash
-    cd ~/.gemini/extensions/
-    ```
-2.  Clone this repository:
-    ```bash
-    git clone https://github.com/billlzzz18/bl1nk-agents-manager.git agents-manager
-    ```
-3.  The extension is now active. Verify installation by listing available agents:
-    ```bash
-    gemini /system-agent
-    ```
+*   Rust 1.70+ ([Install](https://rustup.rs))
+*   For bundled PMAT: `cargo build --features bundle-pmat`
+
+### Build from Source
+
+```bash
+# Standard build
+cargo build --release
+
+# With bundled PMAT (recommended)
+cargo build --release --features bundle-pmat
+
+# Full features
+cargo build --release --features bundle-pmat-full
+```
+
+### Quick Install
+
+```bash
+# Install to ~/.local/bin
+make install-bundled
+```
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. List Available Agents
-View all built-in and custom agents in a clean, categorized table.
-```bash
-/system-agent
+### 1. Configure Agents
+
+Edit `config.toml` or create `~/.config/bl1nk-agents-manager/config.toml`:
+
+```toml
+[server]
+host = "127.0.0.1"
+port = 3000
+max_concurrent_tasks = 5
+
+[main_agent]
+name = "gemini"
+type = "gemini-cli"
+
+[[agents]]
+id = "qwen-coder"
+name = "Qwen Coder"
+type = "cli"
+command = "qwencode"
+rate_limit = { requests_per_minute = 60, requests_per_day = 2000 }
+capabilities = ["code-generation", "refactoring"]
+
+[routing]
+rules = []
 ```
 
-### 2. Inspect an Agent
-See the full profile, personality, use cases, and description for a specific agent.
+### 2. Run the Server
+
 ```bash
-/system-agent:info architect
+# Development mode
+make dev
+
+# Or release mode
+make run-bundled
 ```
 
-### 3. Switch Persona
-Generate the commands needed to switch your active agent.
-```bash
-/system-agent:switch pirate
+### 3. Connect to Gemini CLI
+
+Add to your MCP config:
+
+```json
+{
+  "mcpServers": {
+    "bl1nk-proxy": {
+      "command": "/path/to/bl1nk-agents-manager",
+      "transport": "stdio"
+    }
+  }
+}
 ```
-*Follow the on-screen instructions to export the environment variable and restart your session.*
-
----
-
-## 🧠 Core Agent Profiles
-
-We have optimized our top-tier agents with structured XML prompting for maximum reliability.
-
-| ID | Name | Role | Strengths |
-| :--- | :--- | :--- | :--- |
-| **`orchestrator`** | **Team Lead** | Router | Analyzes complex tasks and delegates them to the right expert. |
-| **`architect`** | **Software Architect** | Planner | Research, system design, Mermaid diagrams. *Strictly no coding.* |
-| **`code-generator`** | **Code Generator** | Implementer | Production-ready, clean code. *Minimal chatter.* |
-| **`creative-writer`** | **Creative Writer** | Artist | Poetry, prose, storytelling, and literary adaptation. |
-| **`pirate`** | **Pirate Assistant** | Fun | Technical help delivered in an authentic swashbuckling dialect. |
 
 ---
 
 ## ⚙️ Configuration
 
-### Adding Custom Agents
-You can extend the library with your own private agents.
+### Agent Configuration
 
-1.  Create the `custom/` directory in the extension root if it doesn't exist.
-2.  Create a new `.md` file (e.g., `custom/my-specialist.md`).
-3.  Add the required YAML frontmatter:
-    ```markdown
-    ---
-    name: my-specialist
-    description: A brief description of what this agent does.
-    category: engineering
-    ---
+```toml
+[[agents]]
+id = "my-agent"
+name = "My Agent"
+type = "cli"                    # cli, gemini-extension, internal
+command = "/path/to/agent"       # For cli type
+args = ["--arg1", "value1"]
+rate_limit = { requests_per_minute = 60, requests_per_day = 2000 }
+capabilities = ["task-type"]
+priority = 100                   # 0-255, higher = preferred
+enabled = true
+cost = 0                         # 0=free, <500=cheap, >=500=expensive
+```
 
-    Your system prompt goes here...
-    ```
-4.  Run `/system-agent` to verify it has been detected.
+### Routing Rules
+
+```toml
+[routing]
+tier = "user"  # default, user, admin (higher tier = higher priority)
+
+[[routing.rules]]
+task_type = "code-generation"
+keywords = ["write", "code", "implement"]
+preferred_agents = ["qwen-coder", "gpt-coder"]
+priority = 500  # 0-999
+enabled = true
+```
 
 ---
 
 ## 🛠️ Development
 
 ### Project Structure
-The extension uses a hybrid architecture for performance and maintainability:
 
-```text
-/
-├── gemini-extension.json   # Manifest file
-├── agents/                 # Built-in agent definitions (*.md + agents.json)
-├── custom/                 # Directory for user-defined agents
-├── commands/               # TOML entry points for CLI commands
-└── scripts/                # Python logic core
-    ├── agent_manager.py    # Main logic for CLI commands
-    ├── validate_agents.py  # CI/CD integrity checker
-    └── fix_agents.py       # Auto-repair tool for metadata
+```
+bl1nk-agents-manager/
+├── src/
+│   ├── main.rs              # Entry point
+│   ├── config.rs             # TOML configuration
+│   ├── rate_limit.rs         # Rate limiting
+│   ├── agents/
+│   │   ├── mod.rs           # Agent management
+│   │   ├── register.rs      # Agent registry
+│   │   ├── router.rs        # Smart routing
+│   │   ├── extractor.rs      # Task execution
+│   │   └── creator.rs        # Agent spec creation
+│   ├── hooks/
+│   │   ├── mod.rs           # Hook exports
+│   │   └── hook_aggregator.rs # Hook execution & merging
+│   ├── mcp/                 # MCP server (PMCP)
+│   │   ├── mod.rs
+│   │   └── protocol.rs
+│   ├── permissions/          # Permission system
+│   │   ├── permission_manager.rs
+│   │   ├── rule_parser.rs
+│   │   └── shell_semantics.rs
+│   ├── persistence/          # Data persistence
+│   └── system/              # System discovery
+│       └── discovery.rs
+├── commands/                 # CLI command definitions
+│   └── agent/
+├── scripts/                  # Python tools
+│   └── test_integration.py  # Integration tests
+├── docs/                     # Documentation
+│   ├── ARCHITECTURE.md
+│   ├── AGENT_GUIDE.md
+│   ├── QUICKSTART.md
+│   └── PROJECT_SUMMARY.md
+├── Cargo.toml
+├── Makefile
+└── rustfmt.toml
 ```
 
-### Running Tests
-To ensure the integrity of the agent library:
+### Available Make Commands
 
 ```bash
-# Validate all agents (Frontmatter & Registry check)
-python3 scripts/validate_agents.py
-```
-
-### Auto-Fixing Issues
-If you add new agents manually and don't want to update `agents.json` by hand:
-
-```bash
-# Automatically detects new files, fixes frontmatter, and updates registry
-python3 scripts/fix_agents.py
+make help           # Show all commands
+make build          # Standard release build
+make build-bundled  # Build with bundled PMAT
+make run            # Run standard build
+make run-bundled    # Run with bundled PMAT
+make dev            # Hot-reload development
+make test           # Run all tests
+make check          # Quick compilation check
+make fmt            # Format code
+make clippy         # Lint code
+make lint           # Run all linters
+make spellcheck     # Spell check
+make all-check      # Run all checks
+make clean          # Clean build artifacts
 ```
 
 ---
 
-## ❓ Troubleshooting
+## 📚 Documentation
 
-**Q: I switched agents but nothing changed?**
-A: Switching agents requires restarting the Gemini CLI session. Ensure you ran the `export` command provided by `/system-agent:switch` and then restarted the tool.
-
-**Q: My custom agent isn't showing up.**
-A: Ensure your file is in the `custom/` folder and ends with `.md`. Try running `python3 scripts/fix_agents.py` to automatically register it.
-
-**Q: `python3` command not found.**
-A: This extension relies on Python 3. Please install it and ensure it's in your system PATH.
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and internals |
+| [AGENT_GUIDE.md](docs/AGENT_GUIDE.md) | Creating ACP-compatible agents |
+| [QUICKSTART.md](docs/QUICKSTART.md) | 5-minute getting started guide |
+| [PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) | Project overview (Thai) |
 
 ---
 
-## 🤝 Contributing
+## 🔧 Hook System
 
-We welcome contributions! Whether it's a new persona, a bug fix, or a feature request.
+The system supports hooks for intercepting and modifying behavior:
 
-1.  **Fork** the repository.
-2.  **Create** a feature branch (`git checkout -b feature/new-agent`).
-3.  **Add** your changes (if adding an agent, please use the XML structure if possible).
-4.  **Validate** your changes (`python3 scripts/validate_agents.py`).
-5.  **Commit** and **Push**.
-6.  Open a **Pull Request**.
+### Available Events
+
+- **PreToolUse**: Before a tool is used
+- **PostToolUse**: After a tool is used
+- **PostToolUseFailure**: After tool failure
+- **Stop**: Stop execution
+- **SubagentStop**: Stop a subagent
+- **UserPromptSubmit**: User prompt submission
+- **PermissionRequest**: Permission handling
+
+### Example Hook Output
+
+```json
+{
+  "decision": "allow",
+  "reason": "Tool usage permitted",
+  "continue_execution": true,
+  "system_message": "Optional user message"
+}
+```
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Built with ❤️ for the Gemini CLI Community.**
+**Built with ❤️ using Rust, Tokio, and PMCP**

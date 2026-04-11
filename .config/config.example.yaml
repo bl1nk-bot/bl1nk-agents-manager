@@ -1,0 +1,88 @@
+# BL1NK Agents Manager Configuration (YAML)
+# Save this as: ~/.config/bl1nk-agents-manager/config.yaml
+
+server:
+  host: "127.0.0.1"
+  port: 3000
+  max_concurrent_tasks: 5
+
+main_agent:
+  name: "gemini"
+  type: "gemini-cli"
+  session_token_path: "~/.config/gemini-cli/session.json"
+
+agents:
+  - id: "qwen-coder"
+    name: "Qwen Code Assistant"
+    type: "cli"
+    command: "qwencode"
+    args: ["--mode", "agent"]
+    rate_limit:
+      requests_per_minute: 60
+      requests_per_day: 2000
+    capabilities:
+      - "code-generation"
+      - "refactoring"
+      - "debugging"
+    priority: 150
+    enabled: true
+
+  - id: "codex-helper"
+    name: "Codex Helper"
+    type: "cli"
+    command: "codex"
+    args: ["--interactive"]
+    rate_limit:
+      requests_per_minute: 60
+      requests_per_day: 2000
+    capabilities:
+      - "code-completion"
+      - "documentation"
+    priority: 100
+    enabled: true
+
+  - id: "jules-agent"
+    name: "Jules Extension"
+    type: "gemini-extension"
+    extension_name: "jules"
+    capabilities:
+      - "research"
+      - "analysis"
+    priority: 120
+    enabled: true
+
+routing:
+  tier: "user"
+  rules:
+    - task_type: "code-analysis"
+      keywords: ["analyze", "review", "grade", "understand"]
+      preferred_agents: ["pmat-architect-internal"]
+      priority: 900
+      enabled: true
+
+    - task_type: "code-generation"
+      keywords: ["rust", "cargo", "macro"]
+      preferred_agents: ["qwen-coder", "pmat-architect-internal"]
+      priority: 250
+      enabled: true
+
+    - task_type: "code-generation"
+      keywords: ["write code", "implement", "create function"]
+      preferred_agents: ["qwen-coder", "codex-helper"]
+      priority: 200
+      enabled: true
+
+    - task_type: "research"
+      keywords: ["search", "find", "lookup", "documentation"]
+      preferred_agents: ["jules-agent", "codex-helper"]
+      priority: 100
+      enabled: true
+
+rate_limiting:
+  strategy: "round-robin"
+  track_usage: true
+  usage_db_path: "~/.config/bl1nk-agents-manager/usage.yaml"
+
+logging:
+  level: "info"
+  output: "stdout"

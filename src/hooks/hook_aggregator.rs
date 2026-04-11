@@ -123,16 +123,16 @@ impl HookAggregator {
         let mut errors = Vec::new();
         let mut total_duration = Duration::ZERO;
 
-        for result in results {
+        for result in &results {
             total_duration += result.duration;
 
             if !result.success {
-                if let Some(err) = result.error {
+                if let Some(err) = result.error.clone() {
                     errors.push(err);
                 }
             }
 
-            if let Some(output) = result.output {
+            if let Some(output) = result.output.clone() {
                 all_outputs.push(output);
             }
         }
@@ -175,6 +175,8 @@ impl HookAggregator {
             HookEventName::PermissionRequest => {
                 Self::merge_permission_request_outputs(outputs)
             }
+            // fallback สำหรับเหตุการณ์อื่น ๆ
+            _ => Self::merge_simple(outputs),
         };
 
         Some(merged)

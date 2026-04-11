@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
@@ -11,6 +11,7 @@ pub struct Config {
     pub agents: Vec<AgentConfig>,
     pub routing: RoutingConfig,
     pub rate_limiting: RateLimitingConfig,
+    #[serde(default)]
     pub logging: LoggingConfig,
 }
 
@@ -29,6 +30,7 @@ pub struct MainAgentConfig {
     pub name: String,
     #[serde(rename = "type")]
     pub agent_type: String,
+    #[serde(default)]
     pub session_token_path: Option<String>,
 }
 
@@ -38,21 +40,26 @@ pub struct AgentConfig {
     pub name: String,
     #[serde(rename = "type")]
     pub agent_type: String,
+    #[serde(default)]
     pub command: Option<String>,
+    #[serde(default)]
     pub args: Option<Vec<String>>,
+    #[serde(default)]
     pub extension_name: Option<String>,
     #[serde(default)]
     pub rate_limit: RateLimit,
     pub capabilities: Vec<String>,
     #[serde(default)]
     pub priority: u8,
-    #[serde(default)]
+    #[serde(default = "default_true")]
     pub enabled: bool,
     #[serde(default)]
     pub requires: Vec<String>,
     #[serde(default)]
     pub cost: u16,
 }
+
+fn default_true() -> bool { true }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RateLimit {
@@ -78,10 +85,10 @@ impl Default for RateLimit {
 pub struct RoutingConfig {
     #[serde(default)]
     pub tier: RoutingTier,
+    #[serde(default)]
     pub rules: Vec<RoutingRule>,
 }
 
-/// Routing tier determines rule priority
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "lowercase")]
 pub enum RoutingTier {
@@ -99,11 +106,12 @@ impl Default for RoutingTier {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RoutingRule {
     pub task_type: String,
+    #[serde(default)]
     pub keywords: Vec<String>,
     pub preferred_agents: Vec<String>,
     #[serde(default)]
-    pub priority: u16,  // 0-999
-    #[serde(default)]
+    pub priority: u16,
+    #[serde(default = "default_true")]
     pub enabled: bool,
 }
 
@@ -129,7 +137,6 @@ pub struct RateLimitingConfig {
 }
 
 fn default_strategy() -> String { "round-robin".to_string() }
-fn default_true() -> bool { true }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct LoggingConfig {
@@ -142,26 +149,89 @@ pub struct LoggingConfig {
 fn default_log_level() -> String { "info".to_string() }
 fn default_output() -> String { "stdout".to_string() }
 
-impl Config {
-    /// Load config from file path
-    pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let content = fs::read_to_string(path.as_ref())
-            .with_context(|| format!("Failed to read config file: {:?}", path.as_ref()))?;
-        
-        let mut config: Config = toml::from_str(&content)
-            .context("Failed to parse TOML config")?;
-        
-        // Inject bundled PMAT agent if feature is enabled
-        #[cfg(feature = "bundle-pmat")]
-        {
-            config.inject_bundled_pmat();
+impl Default for LoggingConfig {
+    fn default() -> Self {
+        Self {
+            level: "info".to_string(),
+            output: "stdout".to_string(),
         }
+    }
+}
+
+impl Config {
+    /// Load config from file path (auto-detect format from extension)
+    pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
+        let path = path.as_ref();
+        let content = fs::read_to_string(path)
+            .with_context(|| format!("Failed to read config file: {:?}", path))?;
+        
+        let config = Self::parse_content(&content, path)
+            .with_context(|| format!("Failed to parse config from {:?}", path))?;
         
         config.validate()?;
         Ok(config)
     }
 
-    /// Load config from default locations
+    /// Parse config content (auto-detect format)
+    fn parse_content(content: &str, path: &Path) -> Result<Self> {
+        let extension = path.extension()
+            .and_then(|e| e.to_str())
+            .unwrap_or("")
+            .to_lowercase();
+
+        match extension.as_str() {
+            "toml" => Self::parse_toml(content),
+            "json" => Self::parse_json(content),
+            "yaml" | "yml" => Self::parse_yaml(content),
+            _ => {
+                // Try to auto-detect from content
+                Self::parse_auto(content)
+            }
+        }
+    }
+
+    /// Parse TOML format
+    fn parse_toml(content: &str) -> Result<Self> {
+        toml::from_str(content)
+            .context("Failed to parse TOML config")
+    }
+
+    /// Parse JSON format
+    fn parse_json(content: &str) -> Result<Self> {
+        serde_json::from_str(content)
+            .context("Failed to parse JSON config")
+    }
+
+    /// Parse YAML format
+    fn parse_yaml(content: &str) -> Result<Self> {
+        serde_yaml::from_str(content)
+            .context("Failed to parse YAML config")
+    }
+
+    /// Auto-detect and parse format
+    fn parse_auto(content: &str) -> Result<Self> {
+        let trimmed = content.trim();
+        
+        // Check for TOML markers
+        if trimmed.starts_with('[') || trimmed.contains("server =") {
+            return Self::parse_toml(content);
+        }
+        
+        // Check for JSON markers
+        if trimmed.starts_with('{') {
+            return Self::parse_json(content);
+        }
+        
+        // Check for YAML markers
+        if trimmed.starts_with("server:") || trimmed.starts_with("---") {
+            return Self::parse_yaml(content);
+        }
+        
+        // Default to TOML
+        Self::parse_toml(content)
+    }
+
+    /// Load config from default locations (supports all formats)
     pub fn load_default() -> Result<Self> {
         let config_paths = Self::default_config_paths();
         
@@ -173,73 +243,45 @@ impl Config {
         }
         
         anyhow::bail!(
-            "No config file found. Create ~/.config/bl1nk-agents-manager/config.toml or use --config"
+            "No config file found. Create config.toml/json/yaml in ~/.config/bl1nk-agents-manager/ or use --config"
         );
     }
 
     /// Default config file locations (in order of priority)
     fn default_config_paths() -> Vec<PathBuf> {
         let mut paths = Vec::new();
+        let formats = ["toml", "json", "yaml", "yml"];
+        let filenames = ["config", ".bl1nk-agents-manager"];
         
         // Current directory
-        paths.push(PathBuf::from("./config.toml"));
-        paths.push(PathBuf::from("./.bl1nk-agents-manager.toml"));
+        for fmt in &formats {
+            for name in &filenames {
+                paths.push(PathBuf::from(format!("{}.{}", name, fmt)));
+            }
+        }
         
         // User config directory
         if let Ok(home) = std::env::var("HOME").or_else(|_| std::env::var("USERPROFILE")) {
             let home_path = PathBuf::from(home);
-            paths.push(home_path.join(".config/bl1nk-agents-manager/config.toml"));
-            paths.push(home_path.join(".bl1nk-agents-manager.toml"));
+            for fmt in &formats {
+                paths.push(home_path.join(format!(".config/bl1nk-agents-manager/config.{}", fmt)));
+                paths.push(home_path.join(format!(".{}.{}", name, fmt)));
+            }
         }
         
         paths
     }
 
-    /// Inject bundled PMAT agent
-    #[cfg(feature = "bundle-pmat")]
-    fn inject_bundled_pmat(&mut self) {
-        let pmat_agent = AgentConfig {
-            id: "pmat-architect-internal".to_string(),
-            name: "PMAT Architect (Bundled)".to_string(),
-            agent_type: "internal".to_string(),
-            command: None,
-            args: None,
-            extension_name: None,
-            rate_limit: RateLimit {
-                requests_per_minute: 120,  // Higher limit for internal
-                requests_per_day: 5000,
-            },
-            capabilities: vec![
-                "code-analysis".to_string(),
-                "context-generation".to_string(),
-                "technical-debt".to_string(),
-            ],
-            priority: 200,
-            enabled: true,
-            requires: Vec::new(),
-            cost: 0,
-        };
-
-        // Check if already exists
-        if !self.agents.iter().any(|a| a.id == "pmat-architect-internal") {
-            tracing::info!("✨ Injecting bundled PMAT agent");
-            self.agents.push(pmat_agent);
-        }
-    }
-
     /// Validate configuration
     fn validate(&self) -> Result<()> {
-        // Validate server config
         if self.server.max_concurrent_tasks == 0 {
             anyhow::bail!("max_concurrent_tasks must be greater than 0");
         }
 
-        // Validate agents
         if self.agents.is_empty() {
             anyhow::bail!("At least one agent must be configured");
         }
 
-        // Check for duplicate agent IDs
         let mut seen_ids = std::collections::HashSet::new();
         for agent in &self.agents {
             if !seen_ids.insert(&agent.id) {
@@ -247,20 +289,18 @@ impl Config {
             }
         }
 
-        // Validate routing rules reference valid agents
         let agent_ids: Vec<String> = self.agents.iter().map(|a| a.id.clone()).collect();
         for rule in &self.routing.rules {
             for preferred_agent in &rule.preferred_agents {
                 if !agent_ids.contains(preferred_agent) {
                     tracing::warn!(
-                        "⚠️  Routing rule references unknown agent: {} (will be skipped)",
+                        "Routing rule references unknown agent: {} (will be skipped)",
                         preferred_agent
                     );
                 }
             }
         }
 
-        // Validate priority ranges
         for rule in &self.routing.rules {
             if rule.priority > 999 {
                 anyhow::bail!(
@@ -274,12 +314,10 @@ impl Config {
         Ok(())
     }
 
-    /// Get agent by ID
     pub fn get_agent(&self, id: &str) -> Option<&AgentConfig> {
         self.agents.iter().find(|a| a.id == id && a.enabled)
     }
 
-    /// Get agents by capability
     pub fn get_agents_by_capability(&self, capability: &str) -> Vec<&AgentConfig> {
         self.agents
             .iter()
@@ -287,7 +325,6 @@ impl Config {
             .collect()
     }
 
-    /// Get enabled agents only
     pub fn get_enabled_agents(&self) -> Vec<&AgentConfig> {
         self.agents.iter().filter(|a| a.enabled).collect()
     }
@@ -298,7 +335,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_default_values() {
+    fn test_parse_toml() {
         let config_str = r#"
             [server]
             host = "127.0.0.1"
@@ -320,14 +357,42 @@ mod tests {
 
             [rate_limiting]
             usage_db_path = "/tmp/test.db"
-
-            [logging]
         "#;
 
         let config: Config = toml::from_str(config_str).unwrap();
         assert_eq!(config.server.max_concurrent_tasks, 5);
         assert_eq!(config.routing.tier, RoutingTier::Default);
         assert_eq!(config.logging.level, "info");
+    }
+
+    #[test]
+    fn test_parse_json() {
+        let config_str = r#"{
+            "server": {
+                "host": "127.0.0.1",
+                "port": 3000
+            },
+            "main_agent": {
+                "name": "gemini",
+                "type": "gemini-cli"
+            },
+            "agents": [{
+                "id": "test-agent",
+                "name": "Test",
+                "type": "cli",
+                "command": "test",
+                "capabilities": ["test"]
+            }],
+            "routing": {
+                "rules": []
+            },
+            "rate_limiting": {
+                "usage_db_path": "/tmp/test.db"
+            }
+        }"#;
+
+        let config: Config = serde_json::from_str(config_str).unwrap();
+        assert_eq!(config.server.port, 3000);
     }
 
     #[test]
