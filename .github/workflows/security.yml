@@ -1,0 +1,116 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '**.rs'
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+jobs:
+  audit:
+    name: Cargo Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Kilo
+        uses: ./.github/actions/setup-kilo
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+
+      - name: Run cargo audit
+        run: cargo audit --deny warnings
+
+      - name: Check for outdated dependencies
+        run: cargo update --dry-run
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit-report
+          path: |
+            target/audit-output.txt
+          retention-days: 30
+
+  insecure-patterns:
+    name: Check Insecure Patterns
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Checking for hardcoded passwords..."
+          if grep -rn "password\s*=\s*\"" --include="*.rs" src/; then
+            echo "::error::Found hardcoded password in source code"
+            exit 1
+          fi
+          echo "✓ No hardcoded passwords found"
+
+      - name: Check for hardcoded API keys
+        run: |
+          echo "Checking for hardcoded API keys..."
+          if grep -rn "api_key\s*=\s*\"" --include="*.rs" src/; then
+            echo "::error::Found hardcoded API key in source code"
+            exit 1
+          fi
+          echo "✓ No hardcoded API keys found"
+
+      - name: Check for unwrap() usage
+        run: |
+          COUNT=$(grep -rn "\.unwrap()" --include="*.rs" src/ | wc -l || echo "0")
+          echo "Found $COUNT .unwrap() calls in src/"
+          if [ "$COUNT" -gt 20 ]; then
+            echo "::warning::High number of .unwrap() calls ($COUNT). Consider using ? operator."
+          fi
+
+      - name: Check for unsafe blocks
+        run: |
+          COUNT=$(grep -rn "unsafe " --include="*.rs" src/ | wc -l || echo "0")
+          echo "Found $COUNT unsafe blocks in src/"
+          if [ "$COUNT" -gt 0 ]; then
+            echo "::warning::Found $COUNT unsafe block(s). Review required."
+          fi
+
+  dependency-review:
+    name: Dependency Review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-3.0, AGPL-3.0
