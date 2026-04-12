@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 
 use std::fs;
@@ -42,6 +42,8 @@ pub struct AgentConfig {
     pub mode: String,
     #[serde(rename = "type")]
     pub agent_type: String,
+    #[serde(default)]
+    pub command: Option<String>,
     #[serde(default = "default_command")]
     pub command: String,
     #[serde(default)]
@@ -285,6 +287,8 @@ impl Config {
         if let Ok(home) = std::env::var("HOME").or_else(|_| std::env::var("USERPROFILE")) {
             let home_path = PathBuf::from(home);
             for fmt in &formats {
+                paths.push(home_path.join(format!(".config/bl1nk-agents-manager/config.{}", fmt)));
+                paths.push(home_path.join(format!(".{}.{}", name, fmt)));
                 for name in &filenames {
                     paths.push(home_path.join(format!(".config/bl1nk-agents-manager/config.{}", fmt)));
                     paths.push(home_path.join(format!(".{}.{}", name, fmt)));
@@ -335,6 +339,21 @@ impl Config {
         }
 
         Ok(())
+    }
+
+    pub fn get_agent(&self, id: &str) -> Option<&AgentConfig> {
+        self.agents.iter().find(|a| a.id == id && a.enabled)
+    }
+
+    pub fn get_agents_by_capability(&self, capability: &str) -> Vec<&AgentConfig> {
+        self.agents
+            .iter()
+            .filter(|a| a.enabled && a.capabilities.contains(&capability.to_string()))
+            .collect()
+    }
+
+    pub fn get_enabled_agents(&self) -> Vec<&AgentConfig> {
+        self.agents.iter().filter(|a| a.enabled).collect()
     }
 }
 
