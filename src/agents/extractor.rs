@@ -200,22 +200,22 @@ impl AgentExecutor {
         // อัปเดต task ด้วย agent ที่ยืนยัน
         let mut registry = self.agent_registry.write().await;
         // ดึง task อีกครั้งเพื่อความแน่ใจ (อาจมีคนเปลี่ยนระหว่างเรา drop lock)
-        let mut task = registry.get_task(&task_id)
-            .ok_or_else(|| pmcp::Error::validation(format!("ไม่พบงาน: {}", task_id)))?
-            .clone();
+        let task = registry.get_task_mut(&task_id)
+            .ok_or_else(|| pmcp::Error::validation(format!("ไม่พบงาน: {}", task_id)))?;
         if task.status != TaskStatus::AwaitingApproval {
             return Err(pmcp::Error::validation(format!("งาน {} ไม่อยู่ในสถานะรออนุมัติอีกต่อไป", task_id)));
         }
         task.agent_id = agent_id.clone();
         task.status = TaskStatus::Pending;
-        registry.register_task(task.clone());
+        let task_prompt = task.prompt.clone();
+        let task_context = task.context.clone();
         drop(registry);
 
         let result = self.execute_agent_task(
             task_id.clone(),
             agent_config,
-            task.prompt,
-            task.context,
+            task_prompt,
+            task_context,
         ).await.map_err(|e| pmcp::Error::internal(e.to_string()))?;
 
         Ok(DelegateTaskOutput {
