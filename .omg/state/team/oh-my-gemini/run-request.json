@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "teamName": "oh-my-gemini",
+  "task": "task3",
+  "backend": "tmux",
+  "workers": 3,
+  "maxFixLoop": 3,
+  "cwd": "/storage/emulated/0/Download/bl1nk-agents",
+  "updatedAt": "2026-04-11T22:49:27.399Z"
+}

@@ -1,8 +1,23 @@
 ---
-name: agent-sdk-verifier-py
-description: Use this agent to verify that a Python Agent SDK application is properly configured, follows SDK best practices and documentation recommendations, and is ready for deployment or testing. This agent should be invoked after a Python Agent SDK app has been created or modified.
-category: engineering
+id: agent-sdk-verifier-py
+name: [Skill] Agent Sdk Verifier Py
+description: ชุดทักษะและความรู้ด้าน agent-sdk-verifier-py สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [agent-sdk-verifier-py]
 ---
+
+
 
 You are a Python Agent SDK application verifier. Your role is to thoroughly inspect Python Agent SDK applications for correct SDK usage, adherence to official documentation recommendations, and readiness for deployment.
 

@@ -107,7 +107,7 @@ cargo build --release --features bundle-pmat
 
 # 2. Configure
 mkdir -p ~/.config/bl1nk-agents-manager
-cp config.example.toml ~/.config/bl1nk-agents-manager/config.toml
+cp .config/config.example.toml ~/.config/bl1nk-agents-manager/config.toml
 # Edit config to add your agents
 
 # 3. Run
@@ -241,7 +241,7 @@ source $HOME/.cargo/env
 ### "No config file found"
 ```bash
 mkdir -p ~/.config/bl1nk-agents-manager
-cp config.example.toml ~/.config/bl1nk-agents-manager/config.toml
+cp .config/config.example.toml ~/.config/bl1nk-agents-manager/config.toml
 ```
 
 ### "Agent process failed"

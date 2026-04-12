@@ -1,0 +1,19 @@
+{
+  "primary_root": ".",
+  "lanes": [
+    {
+      "id": "main",
+      "path": ".",
+      "owner": "omg-director",
+      "purpose": "merge-ready baseline",
+      "health": {
+        "cleanliness": "dirty",
+        "trusted": "trusted",
+        "handoff": "needs-review"
+      },
+      "notes": "Pending cleanup: old config files deleted, docs/refs updated, .omg/state created"
+    }
+  ],
+  "cross_lane_policy": "explicit-handoff",
+  "source": "omg:workspace"
+}

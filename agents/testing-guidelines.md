@@ -1,9 +1,23 @@
 ---
-name: testing-guidelines
-description: Agent for testing guidelines
-category: utility
-alwaysApply: true
+id: testing-guidelines
+name: [Skill] Testing Guidelines
+description: ชุดทักษะและความรู้ด้าน testing-guidelines สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [testing-guidelines]
 ---
+
+
 
 # Testing Guidelines
 
@@ -250,4 +264,3 @@ assert "azure_models" in prompt
 description:
 globs:
 alwaysApply: true
----

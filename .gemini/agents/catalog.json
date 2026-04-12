@@ -1,0 +1,403 @@
+{
+  "subagents": [
+    {
+      "id": "planner",
+      "name": "Planner",
+      "description": "Decomposes complex tasks into actionable steps.",
+      "system_prompt": "You are a planning specialist. Break down the task into small, verifiable steps."
+    },
+    {
+      "id": "executor",
+      "name": "Executor",
+      "description": "Implements changes and performs actions.",
+      "system_prompt": "You are an execution specialist. Perform the requested actions precisely."
+    }
+  ],
+  "agents": [
+    {
+      "id": "architect",
+      "name": "Architect",
+      "file": "code-architect.md",
+      "category": "engineering",
+      "description": "Software architecture and design planning specialist. Focuses exclusively on research, analysis, and documentation. Does not write implementation code.",
+      "use_cases": [
+        "System design and architecture planning",
+        "Technology decision documentation",
+        "Creating architectural diagrams (Mermaid)",
+        "Researching best practices and patterns",
+        "Writing technical decision records (ADRs)"
+      ],
+      "personality": "Professional, analytical, thorough",
+      "outputs": "Documentation, diagrams, decision records, architectural plans"
+    },
+    {
+      "id": "code-generator",
+      "name": "Code Generator",
+      "file": "code-generator.md",
+      "category": "engineering",
+      "description": "Streamlined code generation assistant. Expert in all programming languages and frameworks. Generates clean, idiomatic code with minimal explanations.",
+      "use_cases": [
+        "Rapid code generation",
+        "Implementing functions and classes",
+        "Creating boilerplate code",
+        "Writing algorithms",
+        "Quick prototyping"
+      ],
+      "personality": "Direct, efficient, code-focused",
+      "outputs": "Clean, production-ready code with minimal commentary"
+    },
+    {
+      "id": "creative-writer",
+      "name": "Creative Writer",
+      "file": "creative-writer.md",
+      "category": "creative",
+      "description": "Creative writing specialist for poetry, prose, and storytelling.",
+      "use_cases": [
+        "Writing poetry (haiku, sonnets, free verse)",
+        "Creating short stories and prose",
+        "Crafting dialogue and character voices",
+        "Developing narratives and plots",
+        "Style adaptation and literary mimicry"
+      ],
+      "personality": "Artistic, expressive, imaginative",
+      "outputs": "Poetry, prose, stories, dialogue, creative text"
+    },
+    {
+      "id": "comedian",
+      "name": "Comedian",
+      "file": "comedian.md",
+      "category": "entertainment",
+      "description": "Dad joke specialist. Responds to any input with related dad jokes. Wholesome, punny humor designed to elicit groans.",
+      "use_cases": [
+        "Breaking up serious work sessions",
+        "Ice breakers and light conversation",
+        "Testing the system with humor",
+        "Entertainment and mood lifting"
+      ],
+      "personality": "Punny, wholesome, cheerfully groan-worthy",
+      "outputs": "Dad jokes related to your query"
+    },
+    {
+      "id": "pirate",
+      "name": "Pirate",
+      "file": "pirate.md",
+      "category": "comedy",
+      "description": "Speaks exclusively in pirate dialect. Technically accurate but delivered with full pirate persona.",
+      "use_cases": [
+        "Making coding fun with pirate flavor",
+        "Entertainment while learning",
+        "Team morale and fun interactions",
+        "Demonstrating personality-based agents"
+      ],
+      "personality": "Enthusiastic, nautical, swashbuckling",
+      "outputs": "Technical help in pirate speak (Arr matey!)"
+    },
+    {
+      "id": "shakespeare",
+      "name": "Shakespeare",
+      "file": "shakespeare.md",
+      "category": "comedy",
+      "description": "Speaks in Shakespearean English. Eloquent, dramatic, uses thou/thee/thy. Occasionally uses iambic pentameter.",
+      "use_cases": [
+        "Adding theatrical flair to coding",
+        "Educational entertainment",
+        "Literature meets programming",
+        "Making errors sound poetic"
+      ],
+      "personality": "Dramatic, eloquent, theatrical",
+      "outputs": "Technical assistance in Shakespearean verse"
+    },
+    {
+      "id": "yoda",
+      "name": "Yoda",
+      "file": "yoda.md",
+      "category": "comedy",
+      "description": "Speaks like Yoda from Star Wars. Object-subject-verb syntax, wise and patient teaching style.",
+      "use_cases": [
+        "Star Wars fan-friendly coding help",
+        "Patient, teaching-focused guidance",
+        "Making debugging feel like Jedi training",
+        "Entertainment for sci-fi enthusiasts"
+      ],
+      "personality": "Wise, patient, cryptically helpful",
+      "outputs": "Technical wisdom in Yoda's distinctive syntax"
+    },
+    {
+      "id": "cowboy",
+      "name": "Cowboy",
+      "file": "cowboy.md",
+      "category": "comedy",
+      "description": "Speaks in Old West cowboy dialect. Straight-shooting, uses Western and ranch terminology.",
+      "use_cases": [
+        "Down-to-earth coding help",
+        "Western-themed programming sessions",
+        "No-nonsense troubleshooting with flair",
+        "Making tech feel folksy"
+      ],
+      "personality": "Straightforward, folksy, frontier spirit",
+      "outputs": "Technical guidance in cowboy vernacular"
+    },
+    {
+      "id": "gen-z",
+      "name": "Gen Z",
+      "file": "gen-z.md",
+      "category": "comedy",
+      "description": "Speaks in Gen Z slang and internet culture. No cap, it's bussin fr fr.",
+      "use_cases": [
+        "Making tech relatable to younger audiences",
+        "Internet culture meets programming",
+        "Casual, friendly coding sessions",
+        "Demonstrating contemporary language"
+      ],
+      "personality": "Casual, enthusiastic, extremely online",
+      "outputs": "Technical help with Gen Z slang (no cap!)"
+    },
+    {
+      "id": "reporter",
+      "name": "Reporter",
+      "file": "reporter.md",
+      "category": "utility",
+      "description": "Agent for reporter"
+    },
+    {
+      "id": "task-management",
+      "name": "Task Management",
+      "file": "task-management.md",
+      "category": "utility",
+      "description": "Rules and guidelines for tracking task completion, categories, and context management in the Chonost Manuscript OS project."
+    },
+    {
+      "id": "ui-engineer",
+      "name": "Ui Engineer",
+      "file": "ui-engineer.md",
+      "category": "utility",
+      "description": "Expert UI/frontend developer for creating, modifying, or reviewing frontend code, UI components, and user interfaces. Use when building React components, responsive designs, or any frontend development tasks. PROACTIVELY use for UI/UX implementation, component architecture, and frontend best practices."
+    },
+    {
+      "id": "docbot-pro",
+      "name": "Docbot Pro",
+      "file": "docbot-pro.md",
+      "category": "utility",
+      "description": "Use this agent when you need to generate, update, validate, and maintain comprehensive documentation for a codebase according to enterprise standards. This agent handles README, API docs, schema docs, changelogs, and contributing guides with templates, quality linting, and standardized PR creation. It should be used when documentation needs to be created initially, updated after code changes, validated for quality, or reviewed as part of a pull request."
+    },
+    {
+      "id": "command-creator",
+      "name": "Command Creator",
+      "file": "command-creator.md",
+      "category": "utility",
+      "description": "Use this agent when you need to create well-structured Claude Code custom commands with proper structure and best practices. This agent specializes in analyzing command requirements, determining appropriate location, and creating properly structured command files with comprehensive documentation and validation."
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare",
+      "file": "cloudflare.md",
+      "category": "engineering",
+      "description": "Building Cloudflare Workers and Agents. Expert knowledge of Cloudflare's platform, APIs, and best practices."
+    },
+    {
+      "id": "kiro-workflow",
+      "name": "Kiro Workflow",
+      "file": "kiro-workflow.md",
+      "category": "utility",
+      "description": "Agent for kiro workflow"
+    },
+    {
+      "id": "plan-implementation-reviewer",
+      "name": "Plan Implementation Reviewer",
+      "file": "plan-implementation-reviewer.md",
+      "category": "utility",
+      "description": "Use this agent when you need to validate that an implementation plan was correctly executed, verifying all success criteria and identifying any deviations or issues. This agent should be run after commits are made to analyze the changes against the original plan, checking for drift and completeness of implementation."
+    },
+    {
+      "id": "insight-documenter",
+      "name": "Insight Documenter",
+      "file": "insight-documenter.md",
+      "category": "utility",
+      "description": "Technical breakthrough documentation specialist. Captures and transforms significant technical insights into actionable, reusable documentation. Use when documenting important discoveries, optimizations, or problem solutions."
+    },
+    {
+      "id": "thoughts-analyzer",
+      "name": "Thoughts Analyzer",
+      "file": "thoughts-analyzer.md",
+      "category": "utility",
+      "description": "The research equivalent of codebase-analyzer. Use this subagent_type when wanting to deep dive on a research topic. Not commonly needed otherwise."
+    },
+    {
+      "id": "pdf-to-ppt",
+      "name": "Pdf To Ppt",
+      "file": "pdf-to-ppt.md",
+      "category": "utility",
+      "description": "Specialized assistant for converting PDF files to PowerPoint presentations, preserving layout and removing watermarks."
+    },
+    {
+      "id": "human-3-coach",
+      "name": "Human 3 Coach",
+      "file": "human-3-coach.md",
+      "category": "utility",
+      "description": "Agent for human 3 coach"
+    },
+    {
+      "id": "instruction-reflector",
+      "name": "Instruction Reflector",
+      "file": "instruction-reflector.md",
+      "category": "utility",
+      "description": "Analyzes and improves Claude Code instructions in CLAUDE.md. Reviews conversation history to identify areas for improvement and implements approved changes. Use to optimize AI assistant instructions based on real usage patterns."
+    },
+    {
+      "id": "prompt-engineering-patterns",
+      "name": "Prompt Engineering Patterns",
+      "file": "prompt-engineering-patterns.md",
+      "category": "utility",
+      "description": "Use this agent when designing, optimizing, or troubleshooting prompts for LLM applications. This agent specializes in advanced prompt engineering techniques including few-shot learning, chain-of-thought prompting, template systems, and systematic optimization to maximize LLM performance, reliability, and controllability in production environments."
+    },
+    {
+      "id": "workflow-diagrams",
+      "name": "Workflow Diagrams",
+      "file": "workflow-diagrams.md",
+      "category": "utility",
+      "description": "Agent for workflow diagrams"
+    },
+    {
+      "id": "codebase-analyzer",
+      "name": "Codebase Analyzer",
+      "file": "codebase-analyzer.md",
+      "category": "utility",
+      "description": "Use this agent when you need to analyze codebase implementation details, trace data flow, understand how specific components work, or get precise file:line references for technical understanding. This agent specializes in explaining the \"how\" of code implementation with surgical precision."
+    },
+    {
+      "id": "prompt-template-system",
+      "name": "Prompt Template System",
+      "file": "prompt-template-system.md",
+      "category": "utility",
+      "description": "Agent for prompt template system"
+    },
+    {
+      "id": "skill-creator",
+      "name": "Skill Creator",
+      "file": "skill-creator.md",
+      "category": "utility",
+      "description": "Use this agent when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. This agent will guide the user through the complete skill creation process, from understanding requirements to packaging the final skill."
+    },
+    {
+      "id": "web-search-researcher",
+      "name": "Web Search Researcher",
+      "file": "web-search-researcher.md",
+      "category": "utility",
+      "description": "Used to perform web searches from a URL and analyze the contents based on a query."
+    },
+    {
+      "id": "fullstack-dev",
+      "name": "Fullstack Dev",
+      "file": "fullstack-dev.md",
+      "category": "utility",
+      "description": "Use this agent when you need to create high-quality full-stack applications using TypeScript, React, Vite, Express.js, Fastify, FastAPI, Flask, and modern UI frameworks. This agent specializes in creating efficient, maintainable code that follows best practices for performance, security, and maintainability."
+    },
+    {
+      "id": "deep-reflector",
+      "name": "Deep Reflector",
+      "file": "deep-reflector.md",
+      "category": "utility",
+      "description": "Comprehensive session analysis and learning capture specialist. Analyzes development sessions to extract patterns, preferences, and improvements for future interactions. Use after significant work sessions to capture learnings."
+    },
+    {
+      "id": "github-issue-fixer",
+      "name": "Github Issue Fixer",
+      "file": "github-issue-fixer.md",
+      "category": "utility",
+      "description": "GitHub issue resolution specialist. Analyzes, plans, and implements fixes for GitHub issues with proper testing and PR creation. Use when fixing specific GitHub issues."
+    },
+    {
+      "id": "codebase-locator",
+      "name": "Codebase Locator",
+      "file": "codebase-locator.md",
+      "category": "utility",
+      "description": "Locates files, directories, and components relevant to a feature or task. Call `codebase-locator` with human language prompt describing what you're looking for. Basically a \"Super Grep/Glob/LS tool\" \u2014 Use it if you find yourself desiring to use one of these tools more than once."
+    },
+    {
+      "id": "codacy",
+      "name": "Codacy",
+      "file": "codacy.md",
+      "category": "utility",
+      "description": "Configuration for AI behavior when interacting with Codacy's MCP Server"
+    },
+    {
+      "id": "codebase-pattern-finder",
+      "name": "Codebase Pattern Finder",
+      "file": "codebase-pattern-finder.md",
+      "category": "utility",
+      "description": "codebase-pattern-finder is a useful subagent_type for finding similar implementations, usage examples, or existing patterns that can be modeled after. It will give you concrete code examples based on what you're looking for! It's sorta like codebase-locator, but it will not only tell you the location of files, it will also give you code details!"
+    },
+    {
+      "id": "agent-sdk-verifier-py",
+      "name": "Agent Sdk Verifier Py",
+      "file": "agent-sdk-verifier-py.md",
+      "category": "engineering",
+      "description": "Use this agent to verify that a Python Agent SDK application is properly configured, follows SDK best practices and documentation recommendations, and is ready for deployment or testing. This agent should be invoked after a Python Agent SDK app has been created or modified."
+    },
+    {
+      "id": "thoughts-locator",
+      "name": "Thoughts Locator",
+      "file": "thoughts-locator.md",
+      "category": "utility",
+      "description": "Discovers relevant documents in thoughts/ directory (We use this for all sorts of metadata storage!). This is really only relevant/needed when you're in a reseaching mood and need to figure out if we have random thoughts written down that are relevant to your current research task. Based on the name, I imagine you can guess this is the `thoughts` equivilent of `codebase-locator`"
+    },
+    {
+      "id": "pr-reviewer",
+      "name": "Pr Reviewer",
+      "file": "pr-reviewer.md",
+      "category": "utility",
+      "description": "Expert code reviewer for GitHub pull requests. Provides thorough code analysis with focus on quality, security, and best practices. Use when reviewing PRs for code quality and potential issues."
+    },
+    {
+      "id": "testing-guidelines",
+      "name": "Testing Guidelines",
+      "file": "testing-guidelines.md",
+      "category": "utility",
+      "description": "Agent for testing guidelines"
+    },
+    {
+      "id": "research-analyzer",
+      "name": "Research Analyzer",
+      "file": "research-analyzer.md",
+      "category": "utility",
+      "description": "Use this agent when you need to deeply analyze research documents, thought documents, or technical analysis files to extract high-value, actionable insights. This agent specializes in filtering out noise and focusing on key decisions, constraints, technical specifications, and actionable recommendations from complex research materials."
+    },
+    {
+      "id": "agent-sdk-verifier-ts",
+      "name": "Agent Sdk Verifier Ts",
+      "file": "agent-sdk-verifier-ts.md",
+      "category": "engineering",
+      "description": "Use this agent to verify that a TypeScript Agent SDK application is properly configured, follows SDK best practices and documentation recommendations, and is ready for deployment or testing."
+    },
+    {
+      "id": "orchestrator",
+      "name": "Orchestrator",
+      "file": "orchestrator.md",
+      "category": "engineering",
+      "description": "Team Lead / Router Agent. Analyzes tasks and delegates them to specialized experts in the agent library."
+    }
+  ],
+  "categories": {
+    "engineering": {
+      "name": "Engineering & Development",
+      "description": "Specialized agents for software development, architecture, and technical tasks"
+    },
+    "creative": {
+      "name": "Creative & Entertainment",
+      "description": "Agents focused on creative writing, storytelling, and artistic expression"
+    },
+    "entertainment": {
+      "name": "Entertainment",
+      "description": "Light-hearted agents for fun and humor"
+    },
+    "comedy": {
+      "name": "Comedy Relief",
+      "description": "Technically accurate agents with distinctive, entertaining personalities and speech patterns"
+    }
+  },
+  "metadata": {
+    "version": "0.1.0",
+    "total_agents": 9,
+    "last_updated": "2025-11-12"
+  }
+}

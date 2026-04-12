@@ -1,11 +1,4 @@
-mod config;
-mod mcp;
-mod agents;
-mod rate_limit;
-mod system;
-mod persistence;
-mod hooks;
-mod registry;
+use bl1nk_agents_manager::{config, mcp, system};
 
 use anyhow::Result;
 use clap::Parser;

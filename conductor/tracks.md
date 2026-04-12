@@ -4,5 +4,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: สร้าง Unified Registry, Monitoring & Honesty Layer - ระบบบันทึกทุกชั้น (people, model, tool, input, output) และพิสูจน์ว่าทำให้โมเดลดีขึ้นจริง**
+- [~] **Track: สร้าง Unified Registry, Monitoring & Honesty Layer - ระบบบันทึกทุกชั้น (people, model, tool, input, output) และพิสูจน์ว่าทำให้โมเดลดีขึ้นจริง**
   *Link: [./tracks/registry_knowledge_backbone_20260412/](./tracks/registry_knowledge_backbone_20260412/)*

@@ -9,7 +9,6 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 
 pub struct Orchestrator {
-    config: Config,
     agent_registry: Arc<RwLock<AgentRegistry>>,
     rate_limiter: Arc<RwLock<RateLimitTracker>>,
     executor: Arc<AgentExecutor>,
@@ -89,22 +88,39 @@ impl Orchestrator {
             AgentRegistry::new(config.agents.clone(), report.as_ref())
         ));
 
+        // สร้าง RegistryService เพื่อใช้ Smart Search
+        let registry_path = "agents/agents.json";
+        let registry_service = if std::path::Path::new(registry_path).exists() {
+            crate::registry::RegistryService::from_file(registry_path).ok().map(Arc::new)
+        } else {
+            None
+        };
+
         let mut tracker = RateLimitTracker::new(config.rate_limiting.clone());
         if let Err(e) = tracker.load_usage().await {
             tracing::error!("❌ Failed to load rate limit usage: {}", e);
         }
         let rate_limiter = Arc::new(RwLock::new(tracker));
 
-        let executor = Arc::new(
-            AgentExecutor::new(
-                agent_registry.clone(),
-                rate_limiter.clone(),
-                config.routing.clone(),
-            )
+        // โหลดสถิตินโยบาย (Reputation Ledger) จากไฟล์กลาง
+        let weight_registry = Arc::new(RwLock::new(
+            crate::registry::WeightRegistry::load().await.unwrap_or_else(|_| crate::registry::WeightRegistry::new())
+        ));
+
+        let mut executor_logic = AgentExecutor::new(
+            agent_registry.clone(),
+            rate_limiter.clone(),
+            config.routing.clone(),
+            weight_registry.clone(),
         );
 
+        if let Some(service) = registry_service {
+            executor_logic = executor_logic.with_registry(service);
+        }
+
+        let executor = Arc::new(executor_logic);
+
         Ok(Self {
-            config,
             agent_registry,
             rate_limiter,
             executor,
@@ -112,11 +128,11 @@ impl Orchestrator {
     }
 
     pub async fn delegate_task_internal(&self, args: DelegateTaskArgs) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.delegate_task(args).await
+        self.executor.delegate_task(args).await.map_err(|e| pmcp::Error::internal(&e.to_string()))
     }
 
     pub async fn approve_task_internal(&self, task_id: String, confirmed_agent_id: Option<String>) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.approve_task(task_id, confirmed_agent_id).await
+        self.executor.approve_task(task_id, confirmed_agent_id).await.map_err(|e| pmcp::Error::internal(&e.to_string()))
     }
 
     pub async fn run_stdio(self) -> Result<()> {

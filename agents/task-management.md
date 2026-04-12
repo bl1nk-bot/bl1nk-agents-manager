@@ -1,11 +1,23 @@
 ---
-name: task-management
-description: Rules and guidelines for tracking task completion, categories, and context management in the Chonost Manuscript OS project.
-category: utility
-globs:
-- '**/*'
-alwaysApply: true
+id: task-management
+name: [Skill] Task Management
+description: ชุดทักษะและความรู้ด้าน task-management สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [task-management]
 ---
+
+
 
 # Task Management Rules
 

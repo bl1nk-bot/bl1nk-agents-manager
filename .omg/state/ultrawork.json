@@ -1,0 +1,14 @@
+{
+  "objective": "Align bl1nk-agents Permission System with Gemini CLI Policy Engine",
+  "status": "active",
+  "total_tasks": 5,
+  "completed_tasks": 0,
+  "max_concurrent_workers": 3,
+  "tasks": [
+    { "id": "PE1", "target": "web_research", "status": "active", "worker": "researcher-1" },
+    { "id": "PE2", "target": "docs/ARCHITECTURE.md", "status": "pending", "worker": "architect-1" },
+    { "id": "PE3", "target": ".config/schema-agent.json", "status": "pending", "worker": "executor-1" },
+    { "id": "PE4", "target": "src/registry/mod.rs", "status": "pending", "worker": "executor-2" },
+    { "id": "PE5", "target": "scripts/validate_real_data.rs", "status": "pending", "worker": "verifier-1" }
+  ]
+}

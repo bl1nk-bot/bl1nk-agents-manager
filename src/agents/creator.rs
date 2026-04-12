@@ -62,14 +62,12 @@ pub struct AgentSpec {
 
 /// ตัวสร้างเอเจนต์
 pub struct AgentCreator {
-    template_dir: String,
     output_dir: String,
 }
 
 impl AgentCreator {
-    pub fn new(template_dir: String, output_dir: String) -> Self {
+    pub fn new(_template_dir: String, output_dir: String) -> Self {
         Self {
-            template_dir,
             output_dir,
         }
     }
@@ -203,7 +201,6 @@ impl AgentCreator {
         Ok(ParsedRequirements {
             name: self.extract_agent_name(requirements)?,
             purpose: purpose.to_string(),
-            description: String::new(),
             when_to_use: requirements.to_string(),
             tools,
             complexity,
@@ -224,8 +221,9 @@ impl AgentCreator {
         }
 
         let name = words.join(" ");
-        if name.len() > 64 {
-            Ok(name[..64].to_string())
+        // ใช้ char slicing แทน byte slicing เพื่อรองรับ UTF-8 หลาย byte
+        if name.chars().count() > 64 {
+            Ok(name.chars().take(64).collect())
         } else {
             Ok(name)
         }
@@ -253,8 +251,9 @@ impl AgentCreator {
         if identifier.len() < 3 {
             identifier = format!("{}-agent", identifier);
         }
-        if identifier.len() > 50 {
-            identifier.truncate(50);
+        // ใช้ char count แทน byte len สำหรับ UTF-8
+        if identifier.chars().count() > 50 {
+            identifier = identifier.chars().take(50).collect();
             identifier = identifier.trim_end_matches('-').to_string();
         }
         if identifier.chars().next().map(|c| c.is_numeric()).unwrap_or(false) {
@@ -600,7 +599,6 @@ impl AgentCreator {
 struct ParsedRequirements {
     name: String,
     purpose: String,
-    description: String,
     when_to_use: String,
     tools: Vec<String>,
     complexity: AgentComplexity,
@@ -663,7 +661,7 @@ mod tests {
         let creator = AgentCreator::new("templates".to_string(), output_dir.clone());
 
         let spec = creator.create_agent(
-            "สร้างเอเจนต์สำหรับตรวจสอบโค้ดและวิเคราะห์คุณภาพ",
+            "Agent: Code Review & Quality",
             None,
         ).await.unwrap();
 

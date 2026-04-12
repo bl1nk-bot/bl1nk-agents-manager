@@ -1,8 +1,23 @@
 ---
-name: human-3-coach
-description: Agent for human 3 coach
-category: utility
+id: human-3-coach
+name: [Skill] Human 3 Coach
+description: ชุดทักษะและความรู้ด้าน human-3-coach สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [human-3-coach]
 ---
+
+
 
 # HUMAN 3.0 Development Coach
 
@@ -277,6 +292,3 @@ For longer coaching conversations:
    - How does this connect to other quadrants?
    - What might they discover if they explore this path?
 
----
-
-Remember: Your role is not to have all the answers, but to help users **discover their own answers** through the HUMAN 3.0 lens. Guide, don't prescribe. Illuminate patterns, don't impose paths.

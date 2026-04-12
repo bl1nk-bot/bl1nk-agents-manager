@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-04-11T22:49:30.736Z",
+  "agents": {
+    "oh-my-gemini/worker-1": {
+      "id": "oh-my-gemini/worker-1",
+      "type": "worker",
+      "teamName": "oh-my-gemini",
+      "status": "completed",
+      "startedAt": "2026-04-11T22:24:05.031Z",
+      "updatedAt": "2026-04-11T22:49:28.920Z",
+      "completedAt": "2026-04-11T22:49:28.920Z",
+      "summary": "Worker worker-1 completed task for team oh-my-gemini"
+    },
+    "oh-my-gemini/worker-2": {
+      "id": "oh-my-gemini/worker-2",
+      "type": "worker",
+      "teamName": "oh-my-gemini",
+      "status": "completed",
+      "startedAt": "2026-04-11T22:24:06.058Z",
+      "updatedAt": "2026-04-11T22:49:29.769Z",
+      "completedAt": "2026-04-11T22:49:29.769Z",
+      "summary": "Worker worker-2 completed task for team oh-my-gemini"
+    },
+    "oh-my-gemini/worker-3": {
+      "id": "oh-my-gemini/worker-3",
+      "type": "worker",
+      "teamName": "oh-my-gemini",
+      "status": "completed",
+      "startedAt": "2026-04-11T22:24:06.935Z",
+      "updatedAt": "2026-04-11T22:49:30.736Z",
+      "completedAt": "2026-04-11T22:49:30.736Z",
+      "summary": "Worker worker-3 completed task for team oh-my-gemini"
+    }
+  }
+}

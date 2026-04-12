@@ -1,0 +1,133 @@
+{
+  "runId": "0fa0b69c-9a05-40da-a205-54ba2c45e69d",
+  "teamName": "oh-my-gemini",
+  "handleId": "tmux-00f24e2a-a71f-4e12-b261-f76d8a438185",
+  "backend": "tmux",
+  "status": "completed",
+  "updatedAt": "2026-04-11T22:49:30.682Z",
+  "workers": [
+    {
+      "workerId": "worker-1",
+      "status": "done",
+      "lastHeartbeatAt": "2026-04-11T22:49:28.877Z",
+      "details": "pane_id=%0, command=bash, pane=active, exit=0 | heartbeat=dead | pid=3832 | done_signal=completed,summary=Worker worker-1 completed task for team oh-my-gemini | pid=3832 | heartbeat=dead | done_signal=completed,summary=Worker worker-1 completed task for team oh-my-gemini"
+    },
+    {
+      "workerId": "worker-2",
+      "status": "done",
+      "lastHeartbeatAt": "2026-04-11T22:49:29.747Z",
+      "details": "pane_id=%2, command=node, pane=inactive | heartbeat=dead | pid=3880 | done_signal=completed,summary=Worker worker-2 completed task for team oh-my-gemini | pid=3880 | heartbeat=dead | done_signal=completed,summary=Worker worker-2 completed task for team oh-my-gemini"
+    },
+    {
+      "workerId": "worker-3",
+      "status": "done",
+      "lastHeartbeatAt": "2026-04-11T22:49:30.692Z",
+      "details": "pane_id=%1, command=env, pane=inactive, exit=0 | heartbeat=dead | pid=3915 | done_signal=completed,summary=Worker worker-3 completed task for team oh-my-gemini | pid=3915 | heartbeat=dead | done_signal=completed,summary=Worker worker-3 completed task for team oh-my-gemini"
+    }
+  ],
+  "summary": "tmux session \"oh-my-gemini-1775947767747\" completed (3/3 workers finished).",
+  "runtime": {
+    "sessionName": "oh-my-gemini-1775947767747",
+    "commandTemplate": "node '/data/data/com.termux/files/home/.npm/_npx/b9aab2198c6e66d7/node_modules/oh-my-gemini-sisyphus/dist/cli/index.js' worker run --team 'oh-my-gemini' --worker 'worker-1'",
+    "workers": 3,
+    "stateRoot": "/storage/emulated/0/Download/bl1nk-agents/.omg/state",
+    "deliveryAcks": [
+      {
+        "workerId": "worker-1",
+        "acknowledged": true,
+        "observedSignal": "done",
+        "observedAt": "2026-04-11T22:49:28.852Z"
+      },
+      {
+        "workerId": "worker-2",
+        "acknowledged": true,
+        "observedSignal": "done",
+        "observedAt": "2026-04-11T22:49:29.700Z"
+      },
+      {
+        "workerId": "worker-3",
+        "acknowledged": true,
+        "observedSignal": "done",
+        "observedAt": "2026-04-11T22:49:30.633Z"
+      }
+    ],
+    "workerCliSelection": {
+      "worker-1": "omg",
+      "worker-2": "omg",
+      "worker-3": "omg"
+    },
+    "taskAuditLogPath": "/storage/emulated/0/Download/bl1nk-agents/.omg/state/team/oh-my-gemini/events/task-lifecycle.ndjson",
+    "verifyBaselinePassed": true,
+    "verifyBaselineSource": "tmux-runtime",
+    "sessionExists": true,
+    "paneCount": 3,
+    "workerStatusCounts": {
+      "running": 0,
+      "done": 3,
+      "failed": 0,
+      "unknown": 0
+    },
+    "paneHealth": {
+      "checkedAt": "2026-04-11T22:49:30.682Z",
+      "staleHeartbeatWorkers": 0,
+      "acknowledgedWorkers": 3,
+      "missingDeliveryAckWorkers": [],
+      "healthy": true
+    },
+    "runInput": {
+      "version": 1,
+      "task": "task3",
+      "cwd": "/storage/emulated/0/Download/bl1nk-agents",
+      "backend": "tmux",
+      "workers": 3,
+      "maxFixLoop": 3
+    },
+    "successChecklist": {
+      "runtimeStatus": "completed",
+      "treatRunningAsSuccess": false,
+      "verifyGate": {
+        "passed": true,
+        "reason": "verify baseline passed"
+      },
+      "roleContract": {
+        "passed": true,
+        "summary": "role output contract not applicable: selected subagent assignments absent",
+        "issues": [],
+        "applicable": false,
+        "assignmentCount": 0,
+        "outputCount": 0
+      },
+      "prdContract": {
+        "passed": true,
+        "summary": "prd acceptance contract not applicable: runtime.prd is missing",
+        "issues": [],
+        "applicable": false,
+        "storyCount": 0
+      },
+      "taskCounts": {
+        "total": 0,
+        "required": 0,
+        "failed": 0,
+        "incompleteRequired": 0,
+        "activeNonTerminal": 0
+      },
+      "taskAudit": {
+        "total": 0,
+        "byAction": {
+          "claim": 0,
+          "transition": 0,
+          "release": 0
+        },
+        "byTask": {},
+        "byReasonCode": {}
+      },
+      "health": {
+        "healthy": true,
+        "deadWorkers": [],
+        "nonReportingWorkers": [],
+        "watchdogExpired": false
+      },
+      "legacyBypassAudit": []
+    }
+  }
+}

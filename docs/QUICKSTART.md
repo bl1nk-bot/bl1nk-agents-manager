@@ -33,8 +33,8 @@ make build-bundled
 # Create config directory
 mkdir -p ~/.config/bl1nk-agents-manager
 
-# Copy and customize config
-cp config.example.toml ~/.config/bl1nk-agents-manager/config.toml
+# Copy and customize config from the project's .config/ directory
+cp .config/config.example.toml ~/.config/bl1nk-agents-manager/config.toml
 
 # Edit config to add your agents
 nano ~/.config/bl1nk-agents-manager/config.toml
@@ -211,7 +211,7 @@ source $HOME/.cargo/env
 ```bash
 # Create config
 mkdir -p ~/.config/bl1nk-agents-manager
-cp config.example.toml ~/.config/bl1nk-agents-manager/config.toml
+cp .config/config.example.toml ~/.config/bl1nk-agents-manager/config.toml
 ```
 
 ### Error: "Agent command not found"
@@ -259,7 +259,7 @@ make build
 
 - **README.md** - Comprehensive documentation
 - **ARCHITECTURE.md** - System design and internals
-- **config.example.toml** - Full config example
+- **.config/config.example.toml** - Full config example
 - **Makefile** - Development commands
 
 ---
