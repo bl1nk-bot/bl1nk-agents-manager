@@ -17,19 +17,19 @@
     - [x] **cargo check สำเร็จ ไม่มี errors!**
 
 ### 1.1 Task: Define Unified Registry Schema
-- [ ] Task: Create registry schema types
-    - [ ] สร้าง `src/registry/mod.rs` พร้อม module structure
-    - [ ] สร้าง types สำหรับ Registry, KeywordEntry, MonitoringRecord
-    - [ ] เพิ่ม serde derive + JSON schema generation
-    - [ ] เขียน unit tests สำหรับ schema types
-- [ ] Task: Create JSON schema file
-    - [ ] สร้าง `.config/registry-schema.json` พร้อม full schema definition
-    - [ ] รวม keyword, monitoring, evidence, weight structures
-    - [ ] เขียน test validate schema ถูกต้อง
-- [ ] Task: Add schema validation
-    - [ ] สร้าง `RegistryValidator` struct
-    - [ ] implement validate_entry(), validate_registry() methods
-    - [ ] เขียน tests สำหรับ validation rules
+- [x] Task: Create registry schema types `#commit: 0780c25`
+    - [x] สร้าง `src/registry/schema.rs` พร้อม module structure
+    - [x] สร้าง types สำหรับ Registry, KeywordEntry, MonitoringRecord
+    - [x] เพิ่ม serde derive + JSON schema generation
+    - [x] เขียน unit tests สำหรับ schema types
+- [x] Task: Create JSON schema file
+    - [x] สร้าง `.config/registry-schema.json` พร้อม full schema definition
+    - [x] รวม keyword, monitoring, evidence, weight structures
+    - [x] เขียน test validate schema ถูกต้อง
+- [x] Task: Add schema validation
+    - [x] สร้าง `RegistryValidator` struct (ผ่าน schemars)
+    - [x] implement validate_entry(), validate_registry() methods (ผ่าน tests)
+    - [x] เขียน tests สำหรับ validation rules
 
 ### 1.2 Task: Keyword Mapping & Basic Search
 - [ ] Task: Implement keyword loading
