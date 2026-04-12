@@ -1,0 +1,84 @@
+name: kilo
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "คำสั่งสำหรับ Kilo"
+        required: true
+        default: "review this PR"
+        type: string
+      issue_number:
+        description: "Issue/PR number (ถ้าไม่ใส่จะใช้จาก event ปัจจุบัน)"
+        required: false
+        type: string
+
+jobs:
+  kilo:
+    # รันเฉพาะเมื่อมี /kilo หรือ /kc ใน comment หรือ manual trigger
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.comment.body, '/kc') ||
+      contains(github.event.comment.body, '/kilo')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 0  # ดึงประวัติเต็มสำหรับ context
+
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
+
+      - name: Setup Kilo
+        uses: ./.github/actions/setup-kilo
+
+      - name: Run Kilo
+        uses: Kilo-Org/kilocode/github@latest
+        with:
+          # ใช้ Qwen model ฟรี
+          model: qwen/qwen3.6-plus:free
+
+          # Authentication
+          kilo_api_key: ${{ secrets.KILO_API_KEY }}
+          kilo_org_id: ${{ secrets.KILO_ORG_ID }}
+
+          # Configuration
+          share: ${{ github.event.repository.private == false }}
+          use_github_token: true
+          oidc_base_url: "https://api.kilo.ai"
+
+          # Custom prompt (optional)
+          prompt: ${{ github.event.inputs.prompt || '' }}
+
+      - name: Commit changes (ถ้า Kilo แก้ไขไฟล์)
+        if: always()
+        run: |
+          git config --global user.name "kilo-ai[bot]"
+          git config --global user.email "kilo-ai[bot]@users.noreply.github.com"
+
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add -A
+            git commit -m "kilo: automated changes via /kilo command
+
+            Triggered by: ${{ github.event.comment.user.login }}
+            Comment: ${{ github.event.comment.body }}
+            Model: qwen/qwen3.6-plus:free"
+
+            git push
+            echo "✅ Changes committed and pushed"
+          else
+            echo "ℹ️ No changes to commit"
+          fi
