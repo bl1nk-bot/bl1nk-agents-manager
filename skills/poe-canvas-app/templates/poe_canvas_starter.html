@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poe Canvas App</title>
+    <!-- Tailwind CSS from trusted origin -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for Poe integration */
+        :root {
+            --poe-bg: #ffffff;
+            --poe-text: #111827;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --poe-bg: #111827;
+                --poe-text: #f9fafb;
+            }
+        }
+        body {
+            background-color: var(--poe-bg);
+            color: var(--poe-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div id="app" class="max-w-4xl mx-auto">
+        <header class="mb-8 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Poe Canvas App</h1>
+            <div id="status" class="text-sm opacity-70">Initializing...</div>
+        </header>
+
+        <main class="space-y-6">
+            <!-- App Content Goes Here -->
+            <div class="p-12 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center space-y-4">
+                <p class="text-lg font-medium">Welcome to your new Poe Canvas App</p>
+                <p class="text-sm opacity-60">This app is ready to interact with Poe via window.Poe API</p>
+                <button id="sendMsg" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Send Message to Bot
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Poe Embed API interaction
+        document.addEventListener('DOMContentLoaded', async () => {
+            const statusEl = document.getElementById('status');
+            const sendBtn = document.getElementById('sendMsg');
+
+            if (window.Poe) {
+                statusEl.textContent = 'Poe API Ready';
+                
+                // Get trigger message
+                try {
+                    const triggerMsg = await window.Poe.getTriggerMessage();
+                    console.log('Trigger Message:', triggerMsg);
+                } catch (e) {
+                    console.error('Error getting trigger message:', e);
+                }
+
+                // Register handler
+                window.Poe.registerHandler('mainHandler', (result) => {
+                    console.log('Bot Response:', result);
+                    if (result.status === 'complete') {
+                        statusEl.textContent = 'Response received';
+                    }
+                });
+
+                // Send message example
+                sendBtn.addEventListener('click', async () => {
+                    statusEl.textContent = 'Sending message...';
+                    try {
+                        await window.Poe.sendUserMessage('@Assistant Hello from Canvas!', {
+                            handler: 'mainHandler',
+                            openChat: true
+                        });
+                    } catch (e) {
+                        statusEl.textContent = 'Error: ' + e.message;
+                    }
+                });
+            } else {
+                statusEl.textContent = 'Running outside Poe';
+                sendBtn.disabled = true;
+                sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        });
+    </script>
+</body>
+</html>

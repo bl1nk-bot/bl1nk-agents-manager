@@ -1,71 +1,890 @@
 {
-  "version": "1.1.0",
-  "metadata": {
-    "lastUpdated": "2026-04-12T00:00:00Z",
-    "description": "Agent Registry Backbone",
-    "owner": "อาจารย์"
-  },
-  "groups": [
+  "agents": [
     {
-      "groupId": "agents",
-      "groupName": "AI Agents",
-      "description": "Project Agents",
-      "baseFieldsSchema": {
-        "id": {
-          "type": "string",
-          "description": "Unique ID",
-          "required": true
-        },
-        "aliases": {
-          "type": "array",
-          "itemType": "string",
-          "description": "Search aliases",
-          "required": true
-        },
-        "description": {
-          "type": "string",
-          "description": "Agent description",
-          "required": true
-        }
-      },
-      "customFieldAllowed": {
-        "enabled": true,
-        "maxOne": false,
-        "description": "Allow custom agent metadata"
-      },
-      "entries": [
-        {
-          "id": "visual-story-extension",
-          "aliases": ["visual-story", "ภาพเรื่อง", "story-extension"],
-          "description": "Workflow and context-linking architecture for story visualization"
-        },
-        {
-          "id": "mintlify-docs-builder",
-          "aliases": ["mintlify-docs", "docs-builder", "api-docs"],
-          "description": "Reusable skill for building Mintlify documentation"
-        },
-        {
-          "id": "write-api-reference",
-          "aliases": ["api-docs", "api-reference", "เอกสาร-api"],
-          "description": "Produces API reference documentation for Next.js APIs"
-        },
-        {
-          "id": "mcp-server",
-          "aliases": ["mcp", "model-context-protocol"],
-          "description": "Protocol for connecting AI models to external tools and services"
-        }
-      ]
+      "id": "architect",
+      "name": "Architect",
+      "file": "architect.md",
+      "category": "engineering",
+      "description": "Software architecture and design planning specialist. Focuses exclusively on research, analysis, and documentation.",
+      "use_cases": [
+        "System design and architecture planning",
+        "Technology decision documentation",
+        "Creating architectural diagrams (Mermaid)",
+        "Researching best practices and patterns",
+        "Writing technical decision records (ADRs)"
+      ],
+      "tags": ["engineering", "high-complexity", "architecture", "design", "documentation"],
+      "complexity": "high",
+      "outputs": ["documentation", "diagrams"],
+      "personality": "Professional, analytical, thorough"
+    },
+    {
+      "id": "code-generator",
+      "name": "Code Generator",
+      "file": "code-generator.md",
+      "category": "engineering",
+      "description": "Streamlined code generation assistant. Expert in all programming languages and frameworks.",
+      "use_cases": [
+        "Rapid code generation",
+        "Implementing functions and classes",
+        "Creating boilerplate code",
+        "Writing algorithms",
+        "Quick prototyping"
+      ],
+      "tags": ["engineering", "medium-complexity", "code-generation", "implementation", "code"],
+      "complexity": "medium",
+      "outputs": ["code"],
+      "personality": "Direct, efficient, code-focused"
+    },
+    {
+      "id": "creative-writer",
+      "name": "Creative Writer",
+      "file": "creative-writer.md",
+      "category": "creative",
+      "description": "Creative writing specialist for poetry, prose, and storytelling.",
+      "use_cases": [
+        "Writing poetry (haiku, sonnets, free verse)",
+        "Creating short stories and prose",
+        "Crafting dialogue and character voices",
+        "Developing narratives and plots",
+        "Style adaptation and literary mimicry"
+      ],
+      "tags": ["creative", "low-complexity", "writing", "persona", "text"],
+      "complexity": "low",
+      "outputs": ["text", "persona"],
+      "personality": "Artistic, expressive, imaginative"
+    },
+    {
+      "id": "comedian",
+      "name": "Comedian",
+      "file": "comedian.md",
+      "category": "entertainment",
+      "description": "Dad joke specialist. Responds to any input with related dad jokes.",
+      "use_cases": [
+        "Breaking up serious work sessions",
+        "Ice breakers and light conversation",
+        "Testing the system with humor",
+        "Entertainment and mood lifting"
+      ],
+      "tags": ["creative", "low-complexity", "entertainment", "persona", "text"],
+      "complexity": "low",
+      "outputs": ["persona", "text"],
+      "personality": "Punny, wholesome, cheerfully groan-worthy"
+    },
+    {
+      "id": "pirate",
+      "name": "Pirate",
+      "file": "pirate.md",
+      "category": "comedy",
+      "description": "Speaks exclusively in pirate dialect. Technically accurate but delivered with full pirate persona.",
+      "use_cases": [
+        "Making coding fun with pirate flavor",
+        "Entertainment while learning",
+        "Team morale and fun interactions",
+        "Demonstrating personality-based agents"
+      ],
+      "tags": ["creative", "low-complexity", "entertainment", "persona", "text"],
+      "complexity": "low",
+      "outputs": ["persona", "text"],
+      "personality": "Enthusiastic, nautical, swashbuckling"
+    },
+    {
+      "id": "shakespeare",
+      "name": "Shakespeare",
+      "file": "shakespeare.md",
+      "category": "comedy",
+      "description": "Speaks in Shakespearean English. Eloquent, dramatic, uses thou/thee/thy.",
+      "use_cases": [
+        "Adding theatrical flair to coding",
+        "Educational entertainment",
+        "Literature meets programming",
+        "Making errors sound poetic"
+      ],
+      "tags": ["creative", "low-complexity", "entertainment", "persona", "text"],
+      "complexity": "low",
+      "outputs": ["persona", "text"],
+      "personality": "Dramatic, eloquent, theatrical"
+    },
+    {
+      "id": "yoda",
+      "name": "Yoda",
+      "file": "yoda.md",
+      "category": "comedy",
+      "description": "Speaks like Yoda from Star Wars. Object-subject-verb syntax, wise and patient teaching style.",
+      "use_cases": [
+        "Star Wars fan-friendly coding help",
+        "Patient, teaching-focused guidance",
+        "Making debugging feel like Jedi training",
+        "Entertainment for sci-fi enthusiasts"
+      ],
+      "tags": ["creative", "low-complexity", "entertainment", "persona", "text"],
+      "complexity": "low",
+      "outputs": ["persona", "text"],
+      "personality": "Wise, patient, cryptically helpful"
+    },
+    {
+      "id": "cowboy",
+      "name": "Cowboy",
+      "file": "cowboy.md",
+      "category": "comedy",
+      "description": "Speaks in Old West cowboy dialect. Straight-shooting, uses Western and ranch terminology.",
+      "use_cases": [
+        "Down-to-earth coding help",
+        "Western-themed programming sessions",
+        "No-nonsense troubleshooting with flair",
+        "Making tech feel folksy"
+      ],
+      "tags": ["creative", "low-complexity", "entertainment", "persona", "text"],
+      "complexity": "low",
+      "outputs": ["persona", "text"],
+      "personality": "Straightforward, folksy, frontier spirit"
+    },
+    {
+      "id": "gen-z",
+      "name": "Gen Z",
+      "file": "gen-z.md",
+      "category": "comedy",
+      "description": "Speaks in Gen Z slang and internet culture. No cap, it's bussin fr fr.",
+      "use_cases": [
+        "Making tech relatable to younger audiences",
+        "Internet culture meets programming",
+        "Casual, friendly coding sessions",
+        "Demonstrating contemporary language"
+      ],
+      "tags": ["creative", "low-complexity", "entertainment", "persona", "text"],
+      "complexity": "low",
+      "outputs": ["persona", "text"],
+      "personality": "Casual, enthusiastic, extremely online"
+    },
+    {
+      "id": "reporter",
+      "name": "Reporter",
+      "file": "reporter.md",
+      "category": "utility",
+      "description": "Agent for reporting and information dissemination",
+      "use_cases": [
+        "Generating reports",
+        "Information synthesis",
+        "Summary creation"
+      ],
+      "tags": ["utility", "low-complexity", "reporting", "documentation", "text"],
+      "complexity": "low",
+      "outputs": ["documentation", "text"]
+    },
+    {
+      "id": "task-management",
+      "name": "Task Management",
+      "file": "task-management.md",
+      "category": "utility",
+      "description": "Rules and guidelines for tracking task completion, categories, and context management",
+      "use_cases": [
+        "Task tracking and organization",
+        "Context management",
+        "Progress monitoring"
+      ],
+      "tags": ["utility", "low-complexity", "task-management", "workflow", "guidance"],
+      "complexity": "low",
+      "outputs": ["guidance", "documentation"]
+    },
+    {
+      "id": "ui-engineer",
+      "name": "UI Engineer",
+      "file": "ui-engineer.md",
+      "category": "utility",
+      "description": "Expert UI/frontend developer for creating, modifying, or reviewing frontend code and components",
+      "use_cases": [
+        "Building React components",
+        "Creating responsive designs",
+        "Frontend best practices",
+        "UI/UX implementation"
+      ],
+      "tags": ["engineering", "medium-complexity", "frontend", "code-generation", "code"],
+      "complexity": "medium",
+      "outputs": ["code", "documentation"],
+      "personality": "Design-focused, detail-oriented"
+    },
+    {
+      "id": "docbot-pro",
+      "name": "Docbot Pro",
+      "file": "docbot-pro.md",
+      "category": "utility",
+      "description": "Enterprise documentation specialist. Generates, updates, validates, and maintains comprehensive documentation",
+      "use_cases": [
+        "Generating README and API docs",
+        "Updating documentation after code changes",
+        "Validating documentation quality",
+        "Creating contributing guides"
+      ],
+      "tags": ["utility", "medium-complexity", "documentation", "enterprise", "documentation"],
+      "complexity": "medium",
+      "outputs": ["documentation"],
+      "personality": "Thorough, quality-focused, structured"
+    },
+    {
+      "id": "command-creator",
+      "name": "Command Creator",
+      "file": "command-creator.md",
+      "category": "utility",
+      "description": "Creates well-structured Claude Code custom commands with proper structure and best practices",
+      "use_cases": [
+        "Creating Claude Code commands",
+        "Analyzing command requirements",
+        "Structuring command files",
+        "Documenting commands"
+      ],
+      "tags": ["utility", "medium-complexity", "development", "creation", "code"],
+      "complexity": "medium",
+      "outputs": ["code", "documentation"],
+      "personality": "Structured, standards-focused"
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare",
+      "file": "cloudflare.md",
+      "category": "engineering",
+      "description": "Building Cloudflare Workers and Agents. Expert knowledge of Cloudflare's platform, APIs, and best practices",
+      "use_cases": [
+        "Creating Cloudflare Workers",
+        "Building Cloudflare Agents",
+        "Platform API integration",
+        "Deployment to Cloudflare"
+      ],
+      "tags": ["engineering", "medium-complexity", "cloud", "workers", "code"],
+      "complexity": "medium",
+      "outputs": ["code", "documentation"],
+      "personality": "Cloud-focused, platform-expert"
+    },
+    {
+      "id": "kiro-workflow",
+      "name": "Kiro Workflow",
+      "file": "kiro-workflow.md",
+      "category": "utility",
+      "description": "Agent for kiro workflow management and orchestration",
+      "use_cases": [
+        "Workflow management",
+        "Process orchestration",
+        "Task coordination"
+      ],
+      "tags": ["utility", "medium-complexity", "workflow", "orchestration", "guidance"],
+      "complexity": "medium",
+      "outputs": ["guidance", "documentation"],
+      "personality": "Process-oriented, coordinating"
+    },
+    {
+      "id": "plan-implementation-reviewer",
+      "name": "Plan Implementation Reviewer",
+      "file": "plan-implementation-reviewer.md",
+      "category": "utility",
+      "description": "Validates that an implementation plan was correctly executed, verifying all success criteria",
+      "use_cases": [
+        "Validating implementation against plans",
+        "Checking for plan drift",
+        "Verifying completeness of implementation",
+        "Success criteria validation"
+      ],
+      "tags": ["utility", "medium-complexity", "validation", "planning", "review"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Detail-oriented, analytical"
+    },
+    {
+      "id": "insight-documenter",
+      "name": "Insight Documenter",
+      "file": "insight-documenter.md",
+      "category": "utility",
+      "description": "Technical breakthrough documentation specialist. Captures and transforms significant technical insights",
+      "use_cases": [
+        "Documenting technical discoveries",
+        "Recording optimizations found",
+        "Capturing problem solutions",
+        "Creating reusable documentation"
+      ],
+      "tags": ["utility", "medium-complexity", "documentation", "technical", "text"],
+      "complexity": "medium",
+      "outputs": ["documentation", "text"],
+      "personality": "Insight-focused, thorough"
+    },
+    {
+      "id": "thoughts-analyzer",
+      "name": "Thoughts Analyzer",
+      "file": "thoughts-analyzer.md",
+      "category": "utility",
+      "description": "Deep dive research on topics. Research equivalent of codebase-analyzer",
+      "use_cases": [
+        "Deep research on topics",
+        "Technical investigation",
+        "Analysis of complex subjects",
+        "Topic exploration"
+      ],
+      "tags": ["utility", "medium-complexity", "research", "analysis", "text"],
+      "complexity": "medium",
+      "outputs": ["text", "documentation"],
+      "personality": "Inquisitive, thorough, analytical"
+    },
+    {
+      "id": "pdf-to-ppt",
+      "name": "Pdf To Ppt",
+      "file": "pdf-to-ppt.md",
+      "category": "utility",
+      "description": "Specialized assistant for converting PDF files to PowerPoint presentations",
+      "use_cases": [
+        "Converting PDF to PowerPoint",
+        "Preserving PDF layout",
+        "Removing watermarks",
+        "Presentation creation"
+      ],
+      "tags": ["utility", "low-complexity", "conversion", "file", "document"],
+      "complexity": "low",
+      "outputs": ["document"],
+      "personality": "Conversion-focused, detail-preserving"
+    },
+    {
+      "id": "human-3-coach",
+      "name": "Human 3 Coach",
+      "file": "human-3-coach.md",
+      "category": "utility",
+      "description": "Agent for human-3 coaching and development",
+      "use_cases": [
+        "Coaching sessions",
+        "Skill development",
+        "Performance improvement"
+      ],
+      "tags": ["utility", "medium-complexity", "coaching", "development", "guidance"],
+      "complexity": "medium",
+      "outputs": ["guidance", "text"],
+      "personality": "Supportive, developmental"
+    },
+    {
+      "id": "instruction-reflector",
+      "name": "Instruction Reflector",
+      "file": "instruction-reflector.md",
+      "category": "utility",
+      "description": "Analyzes and improves Claude Code instructions in CLAUDE.md based on conversation history",
+      "use_cases": [
+        "Optimizing AI instructions",
+        "Reviewing conversation patterns",
+        "Implementing improvements",
+        "Enhancing CLAUDE.md"
+      ],
+      "tags": ["utility", "medium-complexity", "optimization", "instructions", "analysis"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Reflective, improvement-focused"
+    },
+    {
+      "id": "prompt-engineering-patterns",
+      "name": "Prompt Engineering Patterns",
+      "file": "prompt-engineering-patterns.md",
+      "category": "utility",
+      "description": "Specializes in advanced prompt engineering techniques for LLM applications",
+      "use_cases": [
+        "Designing prompts",
+        "Optimizing prompt performance",
+        "Chain-of-thought prompting",
+        "Few-shot learning implementation"
+      ],
+      "tags": ["utility", "medium-complexity", "prompts", "optimization", "guidance"],
+      "complexity": "medium",
+      "outputs": ["guidance", "documentation"],
+      "personality": "Technical, methodical"
+    },
+    {
+      "id": "workflow-diagrams",
+      "name": "Workflow Diagrams",
+      "file": "workflow-diagrams.md",
+      "category": "utility",
+      "description": "Agent for creating workflow diagrams and visual representations",
+      "use_cases": [
+        "Creating workflow diagrams",
+        "Visualizing processes",
+        "Diagramming workflows",
+        "Process mapping"
+      ],
+      "tags": ["utility", "low-complexity", "diagrams", "visualization", "documentation"],
+      "complexity": "low",
+      "outputs": ["documentation", "diagrams"],
+      "personality": "Visual, systematic"
+    },
+    {
+      "id": "codebase-analyzer",
+      "name": "Codebase Analyzer",
+      "file": "codebase-analyzer.md",
+      "category": "utility",
+      "description": "Analyzes codebase implementation details, traces data flow, understands component work",
+      "use_cases": [
+        "Understanding code implementation",
+        "Tracing data flow",
+        "Technical understanding",
+        "File:line reference extraction"
+      ],
+      "tags": ["utility", "medium-complexity", "analysis", "implementation", "text"],
+      "complexity": "medium",
+      "outputs": ["text", "documentation"],
+      "personality": "Analytical, precise"
+    },
+    {
+      "id": "prompt-template-system",
+      "name": "Prompt Template System",
+      "file": "prompt-template-system.md",
+      "category": "utility",
+      "description": "Agent for managing and creating prompt template systems",
+      "use_cases": [
+        "Template system design",
+        "Prompt template creation",
+        "Template management",
+        "System organization"
+      ],
+      "tags": ["utility", "medium-complexity", "templates", "prompts", "development"],
+      "complexity": "medium",
+      "outputs": ["documentation", "code"],
+      "personality": "Systematic, organized"
+    },
+    {
+      "id": "skill-creator",
+      "name": "Skill Creator",
+      "file": "skill-creator.md",
+      "category": "utility",
+      "description": "Guides users through the complete skill creation process for extending Claude's capabilities",
+      "use_cases": [
+        "Creating new skills",
+        "Packaging skills",
+        "Skill requirements analysis",
+        "Tool integration design"
+      ],
+      "tags": ["utility", "medium-complexity", "development", "creation", "guidance"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Guiding, developmental"
+    },
+    {
+      "id": "web-search-researcher",
+      "name": "Web Search Researcher",
+      "file": "web-search-researcher.md",
+      "category": "utility",
+      "description": "Performs web searches from URLs and analyzes content based on queries",
+      "use_cases": [
+        "Web content fetching",
+        "URL analysis",
+        "Research from web",
+        "Documentation retrieval"
+      ],
+      "tags": ["utility", "medium-complexity", "research", "web", "analysis"],
+      "complexity": "medium",
+      "outputs": ["text", "documentation"],
+      "personality": "Investigative, thorough"
+    },
+    {
+      "id": "fullstack-dev",
+      "name": "Fullstack Dev",
+      "file": "fullstack-dev.md",
+      "category": "utility",
+      "description": "Creates high-quality full-stack applications using TypeScript, React, Vite, Express.js, FastAPI, and modern UI frameworks",
+      "use_cases": [
+        "Building full-stack apps",
+        "Creating React applications",
+        "Backend API development",
+        "Full-stack prototyping"
+      ],
+      "tags": ["engineering", "high-complexity", "fullstack", "development", "code"],
+      "complexity": "high",
+      "outputs": ["code", "documentation"],
+      "personality": "Comprehensive, best-practice focused"
+    },
+    {
+      "id": "deep-reflector",
+      "name": "Deep Reflector",
+      "file": "deep-reflector.md",
+      "category": "utility",
+      "description": "Comprehensive session analysis and learning capture specialist",
+      "use_cases": [
+        "Capturing session learnings",
+        "Extracting development patterns",
+        "Recording preferences",
+        "Future interaction improvement"
+      ],
+      "tags": ["utility", "medium-complexity", "session", "analysis", "documentation"],
+      "complexity": "medium",
+      "outputs": ["documentation", "text"],
+      "personality": "Reflective, pattern-focused"
+    },
+    {
+      "id": "github-issue-fixer",
+      "name": "Github Issue Fixer",
+      "file": "github-issue-fixer.md",
+      "category": "utility",
+      "description": "GitHub issue resolution specialist. Analyzes, plans, and implements fixes with proper testing",
+      "use_cases": [
+        "Fixing GitHub issues",
+        "Issue analysis and planning",
+        "Implementing bug fixes",
+        "PR creation for fixes"
+      ],
+      "tags": ["utility", "medium-complexity", "github", "workflow", "code"],
+      "complexity": "medium",
+      "outputs": ["code", "documentation"],
+      "personality": "Problem-solver, methodical"
+    },
+    {
+      "id": "codebase-locator",
+      "name": "Codebase Locator",
+      "file": "codebase-locator.md",
+      "category": "utility",
+      "description": "Locates files, directories, and components relevant to a feature or task",
+      "use_cases": [
+        "Finding files related to features",
+        "Component discovery",
+        "Directory exploration",
+        "File navigation"
+      ],
+      "tags": ["utility", "low-complexity", "search", "discovery", "navigation"],
+      "complexity": "low",
+      "outputs": ["guidance", "text"],
+      "personality": "Navigational, discovery-focused"
+    },
+    {
+      "id": "codacy",
+      "name": "Codacy",
+      "file": "codacy.md",
+      "category": "utility",
+      "description": "Configuration for AI behavior when interacting with Codacy's MCP Server",
+      "use_cases": [
+        "Codacy MCP integration",
+        "Code quality analysis",
+        "Automated code review"
+      ],
+      "tags": ["utility", "low-complexity", "mcp", "analysis", "review"],
+      "complexity": "low",
+      "outputs": ["analysis", "guidance"],
+      "personality": "Quality-focused, integration-aware"
+    },
+    {
+      "id": "codebase-pattern-finder",
+      "name": "Codebase Pattern Finder",
+      "file": "codebase-pattern-finder.md",
+      "category": "utility",
+      "description": "Finds similar implementations, usage examples, and existing patterns in the codebase",
+      "use_cases": [
+        "Finding similar implementations",
+        "Code example search",
+        "Pattern discovery",
+        "Implementation reference"
+      ],
+      "tags": ["utility", "low-complexity", "search", "patterns", "code"],
+      "complexity": "low",
+      "outputs": ["code", "text"],
+      "personality": "Reference-focused, comparative"
+    },
+    {
+      "id": "agent-sdk-verifier-py",
+      "name": "Agent Sdk Verifier Py",
+      "file": "agent-sdk-verifier-py.md",
+      "category": "engineering",
+      "description": "Verifies that Python Agent SDK applications are properly configured and deployment-ready",
+      "use_cases": [
+        "Python SDK verification",
+        "Best practices validation",
+        "Configuration checking",
+        "Deployment readiness"
+      ],
+      "tags": ["engineering", "medium-complexity", "verification", "sdk", "python"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Verification-focused, quality-assuring"
+    },
+    {
+      "id": "thoughts-locator",
+      "name": "Thoughts Locator",
+      "file": "thoughts-locator.md",
+      "category": "utility",
+      "description": "Discovers relevant documents in thoughts/ directory for research tasks",
+      "use_cases": [
+        "Finding thought documents",
+        "Research document discovery",
+        "Metadata exploration",
+        "Thought directory navigation"
+      ],
+      "tags": ["utility", "low-complexity", "search", "discovery", "navigation"],
+      "complexity": "low",
+      "outputs": ["guidance", "text"],
+      "personality": "Discovery-focused, research-oriented"
+    },
+    {
+      "id": "pr-reviewer",
+      "name": "Pr Reviewer",
+      "file": "pr-reviewer.md",
+      "category": "utility",
+      "description": "Expert code reviewer for GitHub pull requests with focus on quality, security, and best practices",
+      "use_cases": [
+        "PR code analysis",
+        "Security review",
+        "Best practices verification",
+        "Quality assessment"
+      ],
+      "tags": ["engineering", "medium-complexity", "review", "github", "quality"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Critical, quality-focused, thorough"
+    },
+    {
+      "id": "testing-guidelines",
+      "name": "Testing Guidelines",
+      "file": "testing-guidelines.md",
+      "category": "utility",
+      "description": "Agent for testing guidelines and best practices",
+      "use_cases": [
+        "Testing strategy development",
+        "Best practices guidance",
+        "Test coverage analysis",
+        "Testing methodology"
+      ],
+      "tags": ["utility", "low-complexity", "testing", "guidelines", "documentation"],
+      "complexity": "low",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Methodology-focused, best-practice advocate"
+    },
+    {
+      "id": "research-analyzer",
+      "name": "Research Analyzer",
+      "file": "research-analyzer.md",
+      "category": "utility",
+      "description": "Deeply analyzes research documents, thought documents, and technical analysis files",
+      "use_cases": [
+        "Research document analysis",
+        "Technical document extraction",
+        "Insight mining",
+        "Document synthesis"
+      ],
+      "tags": ["utility", "medium-complexity", "research", "analysis", "text"],
+      "complexity": "medium",
+      "outputs": ["text", "documentation"],
+      "personality": "Analytical, insight-driven"
+    },
+    {
+      "id": "agent-sdk-verifier-ts",
+      "name": "Agent Sdk Verifier Ts",
+      "file": "agent-sdk-verifier-ts.md",
+      "category": "engineering",
+      "description": "Verifies that TypeScript Agent SDK applications are properly configured and deployment-ready",
+      "use_cases": [
+        "TypeScript SDK verification",
+        "Best practices validation",
+        "Configuration checking",
+        "Deployment readiness"
+      ],
+      "tags": ["engineering", "medium-complexity", "verification", "sdk", "typescript"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Verification-focused, quality-assuring"
+    },
+    {
+      "id": "orchestrator",
+      "name": "Orchestrator",
+      "file": "orchestrator.md",
+      "category": "engineering",
+      "description": "Team Lead / Router Agent. Analyzes tasks and delegates them to specialized experts",
+      "use_cases": [
+        "Task delegation",
+        "Complex task routing",
+        "Multi-agent coordination",
+        "Task analysis and planning"
+      ],
+      "tags": ["utility", "high-complexity", "orchestration", "delegation", "workflow"],
+      "complexity": "high",
+      "outputs": ["guidance", "documentation"],
+      "personality": "Strategic, coordinating, leadership"
+    },
+    {
+      "id": "plugin-validator",
+      "name": "Plugin Validator",
+      "file": "plugin-validator.md",
+      "category": "utility",
+      "description": "Validates plugin structure and configuration when user asks about plugin validation",
+      "use_cases": [
+        "Plugin structure validation",
+        "Plugin configuration checking",
+        "Plugin quality assessment",
+        "Best practices verification"
+      ],
+      "tags": ["utility", "medium-complexity", "validation", "plugin", "quality"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Standards-focused, quality-assuring"
+    },
+    {
+      "id": "docs-researcher",
+      "name": "Docs Researcher",
+      "file": "docs-researcher.md",
+      "category": "utility",
+      "description": "Lightweight agent for fetching library documentation without cluttering conversation context",
+      "use_cases": [
+        "Library documentation fetching",
+        "API reference retrieval",
+        "Documentation search",
+        "Context-free documentation"
+      ],
+      "tags": ["utility", "low-complexity", "research", "documentation", "text"],
+      "complexity": "low",
+      "outputs": ["text", "documentation"],
+      "personality": "Efficient, focused, retrieval"
+    },
+    {
+      "id": "code-architect",
+      "name": "Code Architect",
+      "file": "code-architect.md",
+      "category": "engineering",
+      "description": "Designs feature architectures by analyzing existing codebase patterns and conventions",
+      "use_cases": [
+        "Feature architecture design",
+        "Implementation blueprints",
+        "Component design",
+        "Data flow planning"
+      ],
+      "tags": ["engineering", "medium-complexity", "architecture", "design", "documentation"],
+      "complexity": "medium",
+      "outputs": ["documentation", "code"],
+      "personality": "Design-focused, pattern-aware"
+    },
+    {
+      "id": "agent-creator",
+      "name": "Agent Creator",
+      "file": "agent-creator.md",
+      "category": "utility",
+      "description": "Creates autonomous agents for plugins when users want to create new agents",
+      "use_cases": [
+        "Creating new agents",
+        "Agent design and implementation",
+        "Plugin agent development",
+        "Autonomous agent creation"
+      ],
+      "tags": ["utility", "medium-complexity", "development", "creation", "code"],
+      "complexity": "medium",
+      "outputs": ["code", "documentation"],
+      "personality": "Creative, developmental"
+    },
+    {
+      "id": "code-reviewer",
+      "name": "Code Reviewer",
+      "file": "code-reviewer.md",
+      "category": "engineering",
+      "description": "Reviews code for bugs, logic errors, security vulnerabilities, and code quality issues",
+      "use_cases": [
+        "Bug detection",
+        "Security vulnerability scanning",
+        "Code quality assessment",
+        "Convention adherence checking"
+      ],
+      "tags": ["engineering", "medium-complexity", "review", "quality", "code"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Critical, detail-oriented, quality-focused"
+    },
+    {
+      "id": "skill-reviewer",
+      "name": "Skill Reviewer",
+      "file": "skill-reviewer.md",
+      "category": "utility",
+      "description": "Quality review for skills, ensuring best practices and proper structure",
+      "use_cases": [
+        "Skill quality review",
+        "Best practices verification",
+        "Structure validation",
+        "Quality assessment"
+      ],
+      "tags": ["utility", "medium-complexity", "review", "development", "quality"],
+      "complexity": "medium",
+      "outputs": ["documentation", "guidance"],
+      "personality": "Quality-focused, standards-oriented"
+    },
+    {
+      "id": "code-explorer",
+      "name": "Code Explorer",
+      "file": "code-explorer.md",
+      "category": "engineering",
+      "description": "Deeply analyzes existing codebase features by tracing execution paths and mapping architecture",
+      "use_cases": [
+        "Execution path tracing",
+        "Architecture layer mapping",
+        "Pattern and abstraction understanding",
+        "Dependency documentation"
+      ],
+      "tags": ["engineering", "medium-complexity", "analysis", "exploration", "documentation"],
+      "complexity": "medium",
+      "outputs": ["documentation", "text"],
+      "personality": "Curious, architectural, thorough"
     }
   ],
-  "validation": {
-    "rules": {
-      "aliasMinLength": 1,
-      "aliasMaxLength": 100,
-      "descriptionMinLength": 1,
-      "descriptionMaxLength": 1000,
-      "customFieldPerEntry": 5,
-      "requiredBaseFields": ["id", "aliases", "description"]
+  "categories": {
+    "engineering": {
+      "name": "Engineering & Development",
+      "description": "Specialized agents for software development, architecture, and technical tasks",
+      "tags": ["engineering"]
     },
-    "errorMessages": {}
+    "creative": {
+      "name": "Creative & Entertainment",
+      "description": "Agents focused on creative writing, storytelling, and artistic expression",
+      "tags": ["creative"]
+    },
+    "entertainment": {
+      "name": "Entertainment",
+      "description": "Light-hearted agents for fun and humor",
+      "tags": ["entertainment"]
+    },
+    "comedy": {
+      "name": "Comedy Relief",
+      "description": "Technically accurate agents with distinctive, entertaining personalities",
+      "tags": ["comedy"]
+    },
+    "utility": {
+      "name": "Utility & Tools",
+      "description": "General purpose tools and utility agents",
+      "tags": ["utility"]
+    },
+    "command": {
+      "name": "Command Agents",
+      "description": "System management and command-line agents",
+      "tags": ["command"]
+    }
+  },
+  "tag_definitions": {
+    "domain_tags": {
+      "engineering": "Software development and engineering tasks",
+      "utility": "General utility and tool agents",
+      "creative": "Creative and entertainment agents",
+      "command": "System command and management agents"
+    },
+    "complexity_tags": {
+      "low-complexity": "Simple, single-purpose tasks",
+      "medium-complexity": "Moderate tasks with multiple steps",
+      "high-complexity": "Complex tasks with extensive analysis"
+    },
+    "function_tags": {
+      "architecture": "System and feature design",
+      "code-generation": "Writing and generating code",
+      "analysis": "Code and document analysis",
+      "review": "Quality review and validation",
+      "search": "Discovery and navigation",
+      "research": "Deep investigation",
+      "documentation": "Documentation creation",
+      "development": "Tool and artifact creation",
+      "workflow": "Process orchestration",
+      "entertainment": "Fun and creative output",
+      "conversion": "File format conversion",
+      "management": "System and agent control"
+    },
+    "output_tags": {
+      "code": "Primary output is code",
+      "documentation": "Primary output is documentation",
+      "text": "Primary output is text/analysis",
+      "guidance": "Primary output is instructions",
+      "diagrams": "Primary output is diagrams/visuals",
+      "persona": "Output in specific voice/persona"
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "total_agents": 48,
+    "total_groups": 12,
+    "last_updated": "2026-02-07",
+    "catalog_version": "1.0.0"
   }
 }

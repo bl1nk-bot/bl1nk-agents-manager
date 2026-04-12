@@ -1,0 +1,8 @@
+pub const DEFAULT_STALE_TIMEOUT_MS: u64 = 180_000;
+pub const MIN_IDLE_TIME_MS: u64 = 5_000;
+pub const MIN_RUNTIME_BEFORE_STALE_MS: u64 = 30_000;
+pub const MIN_STABILITY_TIME_MS: u64 = 10_000;
+pub const POLLING_INTERVAL_MS: u64 = 3_000;
+pub const TASK_CLEANUP_DELAY_MS: u64 = 10 * 60 * 1_000;
+pub const TASK_TTL_MS: u64 = 30 * 60 * 1000;
+pub const TMUX_CALLBACK_DELAY_MS: u64 = 200;

@@ -1,0 +1,46 @@
+description="Injects context of all relevant files for the Bl1nk Agents Manager"
+prompt = """
+The following output contains the complete
+source code of the Bl1nk Agents Manager (`crates/server`), and `crates/core` and representative test files
+that best conform to the project's testing standards.
+**Pay extremely close attention to these files.** They define the project's
+core architecture, component patterns, and testing standards.
+
+The source code contains the content of absolutely every source code file in
+crates/server and crates/core. You should very rarely need to read any other files from crates/server to resolve
+prompts.
+
+!{find crates/server crates/core \\( -path crates/server/target -o -path crates/core/target -o -name node_modules -o -name .git \\) -prune -o -type f \\( -name "*.rs" \\) ! -name "*.test.rs" ! -name "Cargo.lock" -exec echo "--- {} ---" \\; -exec cat {} \\;}
+
+In addition to the code context, you MUST strictly adhere to the following backend-specific development guidelines when writing code in crates/server.
+
+## Testing Standards
+*   **Async Testing**: ALWAYS use `tokio::test` attribute for async tests instead of blocking code.
+*   **Integration Tests**: Use integration tests to verify HTTP endpoints and Rocket routes.
+*   **Unit Tests**: Use unit tests to verify individual functions and modules.
+*   **Mocking**:
+    *   Reuse existing mock patterns where possible.
+    *   **Parameterized Tests**: Use parameterized tests to reduce duplication and ensure comprehensive coverage.
+
+## Backend Architecture
+*   **HTTP Handling**: You MUST use Rocket framework for HTTP endpoints, following the existing patterns in `crates/server/src/main.rs`.
+*   **State Management**:
+    *   NEVER trigger blocking operations from async contexts. Use proper async/await patterns.
+    *   Use `Arc<Mutex<T>>` or `tokio::sync` primitives for shared state.
+*   **Performance**:
+    *   Avoid blocking operations in async contexts.
+    *   Use proper error handling with `Result` types.
+
+## Configuration & Settings
+*   **Settings vs Args**: Use settings for user-configurable options; do not add new CLI arguments unnecessarily.
+*   **Schema**: Add new settings to `crates/core/src/config.rs`.
+*   **Documentation**:
+    *   If adding new configuration, document in `docs/CONFIGURATION.md`.
+    *   Ensure proper TOML serialization is maintained.
+
+## General
+*   **Logging**: Use `tracing` crate for errors. NEVER leave `println!` or `dbg!` in the code.
+*   **Rust**: Follow Rust idioms and avoid unsafe code unless absolutely necessary.
+
+{{args}}.
+ """

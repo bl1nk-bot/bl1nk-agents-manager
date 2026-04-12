@@ -1,0 +1,7 @@
+description = "Manage Gemini Hooks (Interactive Enable/Disable)"
+prompt = """
+Execute the following Node.js script to configure hooks. This script detects the OS and runs the appropriate configuration script (Powershell, Bash, or Python).
+
+Command:
+`node -e "const fs=require('fs'),cp=require('child_process'),p=require('path');const d='.gemini/hooks';const l=process.platform==='win32'?['hookify-config.ps1','hookify-config.py','hookify-config.sh']:['hookify-config.sh','hookify-config.py','hookify-config.ps1'];for(const f of l){const fp=p.join(d,f);if(fs.existsSync(fp)){console.log('🚀 Running '+f);const c=f.endsWith('.ps1')?'powershell':(f.endsWith('.sh')?'bash':'python');const a=f.endsWith('.ps1')?['-ExecutionPolicy','Bypass','-File',fp]:[fp];cp.spawn(c,a,{stdio:'inherit',shell:true});process.exit(0)}}console.error('❌ No hookify script found in '+d);process.exit(1)"`
+"""

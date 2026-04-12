@@ -1,4 +1,8 @@
 description = "Show how to switch to a different agent"
+tags = ["command", "low-complexity", "management", "switching", "guidance"]
+complexity = "low"
+category = "command"
+outputs = ["guidance"]
 prompt = """
 1. First, get the absolute path of the agent file by running:
    `python3 ${extensionPath}/scripts/agent_manager.py path {{args}}`

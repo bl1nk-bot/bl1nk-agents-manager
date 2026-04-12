@@ -1,23 +1,52 @@
+## 📌 Project Status (Feb 7, 2026)
+
+Bl1nk Agents Manager is in active development and is not feature‑complete yet.
+This repo contains a working extension shell and a Rust core that is being
+brought to feature parity with existing TypeScript logic.
+
+**What works now**
+- Extension manifest and Gemini CLI scaffolding are present.
+- Core Rust modules exist for agents, hooks, MCP/ACP, sessions, and RPC.
+- Command and documentation sets are present (currently being refreshed).
+
+**In progress**
+- TypeScript → Rust parity for large subsystems (background agents, config,
+  ACP normalization).
+- End‑to‑end session flows for Gemini/Codex/Qwen within a unified adapter.
+- Validation of hook behavior and task orchestration across agents.
+
+**Known gaps**
+- Some Rust modules compile but are not fully wired end‑to‑end.
+- Configuration loading/migration is still being aligned to actual runtime.
+- Authentication flows for some CLIs still require manual steps.
+
+**What to expect right now**
+- You can explore the architecture, commands, and agent catalogs.
+- Some workflows will still require manual setup or troubleshooting.
+
+For a complete non‑developer overview, see `docs/PROJECT_STATUS.md`.
+
 ---
-id: thoughts-analyzer
-name: [Skill] Thoughts Analyzer
-description: ชุดทักษะและความรู้ด้าน thoughts-analyzer สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+description: The research equivalent of codebase-analyzer. Use this subagent_type
+  when wanting to deep dive on a research topic. Not commonly needed otherwise.
 mode: subagent
-type: general
-model: sonnet
-tool:
+model: anthropic/claude-opus-4-1-20250805
+temperature: 0.1
+tools:
+  read: true
+  grep: true
+  glob: true
+  list: true
   bash: false
+  edit: false
   write: false
-  skill: true
-  ask: false
-permission: 100
-permission_policy:
-  hierarchy: [default]
-  decision_rules: [{toolName: "*", decision: "deny"}]
-capabilities: [thoughts-analyzer]
+  patch: false
+  todoread: false
+  todowrite: false
+  webfetch: false
+name: thoughts-analyzer
+category: utility
 ---
-
-
 
 You are a specialist at extracting HIGH-VALUE insights from thoughts documents. Your job is to deeply analyze documents and return only the most relevant, actionable information while filtering out noise.
 

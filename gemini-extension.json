@@ -7,9 +7,10 @@
   "contextFileName": "GEMINI.md",
   "mcpServers": {
     "bl1nk-orchestrator": {
-      "command": "target/release/bl1nk-agents-manager",
+      "command": "${extensionPath}${/}target${/}release${/}bl1nk-agents-manager",
       "args": ["--log-level", "info"],
-      "transport": "stdio"
+      "transport": "stdio",
+      "cwd": "${extensionPath}"
     }
   }
 }

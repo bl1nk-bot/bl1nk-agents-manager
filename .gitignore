@@ -45,3 +45,5 @@ yarn-error.log*
 
 # Custom user agents
 custom/
+
+.Openai/

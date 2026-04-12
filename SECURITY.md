@@ -1,144 +1,111 @@
 # Security Policy
+## 📌 Project Status (Feb 7, 2026)
 
+Bl1nk Agents Manager is in active development and is not feature‑complete yet.
+This repo contains a working extension shell and a Rust core that is being
+brought to feature parity with existing TypeScript logic.
+
+**What works now**
+- Extension manifest and Gemini CLI scaffolding are present.
+- Core Rust modules exist for agents, hooks, MCP/ACP, sessions, and RPC.
+- Command and documentation sets are present (currently being refreshed).
+
+**In progress**
+- TypeScript → Rust parity for large subsystems (background agents, config,
+  ACP normalization).
+- End‑to‑end session flows for Gemini/Codex/Qwen within a unified adapter.
+- Validation of hook behavior and task orchestration across agents.
+
+**Known gaps**
+- Some Rust modules compile but are not fully wired end‑to‑end.
+- Configuration loading/migration is still being aligned to actual runtime.
+- Authentication flows for some CLIs still require manual steps.
+
+**What to expect right now**
+- You can explore the architecture, commands, and agent catalogs.
+- Some workflows will still require manual setup or troubleshooting.
+
+For a complete non‑developer overview, see `docs/PROJECT_STATUS.md`.
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.2.x   | :white_check_mark: |
-| 0.1.x   | :warning:          |
-| < 0.1   | :x:                |
+The following versions of Bl1nk Agents Manager are currently supported with security updates:
+
+| Version | Supported |
+|---------|-----------|
+| 0.2.x   | ✅ Yes    |
+| 0.1.x   | ✅ Yes    |
+| < 0.1   | ❌ No     |
 
 ## Reporting a Vulnerability
 
-We take the security of BL1NK Agents Manager seriously. If you discover a security vulnerability, please follow these steps:
+We take security seriously. If you believe you have found a security vulnerability in Bl1nk Agents Manager, please report it responsibly.
 
-### DO NOT
-- ❌ Open a public GitHub issue
-- ❌ Discuss the vulnerability in public forums
-- ❌ Share the vulnerability details with others
+### How to Report
 
-### DO
-- ✅ Email us at: **security@bl1nk.dev** (if available)
-- ✅ Open a [GitHub Security Advisory](https://github.com/billlzzz18/bl1nk-agents-manager/security/advisories/new)
-- ✅ Include as much detail as possible:
-  - Type of vulnerability (e.g., XSS, injection, auth bypass)
-  - Affected component/version
-  - Steps to reproduce
-  - Potential impact
-  - Suggested fix (if any)
+1. **Do not** open a public issue on GitHub
+2. Email your report to: [security@bl1nk.site](mailto:security@bl1nk.site)
+3. Include a detailed description of the vulnerability
+4. Include steps to reproduce the issue
+5. Include any relevant screenshots or logs
 
-## Response Timeline
+### What to Expect
 
-| Stage | Expected Time |
-|-------|---------------|
-| Acknowledgment | Within 48 hours |
-| Initial Assessment | Within 1 week |
-| Fix Development | Within 2-4 weeks |
-| Public Disclosure | After fix is released |
+- We will acknowledge your report within 48 hours
+- We will provide an initial assessment within 7 days
+- We will keep you updated on progress
+- We will not disclose the vulnerability publicly until a fix is released
 
 ## Security Best Practices
 
-### For Users
+### Agent Sandboxing
 
-1. **Keep Dependencies Updated**
-   ```bash
-   # Check for outdated dependencies
-   cargo outdated
+- Agents run in isolated processes
+- No shared memory between agents
+- Clean shutdown on errors
 
-   # Update to latest versions
-   cargo update
-   ```
+### Input Validation
 
-2. **Use Latest Version**
-   Always use the latest version of BL1NK Agents Manager to get security patches.
+- JSON Schema validation for all MCP requests
+- Path validation to prevent directory traversal
+- Command whitelisting for agent execution
 
-3. **Review Agent Configurations**
-   - Never hardcode secrets in agent config files
-   - Use environment variables for sensitive data
-   - Review permission policies before deploying
+### Rate Limiting
 
-4. **Enable Rate Limiting**
-   Configure rate limits for all agents to prevent abuse:
-   ```toml
-   [agents.qwen-coder.rate_limit]
-   requests_per_minute = 60
-   requests_per_day = 2000
-   ```
+- Per-agent request limits (60 requests/minute, 2000 requests/day)
+- Configurable rate limits
+- Automatic reset timers
 
-### For Developers
+### Data Privacy
 
-1. **No Secrets in Code**
-   - Never commit API keys, passwords, or tokens
-   - Use `.env` files (add to `.gitignore`)
-   - Use secret scanning tools
+- Local processing by default
+- No data sent to external servers (except user-configured model providers)
+- Conversation history stored locally
 
-2. **Validate All Input**
-   - Validate agent configurations
-   - Sanitize user inputs
-   - Use type-safe parsing
+## Security Considerations
 
-3. **Minimize Unsafe Code**
-   - Avoid `.unwrap()` in production code
-   - Use `?` operator for error propagation
-   - Minimize `unsafe` blocks
+### Agent Trust
 
-4. **Run Security Audits**
-   ```bash
-   # Install cargo-audit
-   cargo install cargo-audit
+- Only use agents from trusted sources
+- Review agent prompts before use
+- Agents have access to filesystem based on user permissions
 
-   # Run security audit
-   cargo audit
-   ```
+### Configuration
 
-5. **Use Permission System**
-   - Configure permission tiers appropriately
-   - Review rule_parser.rs for custom policies
-   - Enable hook system for additional validation
+- Review configuration before deployment
+- Use least privilege principles for agent permissions
+- Regularly update to latest version
 
-## Known Security Features
+### Dependencies
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| Permission Tiers | ✅ Active | Default/User/Admin/Extension/Workspace |
-| Rate Limiting | ✅ Active | Per-agent RPM/RPD throttling |
-| Hook System | ✅ Active | Pre/Post tool validation |
-| Rule Parser | ✅ Active | Regex-based command filtering |
-| Input Validation | ✅ Active | Schema-based config validation |
-| Secret Scanning | 🟡 Planned | Automated secret detection in CI |
+- All dependencies are reviewed for security
+- Rust crates are audited for known vulnerabilities
+- Keep dependencies updated
 
-## Audit History
+## Related Security Resources
 
-| Date | Tool | Result |
-|------|------|--------|
-| 2026-04-12 | cargo audit | Not run (cargo-audit not installed) |
-| - | - | - |
-
-> Run `make security-check` to perform the latest security audit.
-
-## Third-Party Dependencies
-
-All dependencies are managed via `Cargo.toml` and `Cargo.lock`. We use:
-- **serde** for type-safe serialization
-- **tokio** for async runtime
-- **clap** for CLI argument parsing
-- **tracing** for structured logging
-
-Regular dependency audits should be performed using:
-```bash
-cargo audit
-cargo outdated
-```
-
-## Security Changelog
-
-| Date | Change | Type |
-|------|--------|------|
-| 2026-04-12 | Initial security policy | Documentation |
-| 2026-04-12 | Add security update script | Tooling |
-| 2026-04-12 | Add commitlint for message validation | Process |
+- [OWASP AI Security](https://owasp.org/www-project-ai-security/)
+- [Model Context Protocol Security](https://modelcontextprotocol.io/)
 
 ---
 
-**Last Updated:** 2026-04-12
-**Next Review:** 2026-05-12
+Thank you for helping us keep Bl1nk secure!

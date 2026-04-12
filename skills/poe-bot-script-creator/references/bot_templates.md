@@ -1,0 +1,45 @@
+# Poe Bot Templates
+## 📌 Project Status (Feb 7, 2026)
+
+Bl1nk Agents Manager is in active development and is not feature‑complete yet.
+This repo contains a working extension shell and a Rust core that is being
+brought to feature parity with existing TypeScript logic.
+
+**What works now**
+- Extension manifest and Gemini CLI scaffolding are present.
+- Core Rust modules exist for agents, hooks, MCP/ACP, sessions, and RPC.
+- Command and documentation sets are present (currently being refreshed).
+
+**In progress**
+- TypeScript → Rust parity for large subsystems (background agents, config,
+  ACP normalization).
+- End‑to‑end session flows for Gemini/Codex/Qwen within a unified adapter.
+- Validation of hook behavior and task orchestration across agents.
+
+**Known gaps**
+- Some Rust modules compile but are not fully wired end‑to‑end.
+- Configuration loading/migration is still being aligned to actual runtime.
+- Authentication flows for some CLIs still require manual steps.
+
+**What to expect right now**
+- You can explore the architecture, commands, and agent catalogs.
+- Some workflows will still require manual setup or troubleshooting.
+
+For a complete non‑developer overview, see `docs/PROJECT_STATUS.md`.
+
+Standardized templates for common bot types.
+
+## 1. Translator Template
+- **Base Model**: Claude-3-Haiku
+- **System Prompt**: "You are a professional translator. Translate the input to {target_language}."
+- **Parameters**: `target_language`, `formality`.
+
+## 2. Researcher Template
+- **Base Model**: Claude-3-Sonnet
+- **Skills**: `web_search`, `summarization`.
+- **Workflow**: Search -> Extract -> Summarize.
+
+## 3. Code Expert Template
+- **Base Model**: GPT-4o
+- **Skills**: `code_analysis`, `unit_testing`.
+- **System Prompt**: "You are an expert software engineer. Provide clean, tested code."

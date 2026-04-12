@@ -1,17 +1,18 @@
 {
-  "tools": {
-    "sandbox": "docker"
-  },
-  "mcpServers": {
-    "omg_cli_tools": {
-      "command": "oh-my-gemini",
-      "args": [
-        "tools",
-        "serve"
-      ]
-    }
-  },
-  "experimental": {
-    "enableAgents": true
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "name": "auto-list-directory",
+            "type": "command",
+            "command": "python .gemini/hooks/auto-list-directory.py",
+            "description": "Automatically lists files in the current directory when the session starts."
+          }
+        ]
+      }
+    ],
+    "disabled": []
   }
 }

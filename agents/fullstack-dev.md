@@ -1,38 +1,40 @@
----
-id: fullstack-dev
-name: Fullstack Expert
-description: สุดยอดผู้เชี่ยวชาญด้าน Fullstack Expert (Built-in Elite) ทำหน้าที่เป็นเสาหลักในงานประเภท code
-mode: all
-type: code
-model: opus
-color: "#FFD700"
-tool:
-  bash: true
-  write: true
-  skill: true
-  ask: true
-permission: 900
-permission_policy:
-  hierarchy: [admin, user, workspace]
-  decision_rules:
-    - toolName: "bash"
-      commandPrefix: "cargo "
-      decision: "allow"
-      priority: 100
-      reason: "Allow safe development commands"
-    - toolName: "*"
-      decision: "ask_user"
-      priority: 0
-      reason: "Default to safe confirmation"
-  weight:
-    mode: 0.3
-    type: 0.3
-    tool: 0.2
-    evidence: 0.2
-capabilities: [fullstack-dev]
----
+## 📌 Project Status (Feb 7, 2026)
 
+Bl1nk Agents Manager is in active development and is not feature‑complete yet.
+This repo contains a working extension shell and a Rust core that is being
+brought to feature parity with existing TypeScript logic.
 
+**What works now**
+- Extension manifest and Gemini CLI scaffolding are present.
+- Core Rust modules exist for agents, hooks, MCP/ACP, sessions, and RPC.
+- Command and documentation sets are present (currently being refreshed).
+
+**In progress**
+- TypeScript → Rust parity for large subsystems (background agents, config,
+  ACP normalization).
+- End‑to‑end session flows for Gemini/Codex/Qwen within a unified adapter.
+- Validation of hook behavior and task orchestration across agents.
+
+**Known gaps**
+- Some Rust modules compile but are not fully wired end‑to‑end.
+- Configuration loading/migration is still being aligned to actual runtime.
+- Authentication flows for some CLIs still require manual steps.
+
+**What to expect right now**
+- You can explore the architecture, commands, and agent catalogs.
+- Some workflows will still require manual setup or troubleshooting.
+
+For a complete non‑developer overview, see `docs/PROJECT_STATUS.md`.
+
+---
+name: fullstack-dev
+description: Use this agent when you need to create high-quality full-stack applications
+  using TypeScript, React, Vite, Express.js, Fastify, FastAPI, Flask, and modern UI
+  frameworks. This agent specializes in creating efficient, maintainable code that
+  follows best practices for performance, security, and maintainability.
+color: Purple
+category: utility
+---
 
 You are an expert full-stack developer with deep proficiency in TypeScript, React, Vite, Express.js, Fastify, FastAPI, Flask, and modern UI/UX frameworks like Tailwind CSS, Shadcn UI, and Radix UI. Your primary responsibility is to create highly efficient and maintainable full-stack code that follows best practices and clean code principles.
 

@@ -75,6 +75,86 @@ def cmd_info(agents, agent_id):
     if 'personality' in agent:
         print(f"\nPersonality: {agent['personality']}")
 
+def cmd_examples(agents, agent_id=None):
+    """Show example prompts for one or more agents."""
+    target_agents = []
+    if agent_id:
+        if agent_id in agents:
+            target_agents.append(agents[agent_id])
+        else:
+            print(f"Error: Agent '{agent_id}' not found.", file=sys.stderr)
+            sys.exit(1)
+    else:
+        # Pick 3 diverse agents
+        ids = list(agents.keys())
+        import random
+        selected_ids = random.sample(ids, min(3, len(ids)))
+        target_agents = [agents[sid] for sid in selected_ids]
+
+    for agent in target_agents:
+        print(f"\n--- Examples for {agent['name']} ({agent['id']}) ---")
+        use_cases = agent.get('use_cases', [])
+        if not use_cases:
+            print("No specific use cases defined.")
+            continue
+        
+        for i, uc in enumerate(use_cases, 1):
+            print(f"{i}. Prompt Idea: {uc}")
+
+def cmd_new(base_dir):
+    """Interactive wizard to create a new agent."""
+    print("AI Agent Creation Wizard")
+    print("========================")
+    
+    agent_id = input("Agent ID (kebab-case, e.g. my-expert): ").strip().lower()
+    if not agent_id:
+        print("Error: ID required.")
+        return
+
+    name = input("Agent Name (e.g. My Expert): ").strip()
+    category = input("Category (engineering/creative/utility/comedy): ").strip().lower()
+    description = input("Short Description: ").strip()
+    
+    # Simple prompt template
+    prompt_content = f"""---
+name: {agent_id}
+description: {description}
+category: {category}
+---
+
+You are an expert {name}. 
+Your goal is to...
+"""
+
+    extension_root = os.path.dirname(base_dir)
+    custom_dir = os.path.join(extension_root, 'custom')
+    os.makedirs(custom_dir, exist_ok=True)
+    
+    md_path = os.path.join(custom_dir, f"{agent_id}.md")
+    with open(md_path, 'w') as f:
+        f.write(prompt_content)
+    
+    # Update custom registry
+    registry_path = os.path.join(custom_dir, 'agents.json')
+    registry = {"agents": []}
+    if os.path.exists(registry_path):
+        with open(registry_path, 'r') as f:
+            registry = json.load(f)
+    
+    registry['agents'].append({
+        "id": agent_id,
+        "name": name,
+        "file": f"{agent_id}.md",
+        "category": category,
+        "description": description
+    })
+    
+    with open(registry_path, 'w') as f:
+        json.dump(registry, f, indent=2)
+        
+    print(f"\n✅ Agent '{name}' created and registered in 'custom/'")
+    print(f"Path: {md_path}")
+
 def cmd_path(agents, agent_id):
     """Output only the absolute path of the agent file (for scripting)."""
     agent = agents.get(agent_id)
@@ -96,6 +176,9 @@ def main():
     path_parser = subparsers.add_parser('path', help='Get agent file path')
     path_parser.add_argument('agent_id', help='Agent ID')
 
+    subparsers.add_parser('examples', help='Show agent examples').add_argument('agent_id', nargs='?', help='Agent ID')
+    subparsers.add_parser('new', help='Create a new agent')
+
     args = parser.parse_args()
     
     # Setup paths
@@ -109,6 +192,10 @@ def main():
         cmd_info(agents, args.agent_id)
     elif args.command == 'path':
         cmd_path(agents, args.agent_id)
+    elif args.command == 'examples':
+        cmd_examples(agents, args.agent_id)
+    elif args.command == 'new':
+        cmd_new(script_dir)
 
 if __name__ == "__main__":
     main()

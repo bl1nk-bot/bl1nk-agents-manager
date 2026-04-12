@@ -25,7 +25,7 @@ def run_test():
     env["RUST_LOG"] = "info" 
     
     proc = subprocess.Popen(
-        [BINARY_PATH, "--config", ".config/config.example.toml"],
+        [BINARY_PATH, "--config", "config_test.toml"],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, # Capture stderr for ready check
@@ -44,7 +44,7 @@ def run_test():
         print("⏳ Waiting for server to start...")
         start_time = time.time()
         server_ready = False
-        while time.time() - start_time < 10:
+        while time.time() - start_time < 5:
             try:
                 line = q_stderr.get_nowait()
                 line_str = line.decode().strip()

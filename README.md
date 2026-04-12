@@ -1,322 +1,361 @@
-# 🤖 BL1NK Agents Manager
+# 🤖 Bl1nk Agents Manager
 
-![Version](https://img.shields.io/badge/version-0.2.0--dev-blue.svg)
+![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-<<<<<<< HEAD
-![Status](https://img.shields.io/badge/status-active--development-yellow.svg)
-![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)
-![Commits](https://img.shields.io/badge/commits-137-blue.svg)
-
-> **Intelligent MCP/ACP Orchestrator with Bundled PMAT Support**
-> **🔥 NEW: Unified Registry, Monitoring & Honesty Layer (In Progress)**
-=======
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)
 
-> **Intelligent MCP/ACP Orchestrator with Bundled PMAT Support**
->>>>>>> origin/dev
+> **A sophisticated multi-agent orchestration system with 48+ specialized agents for Gemini CLI**
 
-A high-performance Rust-based orchestrator that bridges MCP (Model Context Protocol) for Gemini CLI integration with ACP (Agent Client Protocol) for sub-agent communication.
+Bl1nk Agents Manager transforms the generic Gemini CLI assistant into a specialized workforce of AI agents. It provides a comprehensive system for managing, switching, and maintaining a library of **System Agents**—specialized prompts designed for specific domains like Architecture, Coding, Writing, Research, and more.
 
 ---
 
+## 📌 Project Status (Feb 7, 2026)
+
+Bl1nk Agents Manager is in active development and is not feature‑complete yet.
+This repo contains a working extension shell and a Rust core that is being
+brought to feature parity with existing TypeScript logic.
+
+**What works now**
+- Extension manifest and Gemini CLI scaffolding are present.
+- Core Rust modules exist for agents, hooks, MCP/ACP, sessions, and RPC.
+- Command and documentation sets are present (currently being refreshed).
+
+**In progress**
+- TypeScript → Rust parity for large subsystems (background agents, config,
+  ACP normalization).
+- End‑to‑end session flows for Gemini/Codex/Qwen within a unified adapter.
+- Validation of hook behavior and task orchestration across agents.
+
+**Known gaps**
+- Some Rust modules compile but are not fully wired end‑to‑end.
+- Configuration loading/migration is still being aligned to actual runtime.
+- Authentication flows for some CLIs still require manual steps.
+
+**What to expect right now**
+- You can explore the architecture, commands, and agent catalogs.
+- Some workflows will still require manual setup or troubleshooting.
+
+For a complete non‑developer overview, see `docs/PROJECT_STATUS.md`.
 ## 📖 Table of Contents
 
 - [Features](#-features)
-- [Architecture](#-architecture)
-- [Installation](#-installation)
 - [Quick Start](#-quick-start)
-- [Configuration](#-configuration)
+- [Available Agents](#-available-agents)
+- [Architecture](#-architecture)
+- [Hooks System](#-hooks-system)
 - [Development](#-development)
-- [Documentation](#-documentation)
+- [Contributing](#-contributing)
 - [License](#-license)
 
 ---
 
 ## ✨ Features
 
-*   **Dual-Protocol Support**: Operates as both MCP Server and ACP Client simultaneously
-*   **Intelligent Routing**: Task-aware agent selection with priority-based fallback
-*   **Hook System**: Extensible hooks for PreToolUse, PostToolUse, PermissionRequest, and more
-*   **Rate Limiting**: Per-agent quota tracking (requests/minute and requests/day)
-*   **Background Tasks**: Async execution with task tracking
-*   **Type Safety**: JSON Schema generation with compile-time validation
-*   **PMAT Bundled**: Built-in context analysis with optional bundled PMAT
-<<<<<<< HEAD
-*   **🔥 NEW: Unified Registry**: Keyword semantic search, multi-layer monitoring, evidence tracking, and dynamic weight calculation (In Progress)
-=======
->>>>>>> origin/dev
+- **📚 Extensive Agent Library**: Access 48+ pre-built, high-quality agents including Software Architect, Code Generator, Cloudflare specialist, Code Reviewer, and more.
+- **⚡ High-Performance Core**: Built on Rust with Tokio async runtime for concurrent operations.
+- **🪝 Advanced Hook System**: 35+ hooks for context injection, monitoring, recovery, and automation.
+- **🔄 Dual-Protocol Support**: MCP (Model Context Protocol) for CLI integration and internal agent communication.
+- **📦 Modular Architecture**: Clean separation between agents, hooks, filesystem, search, and session management.
+- **🎯 Specialized Workflows**: Dedicated agents for code review, architecture planning, research, documentation, and full-stack development.
+- **🔧 Extensible Design**: Easy addition of custom agents and hooks with comprehensive metadata.
+
+---
+
+## 🚀 Quick Start
+
+### Installation
+
+1. Navigate to your Gemini CLI extensions directory:
+
+   ```bash
+   cd ~/.gemini/extensions/
+   ```
+
+2. Clone this repository:
+
+   ```bash
+   git clone https://github.com/billlzzz18/bl1nk-agents-manager.git
+   cd bl1nk-agents-manager
+   ```
+
+3. Build the project:
+
+   ```bash
+   just build
+   ```
+
+### Usage
+
+List all available agents:
+
+```bash
+/system-agent
+```
+
+Get detailed information about an agent:
+
+```bash
+/system-agent:info architect
+```
+
+Switch to a specific agent:
+
+```bash
+/system-agent:switch pirate
+```
+
+Create a new agent:
+
+```bash
+/system-agent:new
+```
+
+---
+
+## 🧠 Available Agents
+
+### Engineering & Development
+
+| Agent | Description |
+|-------|-------------|
+| [Architect](agents/architect.md) | Software architecture and design planning |
+| [Code Generator](agents/code-generator.md) | Rapid, clean code generation |
+| [Code Reviewer](agents/code-reviewer.md) | Bug detection and code quality |
+| [Code Explorer](agents/code-explorer.md) | Deep codebase analysis |
+| [Code Architect](agents/code-architect.md) | Feature architecture design |
+| [Cloudflare](agents/cloudflare.md) | Cloudflare Workers and Agents |
+| [Fullstack Dev](agents/fullstack-dev.md) | Full-stack application development |
+| [Orchestrator](agents/orchestrator.md) | Task delegation and routing |
+
+### Research & Analysis
+
+| Agent | Description |
+|-------|-------------|
+| [Codebase Analyzer](agents/codebase-analyzer.md) | Implementation detail analysis |
+| [Codebase Locator](agents/codebase-locator.md) | File and component discovery |
+| [Codebase Pattern Finder](agents/codebase-pattern-finder.md) | Similar implementation search |
+| [Research Analyzer](agents/research-analyzer.md) | Research document analysis |
+| [Thoughts Analyzer](agents/thoughts-analyzer.md) | Deep research on topics |
+| [Web Search Researcher](agents/web-search-researcher.md) | Web content research |
+
+### Documentation & Planning
+
+| Agent | Description |
+|-------|-------------|
+| [Docbot Pro](agents/docbot-pro.md) | Enterprise documentation |
+| [Docs Researcher](agents/docs-researcher.md) | Library documentation |
+| [Insight Documenter](agents/insight-documenter.md) | Technical breakthrough docs |
+| [Plan Implementation Reviewer](agents/plan-implementation-reviewer.md) | Plan validation |
+
+### Utilities & Tools
+
+| Agent | Description |
+|-------|-------------|
+| [Agent Creator](agents/agent-creator.md) | Create new agents |
+| [Command Creator](agents/command-creator.md) | Create Claude Code commands |
+| [Skill Creator](agents/skill-creator.md) | Create new skills |
+| [Skill Reviewer](agents/skill-reviewer.md) | Skill quality review |
+| [Plugin Validator](agents/plugin-validator.md) | Plugin structure validation |
+| [Task Management](agents/task-management.md) | Task tracking and context |
+| [UI Engineer](agents/ui-engineer.md) | Frontend/UI development |
+
+### Creative & Entertainment
+
+| Agent | Description |
+|-------|-------------|
+| [Creative Writer](agents/creative-writer.md) | Poetry, prose, storytelling |
+| [Pirate](agents/pirate.md) | Pirate dialect assistant |
+| [Yoda](agents/yoda.md) | Yoda-speak assistant |
+| [Shakespeare](agents/shakespeare.md) | Shakespearean English |
+| [Cowboy](agents/cowboy.md) | Western dialect |
+| [Gen Z](agents/gen-z.md) | Gen Z slang |
+| [Comedian](agents/comedian.md) | Dad jokes |
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Gemini MCP Proxy                          │
-├─────────────────────────────────────────────────────────────┤
-│  Layer 1: MCP Server (PMCP)                                │
-│  └── TypedTools, JSON-RPC 2.0, stdio transport            │
-├─────────────────────────────────────────────────────────────┤
-│  Layer 2: Rate Limiting                                    │
-│  └── Per-agent quota tracking, concurrent task management  │
-├─────────────────────────────────────────────────────────────┤
-│  Layer 3: Agent Management                                  │
-│  ├── AgentRegistry     │ AgentRouter    │ AgentExecutor   │
-│  └── HookAggregator                                           │
-├─────────────────────────────────────────────────────────────┤
-│  Layer 4: Protocol Adapters                                 │
-│  └── ACP Client │ External Agents (CLI processes)           │
-└─────────────────────────────────────────────────────────────┘
+bl1nk-agents-manager/
+├── agents/                 # Agent definitions (48+ agents)
+│   ├── *.md               # Agent system prompts
+│   └── agents.json        # Agent registry
+├── commands/               # CLI command definitions
+│   ├── system-agent.toml   # Main /system-agent command
+│   └── agent/              # Subcommands
+├── crates/
+│   ├── core/              # Core library
+│   │   └── src/
+│   │       ├── lib.rs     # Main library entry
+│   │       ├── agents/    # Agent system (16 modules)
+│   │       ├── hooks/     # Hook system (35+ hooks)
+│   │       ├── mcp/       # MCP protocol
+│   │       ├── session/   # Session management
+│   │       ├── filesystem/ # File operations
+│   │       ├── search/    # Conversation search
+│   │       ├── projects/   # Project management
+│   │       ├── adapters/   # Protocol adapters
+│   │       ├── config/    # Configuration
+│   │       ├── rpc/       # RPC handling
+│   │       └── events/    # Event system
+│   └── server/             # HTTP/Rocket server
+├── skills/                 # AI skill definitions
+├── scripts/                # Python management scripts
+├── docs/                   # Documentation
+└── justfile               # Build commands
 ```
 
-### Core Modules
+### Core Components
 
-| Module | Purpose |
-|--------|---------|
-<<<<<<< HEAD
-| `src/registry/` | 🔥 NEW: Unified Registry, Schema, Monitoring |
-=======
->>>>>>> origin/dev
-| `src/mcp/` | MCP server implementation using PMCP SDK |
-| `src/agents/` | Agent registry, routing, and execution |
-| `src/hooks/` | Hook aggregator for event handling |
-| `src/permissions/` | Permission management and rule parsing |
-| `src/persistence/` | Task and state persistence |
-| `src/system/` | System discovery and resource management |
+1. **Agent System** (`crates/core/src/agents/`):
+   - `register.rs`: Agent registry and management
+   - `router.rs`: Intelligent agent routing
+   - `executor.rs`: Task execution
+   - `orchestrator.rs`: Multi-agent coordination
+   - `expert.rs`, `researcher.rs`, `explorer.rs`: Specialized agents
+
+2. **Hooks System** (`crates/core/src/hooks/`):
+   - `todo_continuation_enforcer.rs`: Task continuity
+   - `context_window_monitor.rs`: Memory monitoring
+   - `directory_agents_injector.rs`: Context injection
+   - `ralph_loop.rs`: Loop detection and recovery
+   - `edit_error_recovery.rs`: Error recovery
+   - 30+ more hooks for various purposes
+
+3. **Session Management** (`crates/core/src/session/`):
+   - Process lifecycle management
+   - Backend session handling
+   - Message routing
+
+4. **Filesystem** (`crates/core/src/filesystem/`):
+   - Cross-platform file operations
+   - Git integration
+   - Path normalization
 
 ---
 
-## 📦 Installation
+## 🪝 Hooks System
 
-### Prerequisites
+Bl1nk includes 35+ hooks for advanced automation and monitoring:
 
-*   Rust 1.70+ ([Install](https://rustup.rs))
-*   For bundled PMAT: `cargo build --features bundle-pmat`
+### Context & Injection
 
-### Build from Source
+| Hook | Purpose |
+|------|---------|
+| `directory_agents_injector` | Inject agent context from directory |
+| `directory_readme_injector` | Inject README context |
+| `compaction_context_injector` | Context compaction |
+| `rules_injector` | Rule injection |
+| `ralph_loop` | Loop detection and recovery |
 
-```bash
-# Standard build
-cargo build --release
+### Monitoring & Recovery
 
-# With bundled PMAT (recommended)
-cargo build --release --features bundle-pmat
+| Hook | Purpose |
+|------|---------|
+| `context_window_monitor` | Memory usage monitoring |
+| `session_recovery` | Session recovery |
+| `anthropic_context_window_limit_recovery` | Claude context recovery |
+| `empty_task_response_detector` | Detect empty responses |
+| `edit_error_recovery` | Recover from edit errors |
 
-# Full features
-cargo build --release --features bundle-pmat-full
-```
+### Task Management
 
-### Quick Install
+| Hook | Purpose |
+|------|---------|
+| `todo_continuation_enforcer` | Enforce TODO completion |
+| `category_skill_reminder` | Category/skill reminders |
+| `task_resume_info` | Task resumption info |
+| `start_work` | Work session startup |
 
-```bash
-# Install to ~/.local/bin
-make install-bundled
-```
+### Development Tools
 
----
-
-## 🚀 Quick Start
-
-### 1. Configure Agents
-
-Edit `config.toml` or create `~/.config/bl1nk-agents-manager/config.toml`:
-
-```toml
-[server]
-host = "127.0.0.1"
-port = 3000
-max_concurrent_tasks = 5
-
-[main_agent]
-name = "gemini"
-type = "gemini-cli"
-
-[[agents]]
-id = "qwen-coder"
-name = "Qwen Coder"
-type = "cli"
-command = "qwencode"
-rate_limit = { requests_per_minute = 60, requests_per_day = 2000 }
-capabilities = ["code-generation", "refactoring"]
-
-[routing]
-rules = []
-```
-
-### 2. Run the Server
-
-```bash
-# Development mode
-make dev
-
-# Or release mode
-make run-bundled
-```
-
-### 3. Connect to Gemini CLI
-
-Add to your MCP config:
-
-```json
-{
-  "mcpServers": {
-    "bl1nk-proxy": {
-      "command": "/path/to/bl1nk-agents-manager",
-      "transport": "stdio"
-    }
-  }
-}
-```
-
----
-
-## ⚙️ Configuration
-
-### Agent Configuration
-
-```toml
-[[agents]]
-id = "my-agent"
-name = "My Agent"
-type = "cli"                    # cli, gemini-extension, internal
-command = "/path/to/agent"       # For cli type
-args = ["--arg1", "value1"]
-rate_limit = { requests_per_minute = 60, requests_per_day = 2000 }
-capabilities = ["task-type"]
-priority = 100                   # 0-255, higher = preferred
-enabled = true
-cost = 0                         # 0=free, <500=cheap, >=500=expensive
-```
-
-### Routing Rules
-
-```toml
-[routing]
-tier = "user"  # default, user, admin (higher tier = higher priority)
-
-[[routing.rules]]
-task_type = "code-generation"
-keywords = ["write", "code", "implement"]
-preferred_agents = ["qwen-coder", "gpt-coder"]
-priority = 500  # 0-999
-enabled = true
-```
+| Hook | Purpose |
+|------|---------|
+| `comment_checker` | Check for TODO comments |
+| `tool_output_truncator` | Truncate long outputs |
+| `thinking_block_validator` | Validate thinking blocks |
+| `question_label_truncator` | Truncate question labels |
 
 ---
 
 ## 🛠️ Development
 
-### Project Structure
+### Prerequisites
 
-```
-bl1nk-agents-manager/
-├── src/
-│   ├── main.rs              # Entry point
-│   ├── config.rs             # TOML configuration
-│   ├── rate_limit.rs         # Rate limiting
-│   ├── agents/
-│   │   ├── mod.rs           # Agent management
-│   │   ├── register.rs      # Agent registry
-│   │   ├── router.rs        # Smart routing
-│   │   ├── extractor.rs      # Task execution
-│   │   └── creator.rs        # Agent spec creation
-│   ├── hooks/
-│   │   ├── mod.rs           # Hook exports
-│   │   └── hook_aggregator.rs # Hook execution & merging
-│   ├── mcp/                 # MCP server (PMCP)
-│   │   ├── mod.rs
-│   │   └── protocol.rs
-│   ├── permissions/          # Permission system
-│   │   ├── permission_manager.rs
-│   │   ├── rule_parser.rs
-│   │   └── shell_semantics.rs
-│   ├── persistence/          # Data persistence
-│   └── system/              # System discovery
-│       └── discovery.rs
-├── commands/                 # CLI command definitions
-│   └── agent/
-├── scripts/                  # Python tools
-│   └── test_integration.py  # Integration tests
-├── docs/                     # Documentation
-│   ├── ARCHITECTURE.md
-│   ├── AGENT_GUIDE.md
-│   ├── QUICKSTART.md
-│   └── PROJECT_SUMMARY.md
-├── Cargo.toml
-├── Makefile
-└── rustfmt.toml
-```
+- Rust 1.70+
+- Python 3.8+ (for management scripts)
+- Gemini CLI
 
-### Available Make Commands
+### Setup
 
 ```bash
-make help           # Show all commands
-make build          # Standard release build
-make build-bundled  # Build with bundled PMAT
-make run            # Run standard build
-make run-bundled    # Run with bundled PMAT
-make dev            # Hot-reload development
-make test           # Run all tests
-make check          # Quick compilation check
-make fmt            # Format code
-make clippy         # Lint code
-make lint           # Run all linters
-make spellcheck     # Spell check
-make all-check      # Run all checks
-make clean          # Clean build artifacts
+# Clone the repository
+git clone https://github.com/billlzzz18/bl1nk-agents-manager.git
+cd bl1nk-agents-manager
+
+# Install development tools
+just setup
+
+# Build the project
+just build
+
+# Run tests
+just test
 ```
+
+### Available Commands
+
+```bash
+just build          # Standard release build
+just build-bundled  # Build with bundled PMAT
+just run            # Run the binary
+just dev            # Development mode with hot-reload
+just test           # Run all tests
+just check          # Quick compilation check
+just fmt            # Format code
+just clippy         # Run linter
+just validate-agents # Validate agent files
+just fix-agents     # Fix agent metadata
+```
+
+### Project Structure
+
+- `crates/core/src/agents/mod.rs` - Agent system (16 modules)
+- `crates/core/src/hooks/mod.rs` - Hook system (35+ hooks)
+- `crates/core/src/mcp/mod.rs` - MCP orchestrator
+- `crates/core/src/session/` - Session management
+- `crates/core/src/filesystem/` - File operations
+- `crates/core/src/search/` - Conversation search
+- `crates/core/src/projects/` - Project management
 
 ---
 
-## 📚 Documentation
+## 🤝 Contributing
 
-| Document | Description |
-|----------|-------------|
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and internals |
-| [AGENT_GUIDE.md](docs/AGENT_GUIDE.md) | Creating ACP-compatible agents |
-| [QUICKSTART.md](docs/QUICKSTART.md) | 5-minute getting started guide |
-<<<<<<< HEAD
-| [PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) | 🔥 UPDATED: Complete project status report |
-| [POLICY_MAPPING.md](docs/POLICY_MAPPING.md) | Permission policy documentation |
-| [SESSION_CONTEXT.md](docs/SESSION_CONTEXT.md) | Development session context |
-=======
-| [PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) | Project overview (Thai) |
->>>>>>> origin/dev
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
----
+### Adding New Agents
 
-## 🔧 Hook System
+1. Create a new `.md` file in `agents/` with YAML frontmatter
+2. Add agent metadata to `agents/agents.json`
+3. Run `just validate-agents` to verify
 
-The system supports hooks for intercepting and modifying behavior:
+### Adding New Hooks
 
-### Available Events
-
-- **PreToolUse**: Before a tool is used
-- **PostToolUse**: After a tool is used
-- **PostToolUseFailure**: After tool failure
-- **Stop**: Stop execution
-- **SubagentStop**: Stop a subagent
-- **UserPromptSubmit**: User prompt submission
-- **PermissionRequest**: Permission handling
-
-### Example Hook Output
-
-```json
-{
-  "decision": "allow",
-  "reason": "Tool usage permitted",
-  "continue_execution": true,
-  "system_message": "Optional user message"
-}
-```
+1. Create a new module in `crates/core/src/hooks/`
+2. Implement the hook interface
+3. Register in `crates/core/src/hooks/mod.rs`
 
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-**Built with ❤️ using Rust, Tokio, and PMCP**
+**Built with ❤️ for the AI Agent Community.**
+
+Maintained by [billlzzz18](https://github.com/billlzzz18) and contributors.

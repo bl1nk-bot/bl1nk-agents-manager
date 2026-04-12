@@ -1,0 +1,23 @@
+[package]
+name = "bl1nk-server"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "bl1nk-server"
+path = "src/main.rs"
+
+[dependencies]
+bl1nk-core = { path = "../core" }
+tokio = { version = "1.0", features = ["full"] }
+clap = { version = "4.5", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+anyhow = "1.0"
+rocket = { version = "0.5.0", features = ["json"] }
+rocket_ws = "0.1.0"
+include_dir = "0.7"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+urlencoding = "2.1"
+uuid = { version = "1.0", features = ["v4"] }

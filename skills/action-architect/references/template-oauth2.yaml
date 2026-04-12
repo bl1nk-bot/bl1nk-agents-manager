@@ -1,0 +1,29 @@
+openapi: 3.1.0
+info:
+  title: API with OAuth 2.0 Authentication
+  description: Template for APIs that require OAuth 2.0.
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /user-profile:
+    get:
+      operationId: getUserProfile
+      summary: Retrieve user profile using OAuth 2.0
+      responses:
+        '200':
+          description: Successful response
+components:
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://example.com/oauth/authorize
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            read: Grants read access
+            write: Grants write access
+security:
+  - OAuth2:
+      - read

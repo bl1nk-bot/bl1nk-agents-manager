@@ -1,0 +1,26 @@
+{
+  "name": "bl1nk-agents-manager",
+  "version": "0.2.0",
+  "description": "System Agents Manager for Gemini CLI",
+  "main": "index.js",
+  "scripts": {
+    "build": "just build",
+    "build-bundled": "just build-bundled",
+    "setup": "pnpm install && just build",
+    "run": "just run",
+    "dev": "just dev",
+    "test": "just test",
+    "fmt": "just fmt",
+    "clippy": "just clippy",
+    "validate-agents": "just validate-agents",
+    "fix-agents": "just fix-agents"
+  },
+  "keywords": [
+    "gemini",
+    "cli",
+    "agents",
+    "ai"
+  ],
+  "author": "billlzzz18 <team@bl1nk.site>",
+  "license": "MIT"
+}

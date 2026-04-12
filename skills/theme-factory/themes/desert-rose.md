@@ -1,0 +1,46 @@
+# Desert Rose
+## 📌 Project Status (Feb 7, 2026)
+
+Bl1nk Agents Manager is in active development and is not feature‑complete yet.
+This repo contains a working extension shell and a Rust core that is being
+brought to feature parity with existing TypeScript logic.
+
+**What works now**
+- Extension manifest and Gemini CLI scaffolding are present.
+- Core Rust modules exist for agents, hooks, MCP/ACP, sessions, and RPC.
+- Command and documentation sets are present (currently being refreshed).
+
+**In progress**
+- TypeScript → Rust parity for large subsystems (background agents, config,
+  ACP normalization).
+- End‑to‑end session flows for Gemini/Codex/Qwen within a unified adapter.
+- Validation of hook behavior and task orchestration across agents.
+
+**Known gaps**
+- Some Rust modules compile but are not fully wired end‑to‑end.
+- Configuration loading/migration is still being aligned to actual runtime.
+- Authentication flows for some CLIs still require manual steps.
+
+**What to expect right now**
+- You can explore the architecture, commands, and agent catalogs.
+- Some workflows will still require manual setup or troubleshooting.
+
+For a complete non‑developer overview, see `docs/PROJECT_STATUS.md`.
+
+A soft and sophisticated theme with dusty, muted tones perfect for elegant presentations.
+
+## Color Palette
+
+- **Dusty Rose**: `#d4a5a5` - Soft primary color
+- **Clay**: `#b87d6d` - Earthy accent
+- **Sand**: `#e8d5c4` - Warm neutral backgrounds
+- **Deep Burgundy**: `#5d2e46` - Rich dark contrast
+
+## Typography
+
+- **Headers**: FreeSans Bold
+- **Body Text**: FreeSans
+
+## Best Used For
+
+Fashion presentations, beauty brands, wedding planning, interior design, boutique businesses.
