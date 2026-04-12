@@ -3,7 +3,8 @@
 # ==============================================================================
 
 .PHONY: help build build-bundled build-full run dev test check fmt clippy clean install doc setup lint spellcheck all-check \
-        parallel parallel-verbose fmt-only clippy-only test-only commitlint commitlint-range changelog \
+        parallel parallel-verbose fmt-only clippy-only test-only review review-comment \
+        commitlint commitlint-range changelog \
         bump-patch bump-minor bump-major security-check security-update
 
 # --- Default Behavior ---
@@ -35,6 +36,8 @@ help:
 	@echo "  all-check             - Run all checks sequentially"
 	@echo "  parallel              - Run fmt + clippy + test in PARALLEL (fast)"
 	@echo "  parallel-verbose      - Run parallel with verbose output"
+	@echo "  review [TARGET]       - Code review (local changes, PR#, or file)"
+	@echo "  review-comment PR#    - Code review + post inline comments"
 	@echo ""
 	@echo "Release Management:"
 	@echo "  bump-patch            - Bump patch version (0.1.0 -> 0.1.1)"
@@ -148,6 +151,12 @@ clippy-only:
 
 test-only:
 	@bash scripts/parallel-check.sh --test
+
+review:
+	@bash scripts/review.sh $(filter-out $@,$(MAKECMDGOALS))
+
+review-comment:
+	@bash scripts/review.sh $(filter-out $@,$(MAKECMDGOALS)) --comment
 
 
 # ==============================================================================
