@@ -51,7 +51,6 @@ jobs:
         with:
           model: qwen/qwen3.6-plus:free
           kilo_api_key: ${{ secrets.KILO_API_KEY }}
-          kilo_org_id: ${{ secrets.KILO_ORG_ID }}
           oidc_base_url: "https://api.kilo.ai/api/gateway"
           share: ${{ github.event.repository.private == false }}
           use_github_token: true
