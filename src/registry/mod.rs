@@ -1,3 +1,5 @@
+pub mod schema;
+
 use bl1nk_keyword_core::{
     KeywordRegistry, KeywordSearch, Validator,
     ValidationError, ValidatorError, SearchResult,

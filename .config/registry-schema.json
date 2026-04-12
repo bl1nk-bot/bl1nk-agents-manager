@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Registry",
+  "description": "Registry หลัก เก็บ keywords ทั้งหมด",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/KeywordEntry"
+      }
+    }
+  },
+  "required": [
+    "version",
+    "keywords"
+  ],
+  "$defs": {
+    "KeywordEntry": {
+      "description": "Keyword entry พร้อม semantic search และ dynamic weights",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "term": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "meanings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeywordMeaning"
+          }
+        },
+        "expected_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "base_weight": {
+          "type": "number",
+          "format": "float"
+        },
+        "calculated_weight": {
+          "type": "number",
+          "format": "float"
+        }
+      },
+      "required": [
+        "id",
+        "term",
+        "aliases",
+        "meanings",
+        "expected_evidence",
+        "base_weight",
+        "calculated_weight"
+      ]
+    },
+    "KeywordMeaning": {
+      "description": "ความหมายของ keyword ในบริบทต่างๆ",
+      "type": "object",
+      "properties": {
+        "context": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "string"
+        },
+        "related_terms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "context",
+        "definition",
+        "related_terms"
+      ]
+    }
+  }
+}
