@@ -48,17 +48,19 @@ jobs:
       - name: Run Kilo
         uses: Kilo-Org/kilocode/github@latest
         with:
-          # ใช้ Qwen model ฟรี
+          # ใช้ Qwen model ผ่าน Kilo Gateway
           model: qwen/qwen3.6-plus:free
 
-          # Authentication
+          # Kilo Authentication เท่านั้น
           kilo_api_key: ${{ secrets.KILO_API_KEY }}
           kilo_org_id: ${{ secrets.KILO_ORG_ID }}
+
+          # Kilo Gateway Base URL
+          oidc_base_url: "https://api.kilo.ai/api/gateway"
 
           # Configuration
           share: ${{ github.event.repository.private == false }}
           use_github_token: true
-          oidc_base_url: "https://api.kilo.ai"
 
           # Custom prompt (optional)
           prompt: ${{ github.event.inputs.prompt || '' }}
@@ -68,6 +70,7 @@ jobs:
         run: |
           git config --global user.name "kilo-ai[bot]"
           git config --global user.email "kilo-ai[bot]@users.noreply.github.com"
+
 
           if [[ -n "$(git status --porcelain)" ]]; then
             git add -A

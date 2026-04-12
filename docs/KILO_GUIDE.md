@@ -196,27 +196,26 @@ Report ผลเป็นภาษาไทย
 
 ### Model Selection
 
-Workflow นี้ใช้ **`qwen/qwen3.6-plus:free`** (ฟรี)
+Workflow นี้ใช้ **`qwen/qwen3.6-plus:free`** ผ่าน **Kilo Gateway**
 
 เปลี่ยน model ได้ใน `.github/workflows/kilo.yml`:
 ```yaml
 with:
-  model: anthropic/claude-sonnet-4-20250514  # ใช้ ANTHROPIC_API_KEY
-  # หรือ
-  model: openai/gpt-4o                       # ใช้ OPENAI_API_KEY
-  # หรือ
-  model: qwen/qwen3.6-plus:free              # ใช้ KILO_API_KEY
+  model: qwen/qwen3.6-plus:free              # ใช้ผ่าน Kilo (แนะนำ)
+  # หรือ model อื่นๆที่ Kilo รองรับ
 ```
 
 ### Environment Variables
 
-เพิ่ม secrets ตามต้องการ:
+ตั้งค่า secrets ใน GitHub Settings → Secrets:
 ```bash
-# ตั้งค่าใน GitHub Settings → Secrets
-KILO_API_KEY=your_key
-KILO_ORG_ID=your_org_id
-ANTHROPIC_API_KEY=your_key    # ถ้าใช้ Claude
-OPENAI_API_KEY=your_key       # ถ้าใช้ GPT
+# จำเป็น
+KILO_API_KEY=your_key_from_kilo
+KILO_ORG_ID=your_org_id        # ถ้ามี
+
+# Kilo ใช้ gateway ของตัวเอง ไม่ต้องใช้ API keys อื่น
+# ❌ ไม่ต้องใช้ ANTHROPIC_API_KEY
+# ❌ ไม่ต้องใช้ OPENAI_API_KEY
 ```
 
 ---
