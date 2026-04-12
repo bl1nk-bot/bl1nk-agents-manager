@@ -31,25 +31,9 @@ impl Persistence {
         if path.is_absolute()
             || path.components().any(|c| matches!(c, std::path::Component::ParentDir | std::path::Component::Prefix(_)))
         {
-    fn validate_relative_path(&self, relative_path: &str) -> Result<PathBuf> {
-        let path = Path::new(relative_path);
-        if path.is_absolute() {
-            return Err(anyhow::anyhow!("relative_path must not be an absolute path: {}", relative_path));
+            return Err(anyhow::anyhow!("relative_path must not be an absolute path or contain path traversal: {}", relative_path));
         }
-        // Block path traversal attempts
-        let joined = self.base_path.join(relative_path);
-        // Use lexical normalization to detect traversal without filesystem access
-        let mut normalized = PathBuf::new();
-        for component in joined.components() {
-            match component {
-                std::path::Component::ParentDir => { normalized.pop(); }
-                c => normalized.push(c.as_os_str()),
-            }
-        }
-        if !normalized.starts_with(&self.base_path) {
-            return Err(anyhow::anyhow!("relative_path escapes base directory: {}", relative_path));
-        }
-        Ok(joined)
+        Ok(self.base_path.join(relative_path))
     }
 
     pub async fn save_json<T: Serialize>(&self, relative_path: &str, data: &T) -> Result<()> {

@@ -1,0 +1,41 @@
+# commitlint.config.json - Configuration for commit message linting
+#
+# Conventional Commit format: type(scope): description
+#
+# Valid types:
+#   feat        - New feature
+#   fix         - Bug fix
+#   docs        - Documentation changes
+#   style       - Formatting (no logic change)
+#   refactor    - Code refactoring
+#   perf        - Performance improvements
+#   test        - Test changes
+#   chore       - Maintenance tasks
+#   security    - Security updates
+#   conductor   - Conductor project management
+#   ci          - CI/CD changes
+#   build       - Build system changes
+#   revert      - Revert previous commit
+#
+# Valid scopes (examples):
+#   registry, agents, mcp, hooks, permissions, persistence,
+#   system, config, cli, docs, scripts, deps
+#
+# Rules:
+#   - Subject line max 72 characters
+#   - Type must be lowercase
+#   - Scope (if present) must be lowercase
+#   - Description must not be empty
+#   - Description should not end with period
+
+{
+  "validTypes": [
+    "feat", "fix", "docs", "style", "refactor", "perf", "test",
+    "chore", "security", "conductor", "ci", "build", "revert"
+  ],
+  "maxSubjectLength": 72,
+  "typeCase": "lowercase",
+  "scopeCase": "lowercase",
+  "requireDescription": true,
+  "descriptionNoTrailingPeriod": true
+}

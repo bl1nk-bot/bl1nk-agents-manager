@@ -254,4 +254,49 @@ mod tests {
         assert!(tracker.check_and_increment("test-agent", &agent_limit).await);
         assert!(tracker.check_and_increment("test-agent", &agent_limit).await);
     }
+
+    #[tokio::test]
+    async fn test_rate_limit_integer_boundary() {
+        let config = RateLimitingConfig {
+            strategy: "round-robin".to_string(),
+            track_usage: true,
+            usage_db_path: "/tmp/boundary.db".to_string(),
+        };
+        let mut tracker = RateLimitTracker::new(config);
+        let limits = RateLimit { requests_per_minute: 0, requests_per_day: 0 };
+        
+        // เมื่อขีดจำกัดเป็น 0 ทุกอย่างควรถูกบล็อก
+        assert!(!tracker.check_and_increment("agent1", &limits).await);
+    }
+
+    #[tokio::test]
+    async fn test_rate_limit_concurrency_stress() {
+        use std::sync::Arc;
+        use tokio::sync::Mutex;
+
+        let config = RateLimitingConfig {
+            strategy: "round-robin".to_string(),
+            track_usage: true,
+            usage_db_path: "/tmp/stress.db".to_string(),
+        };
+        let tracker = Arc::new(Mutex::new(RateLimitTracker::new(config)));
+        let limits = RateLimit { requests_per_minute: 10, requests_per_day: 100 };
+        
+        let mut handles = vec![];
+        for _ in 0..20 {
+            let t = tracker.clone();
+            let l = limits.clone();
+            handles.push(tokio::spawn(async move {
+                let mut guard = t.lock().await;
+                guard.check_and_increment("agent-stress", &l).await
+            }));
+        }
+
+        let mut success_count = 0;
+        for h in handles {
+            if h.await.unwrap() { success_count += 1; }
+        }
+
+        assert_eq!(success_count, 10, "ควรอนุญาตให้ผ่านได้แค่ 10 คำขอตามกำหนด");
+    }
 }

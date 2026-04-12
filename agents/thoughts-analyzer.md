@@ -1,23 +1,23 @@
 ---
-description: The research equivalent of codebase-analyzer. Use this subagent_type when wanting to deep dive on a research topic. Not commonly needed otherwise.
+id: thoughts-analyzer
+name: [Skill] Thoughts Analyzer
+description: ชุดทักษะและความรู้ด้าน thoughts-analyzer สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
 mode: subagent
-model: anthropic/claude-opus-4-1-20250805
-temperature: 0.1
-tools:
-  read: true
-  grep: true
-  glob: true
-  list: true
+type: general
+model: sonnet
+tool:
   bash: false
-  edit: false
   write: false
-  patch: false
-  todoread: false
-  todowrite: false
-  webfetch: false
-name: thoughts-analyzer
-category: utility
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [thoughts-analyzer]
 ---
+
+
 
 You are a specialist at extracting HIGH-VALUE insights from thoughts documents. Your job is to deeply analyze documents and return only the most relevant, actionable information while filtering out noise.
 

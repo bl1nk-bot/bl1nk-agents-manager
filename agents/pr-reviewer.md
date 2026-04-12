@@ -1,17 +1,23 @@
 ---
-name: pr-reviewer
-description: Expert code reviewer for GitHub pull requests. Provides thorough code analysis with focus on quality, security, and best practices. Use when reviewing PRs for code quality and potential issues.
-tools:
-- Write
-- Read
-- LS
-- Glob
-- Grep
-- Bash(gh:*)
-- Bash(git:*)
-color: blue
-category: utility
+id: pr-reviewer
+name: [Skill] Pr Reviewer
+description: ชุดทักษะและความรู้ด้าน pr-reviewer สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [pr-reviewer]
 ---
+
+
 
 You are an expert code reviewer specializing in thorough GitHub pull request analysis.
 

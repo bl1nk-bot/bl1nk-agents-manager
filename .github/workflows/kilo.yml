@@ -1,0 +1,57 @@
+name: kilo
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "คำสั่งสำหรับ Kilo"
+        required: true
+        default: "review this PR"
+        type: string
+      issue_number:
+        description: "Issue/PR number (ถ้าไม่ใส่จะใช้จาก event ปัจจุบัน)"
+        required: false
+        type: string
+
+jobs:
+  kilo:
+    # รันเฉพาะเมื่อมี /kilo หรือ /kc ใน comment หรือ manual trigger
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.comment.body, '/kc') ||
+      contains(github.event.comment.body, '/kilo')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          # ✅ ให้ Kilo จัดการ credentials เองผ่าน OIDC
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
+
+      - name: Setup Kilo
+        uses: ./.github/actions/setup-kilo
+
+      - name: Run Kilo
+        uses: Kilo-Org/kilocode/github@latest
+        with:
+          model: qwen/qwen3.6-plus:free
+          kilo_api_key: ${{ secrets.KILO_API_KEY }}
+          oidc_base_url: "https://api.kilo.ai/api/gateway"
+          share: ${{ github.event.repository.private == false }}
+          use_github_token: true
+          prompt: ${{ github.event.inputs.prompt || '' }}

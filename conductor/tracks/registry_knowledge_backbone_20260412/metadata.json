@@ -1,0 +1,8 @@
+{
+  "track_id": "registry_knowledge_backbone_20260412",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-04-12T00:00:00Z",
+  "updated_at": "2026-04-12T00:00:00Z",
+  "description": "สร้าง Unified Registry, Monitoring & Honesty Layer - ระบบบันทึกทุกชั้น (people, model, tool, input, output) และพิสูจน์ว่าทำให้โมเดลดีขึ้นจริง พร้อม keyword mapping, semantic search, dynamic weight calculation, และ honesty checks"
+}

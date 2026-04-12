@@ -2,14 +2,13 @@ use crate::config::Config;
 use crate::agents::{AgentRegistry, AgentExecutor};
 use crate::rate_limit::RateLimitTracker;
 use anyhow::Result;
-use pmcp::{ServerBuilder, TypedTool, RequestHandlerExtra, Error as McpError};
+use pmcp::{ServerBuilder, TypedTool, RequestHandlerExtra};
 use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
 pub struct Orchestrator {
-    config: Config,
     agent_registry: Arc<RwLock<AgentRegistry>>,
     rate_limiter: Arc<RwLock<RateLimitTracker>>,
     executor: Arc<AgentExecutor>,
@@ -89,22 +88,39 @@ impl Orchestrator {
             AgentRegistry::new(config.agents.clone(), report.as_ref())
         ));
 
+        // สร้าง RegistryService เพื่อใช้ Smart Search
+        let registry_path = "agents/agents.json";
+        let registry_service = if std::path::Path::new(registry_path).exists() {
+            crate::registry::RegistryService::from_file(registry_path).ok().map(Arc::new)
+        } else {
+            None
+        };
+
         let mut tracker = RateLimitTracker::new(config.rate_limiting.clone());
         if let Err(e) = tracker.load_usage().await {
             tracing::error!("❌ Failed to load rate limit usage: {}", e);
         }
         let rate_limiter = Arc::new(RwLock::new(tracker));
 
-        let executor = Arc::new(
-            AgentExecutor::new(
-                agent_registry.clone(),
-                rate_limiter.clone(),
-                config.routing.clone(),
-            )
+        // โหลดสถิตินโยบาย (Reputation Ledger) จากไฟล์กลาง
+        let weight_registry = Arc::new(RwLock::new(
+            crate::registry::WeightRegistry::load().await.unwrap_or_else(|_| crate::registry::WeightRegistry::new())
+        ));
+
+        let mut executor_logic = AgentExecutor::new(
+            agent_registry.clone(),
+            rate_limiter.clone(),
+            config.routing.clone(),
+            weight_registry.clone(),
         );
 
+        if let Some(service) = registry_service {
+            executor_logic = executor_logic.with_registry(service);
+        }
+
+        let executor = Arc::new(executor_logic);
+
         Ok(Self {
-            config,
             agent_registry,
             rate_limiter,
             executor,
@@ -112,17 +128,17 @@ impl Orchestrator {
     }
 
     pub async fn delegate_task_internal(&self, args: DelegateTaskArgs) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.delegate_task(args).await
+        self.executor.delegate_task(args).await.map_err(|e| pmcp::Error::internal(&e.to_string()))
     }
 
     pub async fn approve_task_internal(&self, task_id: String, confirmed_agent_id: Option<String>) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.approve_task(task_id, confirmed_agent_id).await
+        self.executor.approve_task(task_id, confirmed_agent_id).await.map_err(|e| pmcp::Error::internal(&e.to_string()))
     }
 
     pub async fn run_stdio(self) -> Result<()> {
         let executor = self.executor.clone();
         let agent_registry = self.agent_registry.clone();
-        let rate_limiter = self.rate_limiter.clone();
+        let _rate_limiter = self.rate_limiter.clone();
 
         // Build MCP server with typed tools
         let server = ServerBuilder::new()
@@ -192,21 +208,13 @@ impl Orchestrator {
         }
 
         // Flush usage on shutdown
-        let rate_limiter = rate_limiter.read().await;
-        if let Err(e) = rate_limiter.flush_usage().await {
+        let rate_limiter_guard = self.rate_limiter.read().await;
+        if let Err(e) = rate_limiter_guard.flush_usage().await {
             tracing::error!("❌ Failed to flush rate limit usage on shutdown: {}", e);
         }
+        drop(rate_limiter_guard);
 
-        match server_error {
-            Some(e) => Err(e.into()),
-            None => Ok(()),
-        }
-
-        // Flush usage on shutdown
-        let rate_limiter = rate_limiter.read().await;
-        if let Err(e) = rate_limiter.flush_usage().await {
-            tracing::error!("❌ Failed to flush rate limit usage on shutdown: {}", e);
-        }
+        if let Some(e) = server_error { return Err(e.into()) }
 
         Ok(())
     }

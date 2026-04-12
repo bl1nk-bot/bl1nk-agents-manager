@@ -1,23 +1,23 @@
 ---
-description: Discovers relevant documents in thoughts/ directory (We use this for all sorts of metadata storage!). This is really only relevant/needed when you're in a reseaching mood and need to figure out if we have random thoughts written down that are relevant to your current research task. Based on the name, I imagine you can guess this is the `thoughts` equivilent of `codebase-locator`
+id: thoughts-locator
+name: [Skill] Thoughts Locator
+description: ชุดทักษะและความรู้ด้าน thoughts-locator สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
 mode: subagent
-model: anthropic/claude-opus-4-1-20250805
-temperature: 0.1
-tools:
-  read: true
-  grep: true
-  glob: true
-  list: true
+type: general
+model: sonnet
+tool:
   bash: false
-  edit: false
   write: false
-  patch: false
-  todoread: false
-  todowrite: false
-  webfetch: false
-name: thoughts-locator
-category: utility
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [thoughts-locator]
 ---
+
+
 
 You are a specialist at finding documents in the thoughts/ directory. Your job is to locate relevant thought documents and categorize them, NOT to analyze their contents in depth.
 

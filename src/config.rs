@@ -1,6 +1,6 @@
 use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -38,10 +38,14 @@ pub struct MainAgentConfig {
 pub struct AgentConfig {
     pub id: String,
     pub name: String,
+    pub description: String,
+    pub mode: String,
     #[serde(rename = "type")]
     pub agent_type: String,
     #[serde(default)]
     pub command: Option<String>,
+    #[serde(default = "default_command")]
+    pub command: String,
     #[serde(default)]
     pub args: Option<Vec<String>>,
     #[serde(default)]
@@ -57,6 +61,19 @@ pub struct AgentConfig {
     pub requires: Vec<String>,
     #[serde(default)]
     pub cost: u16,
+    pub tool: AgentToolPermissions,
+    pub permission: u32,
+    pub permission_policy: serde_json::Value,
+}
+
+fn default_command() -> String { "true".to_string() }
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct AgentToolPermissions {
+    pub bash: bool,
+    pub write: bool,
+    pub skill: bool,
+    pub ask: bool,
 }
 
 fn default_true() -> bool { true }
@@ -89,19 +106,25 @@ pub struct RoutingConfig {
     pub rules: Vec<RoutingRule>,
 }
 
+impl Default for RoutingConfig {
+    fn default() -> Self {
+        Self {
+            tier: RoutingTier::Default,
+            rules: Vec::new(),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "lowercase")]
+#[derive(Default)]
 pub enum RoutingTier {
+    #[default]
     Default,
     User,
     Admin,
 }
 
-impl Default for RoutingTier {
-    fn default() -> Self {
-        RoutingTier::Default
-    }
-}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RoutingRule {
@@ -266,6 +289,10 @@ impl Config {
             for fmt in &formats {
                 paths.push(home_path.join(format!(".config/bl1nk-agents-manager/config.{}", fmt)));
                 paths.push(home_path.join(format!(".{}.{}", name, fmt)));
+                for name in &filenames {
+                    paths.push(home_path.join(format!(".config/bl1nk-agents-manager/config.{}", fmt)));
+                    paths.push(home_path.join(format!(".{}.{}", name, fmt)));
+                }
             }
         }
         
@@ -399,5 +426,31 @@ mod tests {
     fn test_tier_ordering() {
         assert!(RoutingTier::Admin > RoutingTier::User);
         assert!(RoutingTier::User > RoutingTier::Default);
+    }
+
+    #[test]
+    fn test_load_non_existent_file() {
+        let result = Config::load("non_existent_file.toml");
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_parse_malformed_toml() {
+        let content = "invalid = [toml";
+        let result = Config::parse_toml(content);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_validate_empty_agents() {
+        let config = Config {
+            server: ServerConfig { host: "127.0.0.1".into(), port: 3000, max_concurrent_tasks: 5 },
+            main_agent: MainAgentConfig { name: "test".into(), agent_type: "cli".into(), session_token_path: None },
+            agents: vec![],
+            routing: RoutingConfig { tier: RoutingTier::Default, rules: vec![] },
+            rate_limiting: RateLimitingConfig { strategy: "rr".into(), track_usage: true, usage_db_path: "db".into() },
+            logging: LoggingConfig::default(),
+        };
+        assert!(config.validate().is_err());
     }
 }

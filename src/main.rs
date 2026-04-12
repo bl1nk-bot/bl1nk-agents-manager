@@ -5,6 +5,7 @@ mod rate_limit;
 mod system;
 mod persistence;
 mod hooks;
+use bl1nk_agents_manager::{config, mcp, system};
 
 use anyhow::Result;
 use clap::Parser;

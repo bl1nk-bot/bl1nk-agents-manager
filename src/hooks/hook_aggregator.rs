@@ -67,14 +67,14 @@ impl HookOutput {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// ผลลัพธ์จากการเรียกใช้ Hook หนึ่งตัว
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct HookExecutionResult {
     /// การทำงานสำเร็จหรือไม่ (ไม่มีข้อผิดพลาด)
     pub success: bool,
     /// ผลลัพธ์ที่ได้จาก Hook (ถ้ามี)
     pub output: Option<HookOutput>,
     /// ข้อผิดพลาดที่เกิดขึ้น (ถ้ามี)
-    pub error: Option<anyhow::Error>,
+    pub error: Option<String>, // เปลี่ยนเป็น String เพื่อให้ Clone ได้
     /// ระยะเวลาที่ใช้ในการทำงาน
     pub duration: Duration,
 }
@@ -84,14 +84,14 @@ pub struct HookExecutionResult {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// ผลลัพธ์ที่ได้หลังจากรวม Hook หลายตัวเข้าด้วยกัน
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AggregatedHookResult {
     /// การทำงานของทุก Hook สำเร็จทั้งหมดหรือไม่
     pub success: bool,
     /// ผลลัพธ์ดิบจากทุก Hook
     pub all_outputs: Vec<HookOutput>,
     /// ข้อผิดพลาดที่เกิดขึ้นทั้งหมด
-    pub errors: Vec<anyhow::Error>,
+    pub errors: Vec<String>, // เปลี่ยนเป็น String
     /// เวลารวมที่ใช้ในการรันทุก Hook
     pub total_duration: Duration,
     /// ผลลัพธ์สุดท้ายหลังจากรวมตามกฎของเหตุการณ์นั้น ๆ
@@ -175,8 +175,6 @@ impl HookAggregator {
             HookEventName::PermissionRequest => {
                 Self::merge_permission_request_outputs(outputs)
             }
-            // fallback สำหรับเหตุการณ์อื่น ๆ
-            _ => Self::merge_simple(outputs),
         };
 
         Some(merged)
@@ -363,55 +361,6 @@ impl HookAggregator {
         let mut hook_specific = merged.hook_specific_output.unwrap_or_default();
         hook_specific.insert("decision".to_string(), serde_json::Value::Object(merged_decision));
         merged.hook_specific_output = Some(hook_specific);
-
-        merged
-    }
-
-    /// การรวมแบบง่ายสำหรับเหตุการณ์ที่ไม่มีตรรกะพิเศษ
-    /// ใช้ค่าจากผลลัพธ์สุดท้าย แต่ต่อ additionalContext
-    fn merge_simple(outputs: &[HookOutput]) -> HookOutput {
-        let mut additional_contexts = Vec::new();
-        let mut merged = HookOutput::new();
-
-        for output in outputs {
-            Self::extract_additional_context(output, &mut additional_contexts);
-            // คัดลอกฟิลด์ทั้งหมดจาก output (ค่าหลังจะเขียนทับค่าก่อน)
-            if let Some(dec) = &output.decision {
-                merged.decision = Some(dec.clone());
-            }
-            if let Some(r) = &output.reason {
-                merged.reason = Some(r.clone());
-            }
-            if let Some(cont) = output.continue_execution {
-                merged.continue_execution = Some(cont);
-            }
-            if let Some(sr) = &output.stop_reason {
-                merged.stop_reason = Some(sr.clone());
-            }
-            if let Some(so) = output.suppress_output {
-                merged.suppress_output = Some(so);
-            }
-            if let Some(sm) = &output.system_message {
-                merged.system_message = Some(sm.clone());
-            }
-            if let Some(specific) = &output.hook_specific_output {
-                let mut current = merged.hook_specific_output.unwrap_or_default();
-                for (k, v) in specific {
-                    current.insert(k.clone(), v.clone());
-                }
-                merged.hook_specific_output = Some(current);
-            }
-        }
-
-        // ต่อ additionalContext
-        if !additional_contexts.is_empty() {
-            let mut specific = merged.hook_specific_output.unwrap_or_default();
-            specific.insert(
-                "additionalContext".to_string(),
-                serde_json::Value::String(additional_contexts.join("\n")),
-            );
-            merged.hook_specific_output = Some(specific);
-        }
 
         merged
     }

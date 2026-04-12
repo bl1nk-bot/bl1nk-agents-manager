@@ -12,7 +12,23 @@
       "description": "ชื่อเอเจนต์สำหรับแสดงผล ต้องชัดเจน เรียกใช้งานง่าย ความยาว 3-64 ตัวอักษร",
       "minLength": 3,
       "maxLength": 64,
-      "pattern": "^[a-zA-Z0-9ก-๙\\s]+$"
+      "pattern": "^[a-zA-Z0-9ก-๙\\s\\-&]+$"
+    },
+
+    "id": {
+      "type": "string",
+      "description": "ตัวระบุเอเจนต์ (slug)"
+    },
+
+    "command": {
+      "type": "string",
+      "description": "คำสั่งที่ใช้เรียกเอเจนต์"
+    },
+
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "ความสามารถของเอเจนต์"
     },
 
     "description": {
@@ -87,16 +103,34 @@
 
     "permission_policy": {
       "type": "object",
-      "description": "นโยบายสำหรับคำนวณ permission score โดยกำหนดลำดับความสำคัญของหลักฐาน reasoning และค่าน้ำหนักของปัจจัยที่ใช้จัดอันดับ agent",
+      "description": "นโยบายสำหรับคำนวณ permission score และการตัดสินใจเชิงกฎ (Policy Decisions)",
       "properties": {
 
         "hierarchy": {
           "type": "array",
-          "description": "ลำดับความสำคัญของชนิดหลักฐาน reasoning เรียงจากสำคัญมากไปน้อย ใช้ override เมื่อหลักฐานขัดกัน",
           "items": {
             "type": "string",
-            "enum": ["instruction", "explicit", "structure", "context", "assumption"],
-            "description": "ชนิดของหลักฐาน reasoning ที่ใช้กำหนด priority"
+            "enum": ["admin", "user", "workspace", "extension", "default"]
+          }
+        },
+
+        "decision_rules": {
+          "type": "array",
+          "description": "กฎการตัดสินใจตามมาตรฐาน Gemini CLI TOML Schema",
+          "items": {
+            "type": "object",
+            "properties": {
+              "toolName": { "type": "string", "description": "ชื่อเครื่องมือ (เช่น bash, write หรือ * )" },
+              "mcpName": { "type": "string", "description": "ชื่อ MCP Server" },
+              "subagent": { "type": "string", "description": "ชื่อเอเจนต์ผู้เรียก" },
+              "decision": { "type": "string", "enum": ["allow", "deny", "ask_user"] },
+              "argsPattern": { "type": "string", "description": "Regex สำหรับตรวจสอบ arguments ทั้งหมด" },
+              "commandPrefix": { "type": "string", "description": "ส่วนหน้าของคำสั่ง (สำหรับ bash tool)" },
+              "commandRegex": { "type": "string", "description": "Regex สำหรับตรวจสอบคำสั่งทั้งหมด (สำหรับ bash tool)" },
+              "priority": { "type": "integer", "default": 0, "minimum": 0, "maximum": 1000 },
+              "reason": { "type": "string", "description": "เหตุผลประกอบกฎเพื่อการตรวจสอบ" }
+            },
+            "required": ["toolName", "decision"]
           }
         },
 
@@ -164,14 +198,16 @@
   },
 
   "required": [
+    "id",
     "name",
     "description",
     "mode",
     "type",
     "tool",
     "permission",
-    "permission_policy"
+    "permission_policy",
+    "capabilities"
   ],
 
-  "additionalProperties": false
+  "additionalProperties": true
 }

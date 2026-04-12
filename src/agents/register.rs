@@ -205,8 +205,10 @@ mod tests {
             AgentConfig {
                 id: "cli-agent".to_string(),
                 name: "CLI Agent".to_string(),
+                description: "Test description".to_string(),
+                mode: "all".to_string(),
                 agent_type: "cli".to_string(),
-                command: Some("test-cli".to_string()),
+                command: "test-cli".to_string(),
                 args: None,
                 extension_name: None,
                 rate_limit: RateLimit::default(),
@@ -215,12 +217,17 @@ mod tests {
                 enabled: true,
                 requires: Vec::new(),
                 cost: 0,
+                tool: crate::config::AgentToolPermissions { bash: true, write: true, skill: true, ask: false },
+                permission: 500,
+                permission_policy: serde_json::json!({}),
             },
             AgentConfig {
                 id: "internal-pmat".to_string(),
                 name: "Internal PMAT Agent".to_string(),
+                description: "Test description".to_string(),
+                mode: "subagent".to_string(),
                 agent_type: "internal".to_string(),
-                command: Some("pmat-internal".to_string()),
+                command: "pmat-internal".to_string(),
                 args: None,
                 extension_name: None,
                 rate_limit: RateLimit::default(),
@@ -229,6 +236,9 @@ mod tests {
                 enabled: true,
                 requires: Vec::new(),
                 cost: 0,
+                tool: crate::config::AgentToolPermissions { bash: false, write: false, skill: true, ask: false },
+                permission: 500,
+                permission_policy: serde_json::json!({}),
             },
         ]
     }
@@ -282,8 +292,10 @@ mod tests {
         agents.push(AgentConfig {
             id: "missing-tool-agent".to_string(),
             name: "Missing Tool Agent".to_string(),
+            description: "Test description".to_string(),
+            mode: "all".to_string(),
             agent_type: "cli".to_string(),
-            command: Some("missing".to_string()),
+            command: "missing".to_string(),
             args: None,
             extension_name: None,
             rate_limit: RateLimit::default(),
@@ -292,6 +304,9 @@ mod tests {
             enabled: true,
             requires: vec!["non-existent-tool".to_string()],
             cost: 0,
+            tool: crate::config::AgentToolPermissions { bash: false, write: false, skill: true, ask: false },
+            permission: 500,
+            permission_policy: serde_json::json!({}),
         });
 
         let report = DiscoveryReport {
@@ -349,5 +364,36 @@ mod tests {
 
         registry.cleanup_finished_tasks();
         assert!(registry.active_tasks.get("task-123").is_none());
+    }
+
+    #[tokio::test]
+    async fn test_concurrent_task_registration() {
+        use std::sync::Arc;
+        use tokio::sync::RwLock;
+
+        let agents = create_test_agents();
+        let registry = Arc::new(RwLock::new(AgentRegistry::new(agents, None)));
+        
+        let mut handles = vec![];
+        for i in 0..50 {
+            let reg = registry.clone();
+            handles.push(tokio::spawn(async move {
+                let task = TaskInfo {
+                    task_id: format!("task-{}", i),
+                    agent_id: "cli-agent".to_string(),
+                    task_type: "cli".to_string(),
+                    status: TaskStatus::Running,
+                    proposal: None,
+                    prompt: "test".to_string(),
+                    context: None,
+                };
+                let mut guard = reg.write().await;
+                guard.register_task(task);
+            }));
+        }
+
+        for h in handles { h.await.unwrap(); }
+        let guard = registry.read().await;
+        assert_eq!(guard.active_task_count(), 50);
     }
 }

@@ -1,0 +1,62 @@
+{
+  "active_pack": "bl1nk-standard",
+  "available_packs": [
+    "default",
+    "strict",
+    "fast",
+    "security",
+    "migration",
+    "bl1nk-standard"
+  ],
+  "rules": {
+    "file_restrictions": {
+      "forbidden_paths": [".git", ".env"],
+      "mandatory_docs": ["src/lib.rs", "src/main.rs"]
+    },
+    "review_requirements": {
+      "mandatory_manual_review": true,
+      "review_scope": "all_changes"
+    },
+    "test_requirements": {
+      "min_line_coverage": 90,
+      "tdd_enforced": true,
+      "required_types": ["unit", "integration", "doc-tests"]
+    },
+    "approval_gates": {
+      "user_sign_off_on_phase_end": true,
+      "destructive_action_confirmation": true
+    },
+    "forbidden_patterns": {
+      "unsafe_blocks": "forbidden_without_review",
+      "hardcoded_secrets": "forbidden",
+      "english_only_comments": "warning"
+    },
+    "formatting": {
+      "rustfmt_mandatory": true,
+      "clippy_zero_warnings": true,
+      "thai_comments_required": true,
+      "comment_style": {
+        "language": "Thai",
+        "requirement": "Explain 'Why' not just 'What'",
+        "rustdoc_mandatory_for_public": true
+      }
+    },
+    "project_management": {
+      "todo_md": {
+        "mandatory": true,
+        "role": "Working document for tracking and reporting",
+        "update_frequency": "Every task completion"
+      },
+      "versioning": {
+        "convention": "Semantic Versioning (SemVer)",
+        "changelog_mandatory": true,
+        "file": "CHANGELOG.md"
+      }
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "last_updated": "2026-04-12T00:00:00Z",
+    "source": "conductor/workflow.md, product-guidelines.md"
+  }
+}

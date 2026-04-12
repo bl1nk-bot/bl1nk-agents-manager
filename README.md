@@ -1,11 +1,13 @@
 # 🤖 BL1NK Agents Manager
 
-![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-0.2.0--dev-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Status](https://img.shields.io/badge/status-active-success.svg)
+![Status](https://img.shields.io/badge/status-active--development-yellow.svg)
 ![Rust](https://img.shields.io/badge/rust-1.70+-orange.svg)
+![Commits](https://img.shields.io/badge/commits-137-blue.svg)
 
 > **Intelligent MCP/ACP Orchestrator with Bundled PMAT Support**
+> **🔥 NEW: Unified Registry, Monitoring & Honesty Layer (In Progress)**
 
 A high-performance Rust-based orchestrator that bridges MCP (Model Context Protocol) for Gemini CLI integration with ACP (Agent Client Protocol) for sub-agent communication.
 
@@ -33,6 +35,7 @@ A high-performance Rust-based orchestrator that bridges MCP (Model Context Proto
 *   **Background Tasks**: Async execution with task tracking
 *   **Type Safety**: JSON Schema generation with compile-time validation
 *   **PMAT Bundled**: Built-in context analysis with optional bundled PMAT
+*   **🔥 NEW: Unified Registry**: Keyword semantic search, multi-layer monitoring, evidence tracking, and dynamic weight calculation (In Progress)
 
 ---
 
@@ -61,6 +64,7 @@ A high-performance Rust-based orchestrator that bridges MCP (Model Context Proto
 
 | Module | Purpose |
 |--------|---------|
+| `src/registry/` | 🔥 NEW: Unified Registry, Schema, Monitoring |
 | `src/mcp/` | MCP server implementation using PMCP SDK |
 | `src/agents/` | Agent registry, routing, and execution |
 | `src/hooks/` | Hook aggregator for event handling |
@@ -259,7 +263,9 @@ make clean          # Clean build artifacts
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and internals |
 | [AGENT_GUIDE.md](docs/AGENT_GUIDE.md) | Creating ACP-compatible agents |
 | [QUICKSTART.md](docs/QUICKSTART.md) | 5-minute getting started guide |
-| [PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) | Project overview (Thai) |
+| [PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md) | 🔥 UPDATED: Complete project status report |
+| [POLICY_MAPPING.md](docs/POLICY_MAPPING.md) | Permission policy documentation |
+| [SESSION_CONTEXT.md](docs/SESSION_CONTEXT.md) | Development session context |
 
 ---
 

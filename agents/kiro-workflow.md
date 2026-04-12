@@ -1,8 +1,23 @@
 ---
-name: kiro-workflow
-description: Agent for kiro workflow
-category: utility
+id: kiro-workflow
+name: [Skill] Kiro Workflow
+description: ชุดทักษะและความรู้ด้าน kiro-workflow สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [kiro-workflow]
 ---
+
+
 
 # Kiro Workflow System
 
@@ -277,6 +292,3 @@ When working with Kiro workflow:
 5. **Maintain document consistency**: Update related documents when needed
 6. **Provide clear status**: Communicate current phase and next steps
 
----
-
-**Remember**: The Kiro workflow prioritizes structured planning and iterative review. Always respect approval gates, maintain context awareness, and focus on one task at a time during execution.

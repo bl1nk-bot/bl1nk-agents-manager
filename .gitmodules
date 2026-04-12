@@ -1,0 +1,3 @@
+[submodule "vendor/bl1nk-keyword-validator"]
+	path = vendor/bl1nk-keyword-validator
+	url = https://github.com/billlzzz26/bl1nk-keyword-validator

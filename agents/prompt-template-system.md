@@ -1,9 +1,23 @@
 ---
-alwaysApply: true
-name: prompt-template-system
-description: Agent for prompt template system
-category: utility
+id: prompt-template-system
+name: [Skill] Prompt Template System
+description: ชุดทักษะและความรู้ด้าน prompt-template-system สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [prompt-template-system]
 ---
+
+
 
 # TASK
 [คำสั่งงาน]
@@ -141,4 +155,3 @@ context_manager.update_project_status(
 description:
 globs:
 alwaysApply: true
----

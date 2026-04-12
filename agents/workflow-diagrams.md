@@ -1,8 +1,23 @@
 ---
-name: workflow-diagrams
-description: Agent for workflow diagrams
-category: utility
+id: workflow-diagrams
+name: [Skill] Workflow Diagrams
+description: ชุดทักษะและความรู้ด้าน workflow-diagrams สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+mode: subagent
+type: general
+model: sonnet
+tool:
+  bash: false
+  write: false
+  skill: true
+  ask: false
+permission: 100
+permission_policy:
+  hierarchy: [default]
+  decision_rules: [{toolName: "*", decision: "deny"}]
+capabilities: [workflow-diagrams]
 ---
+
+
 
 # Kiro Workflow Diagrams
 

@@ -1,0 +1,10 @@
+{
+  "visibility": "normal",
+  "mode": "balanced",
+  "stage": "team-planning",
+  "tasks_completed": 2,
+  "tasks_total": 55,
+  "risks": 0,
+  "next_command": "/omg:status",
+  "source": "omg:hud-on"
+}

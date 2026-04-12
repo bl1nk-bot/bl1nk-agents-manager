@@ -25,7 +25,7 @@ def run_test():
     env["RUST_LOG"] = "info" 
     
     proc = subprocess.Popen(
-        [BINARY_PATH, "--config", "config_test.toml"],
+        [BINARY_PATH, "--config", ".config/config.example.toml"],
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, # Capture stderr for ready check
