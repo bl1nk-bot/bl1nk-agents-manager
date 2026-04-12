@@ -354,7 +354,12 @@ impl AgentExecutor {
         reader.read_line(&mut line).await?;
         let response: Value = serde_json::from_str(&line)?;
         if let Some(result) = response.get("result") {
-            Ok(if result.is_string() { result.as_str().unwrap().to_string() } else { result.to_string() })
+            let response_text = if result.is_string() {
+                result.as_str().unwrap().to_string()
+            } else {
+                result.to_string()
+            };
+            Ok(response_text)
         } else if let Some(error) = response.get("error") {
             bail!("เอเจนต์ส่งค่าผิดพลาด: {}", error);
         } else {
