@@ -372,7 +372,7 @@ impl AgentExecutor {
         Self {
             agent_registry: self.agent_registry.clone(),
             rate_limiter: self.rate_limiter.clone(),
-            router: AgentRouter::new(RoutingConfig { rules: vec![], tier: RoutingTier::Default }),
+            router: self.router.clone(),
         }
     }
 }
