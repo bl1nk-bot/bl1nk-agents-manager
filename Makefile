@@ -2,10 +2,15 @@
 # Makefile for BL1NK Agents Manager
 # ==============================================================================
 
+<<<<<<< HEAD
 .PHONY: help build build-bundled build-full run dev test check fmt clippy clean install doc setup lint spellcheck all-check \
         parallel parallel-verbose fmt-only clippy-only test-only review review-comment \
         commitlint commitlint-range changelog \
         bump-patch bump-minor bump-major security-check security-update
+=======
+# .PHONY tells make that these are not files, so it should always run the command.
+.PHONY: help build build-bundled build-full run dev test check fmt clippy clean install doc setup lint spellcheck all-check
+>>>>>>> origin/dev
 
 # --- Default Behavior ---
 all: build
@@ -21,10 +26,24 @@ help:
 	@echo "  build-bundled         - Build with bundled PMAT (recommended)"
 	@echo "  build-full            - Build with bundled PMAT + all features"
 	@echo ""
+<<<<<<< HEAD
 	@echo "Development:"
 	@echo "  run                   - Run standard release binary"
 	@echo "  run-bundled           - Run bundled PMAT binary"
 	@echo "  dev                   - Hot-reload development mode"
+=======
+	@echo "Development & Testing:"
+	@echo "  run                   - Run the standard release binary."
+	@echo "  run-bundled           - Run the release binary with bundled PMAT."
+	@echo "  dev                   - Run in dev mode with hot-reload (watches for file changes)."
+	@echo "  test                  - Run all tests, including feature-specific ones."
+	@echo "  check                 - Run cargo check for quick compilation checks."
+	@echo "  fmt                   - Format all code according to project style."
+	@echo "  clippy                - Run clippy linter to find potential issues (with strict warnings)."
+	@echo "  lint                  - Run all linting tools (fmt + check + clippy)."
+	@echo "  spellcheck            - Run codespell to check for spelling errors."
+	@echo "  all-check             - Run all checks (lint + spellcheck + test)."
+>>>>>>> origin/dev
 	@echo ""
 	@echo "Quality Checks:"
 	@echo "  test                  - Run all tests"
@@ -115,6 +134,10 @@ clippy:
 	@echo "Running clippy linter..."
 	cargo clippy --all-features -- -D warnings
 
+<<<<<<< HEAD
+=======
+# Run all linting tools (fmt + clippy + check)
+>>>>>>> origin/dev
 lint:
 	@echo "Running all linters..."
 	@echo "--- Running cargo fmt ---"
@@ -124,6 +147,19 @@ lint:
 	@echo "--- Running cargo clippy ---"
 	cargo clippy --all-features -- -D warnings
 	@echo "Lint check complete!"
+<<<<<<< HEAD
+=======
+
+# Spell check using codespell
+spellcheck:
+	@echo "Running spell check..."
+	@command -v codespell >/dev/null 2>&1 && codespell --config .codespellrc . || echo "codespell not installed, skipping..."
+
+# Run all checks (lint + spellcheck + test)
+all-check: lint spellcheck test
+	@echo "All checks passed!"
+
+>>>>>>> origin/dev
 
 spellcheck:
 	@echo "Running spell check..."

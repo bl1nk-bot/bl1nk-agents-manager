@@ -12,6 +12,7 @@
       "description": "ชื่อเอเจนต์สำหรับแสดงผล ต้องชัดเจน เรียกใช้งานง่าย ความยาว 3-64 ตัวอักษร",
       "minLength": 3,
       "maxLength": 64,
+<<<<<<< HEAD
       "pattern": "^[a-zA-Z0-9ก-๙\\s\\-&]+$"
     },
 
@@ -29,6 +30,9 @@
       "type": "array",
       "items": { "type": "string" },
       "description": "ความสามารถของเอเจนต์"
+=======
+      "pattern": "^[a-zA-Z0-9ก-๙\\s]+$"
+>>>>>>> origin/dev
     },
 
     "description": {
@@ -103,11 +107,16 @@
 
     "permission_policy": {
       "type": "object",
+<<<<<<< HEAD
       "description": "นโยบายสำหรับคำนวณ permission score และการตัดสินใจเชิงกฎ (Policy Decisions)",
+=======
+      "description": "นโยบายสำหรับคำนวณ permission score โดยกำหนดลำดับความสำคัญของหลักฐาน reasoning และค่าน้ำหนักของปัจจัยที่ใช้จัดอันดับ agent",
+>>>>>>> origin/dev
       "properties": {
 
         "hierarchy": {
           "type": "array",
+<<<<<<< HEAD
           "items": {
             "type": "string",
             "enum": ["admin", "user", "workspace", "extension", "default"]
@@ -131,6 +140,13 @@
               "reason": { "type": "string", "description": "เหตุผลประกอบกฎเพื่อการตรวจสอบ" }
             },
             "required": ["toolName", "decision"]
+=======
+          "description": "ลำดับความสำคัญของชนิดหลักฐาน reasoning เรียงจากสำคัญมากไปน้อย ใช้ override เมื่อหลักฐานขัดกัน",
+          "items": {
+            "type": "string",
+            "enum": ["instruction", "explicit", "structure", "context", "assumption"],
+            "description": "ชนิดของหลักฐาน reasoning ที่ใช้กำหนด priority"
+>>>>>>> origin/dev
           }
         },
 
@@ -198,16 +214,26 @@
   },
 
   "required": [
+<<<<<<< HEAD
     "id",
+=======
+>>>>>>> origin/dev
     "name",
     "description",
     "mode",
     "type",
     "tool",
     "permission",
+<<<<<<< HEAD
     "permission_policy",
     "capabilities"
   ],
 
   "additionalProperties": true
+=======
+    "permission_policy"
+  ],
+
+  "additionalProperties": false
+>>>>>>> origin/dev
 }
