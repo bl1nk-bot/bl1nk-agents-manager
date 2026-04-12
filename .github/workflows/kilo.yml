@@ -36,8 +36,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
+          # ✅ ให้ Kilo จัดการ credentials เองผ่าน OIDC
           persist-credentials: false
-          fetch-depth: 0  # ดึงประวัติเต็มสำหรับ context
+          fetch-depth: 0
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
@@ -48,40 +49,10 @@ jobs:
       - name: Run Kilo
         uses: Kilo-Org/kilocode/github@latest
         with:
-          # ใช้ Qwen model ผ่าน Kilo Gateway
           model: qwen/qwen3.6-plus:free
-
-          # Kilo Authentication เท่านั้น
           kilo_api_key: ${{ secrets.KILO_API_KEY }}
           kilo_org_id: ${{ secrets.KILO_ORG_ID }}
-
-          # Kilo Gateway Base URL
           oidc_base_url: "https://api.kilo.ai/api/gateway"
-
-          # Configuration
           share: ${{ github.event.repository.private == false }}
           use_github_token: true
-
-          # Custom prompt (optional)
           prompt: ${{ github.event.inputs.prompt || '' }}
-
-      - name: Commit changes (ถ้า Kilo แก้ไขไฟล์)
-        if: always()
-        run: |
-          git config --global user.name "kilo-ai[bot]"
-          git config --global user.email "kilo-ai[bot]@users.noreply.github.com"
-
-
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git add -A
-            git commit -m "kilo: automated changes via /kilo command
-
-            Triggered by: ${{ github.event.comment.user.login }}
-            Comment: ${{ github.event.comment.body }}
-            Model: qwen/qwen3.6-plus:free"
-
-            git push
-            echo "✅ Changes committed and pushed"
-          else
-            echo "ℹ️ No changes to commit"
-          fi
