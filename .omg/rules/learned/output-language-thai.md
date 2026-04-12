@@ -5,6 +5,7 @@ description: >
   เป็นกฎพื้นฐานของโปรเจค
 globs:
   - "**/*"
+alwaysApply: true
 ---
 
 # Output Language: Thai

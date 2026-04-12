@@ -6,6 +6,7 @@ description: >
 globs:
   - ".omg/rules/learned/**"
   - ".omg/MEMORY.md"
+alwaysApply: true
 ---
 
 # Session Learning Persistence

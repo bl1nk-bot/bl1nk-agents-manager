@@ -5,6 +5,7 @@ description: >
   เมื่อไม่แน่ใจหรือมีหลายทางเลือก ให้ถามผู้ใช้
 globs:
   - "**/*"
+alwaysApply: true
 ---
 
 # Use Ask User - อย่ากลัวความผิดพลาด

@@ -1,0 +1,15 @@
+{
+  "cooldown": {
+    "enabled": true,
+    "max_per_session": 3,
+    "min_interval_minutes": 15
+  },
+  "exclude_patterns": [
+    "output-language-thai",
+    "use-ask-user-always"
+  ],
+  "always_apply": [
+    "session-learning-persistence",
+    "create-scripts-for-repetition"
+  ]
+}
