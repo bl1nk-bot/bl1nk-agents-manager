@@ -1,6 +1,6 @@
 // src/main.rs
-use bl1nk_agents_manager::*;
 use anyhow::Result;
+use bl1nk_agents_manager::*;
 use clap::Parser;
 use std::path::PathBuf;
 use tracing_subscriber::EnvFilter;
@@ -79,10 +79,7 @@ async fn main() -> Result<()> {
     tracing::info!("✅ Loaded {} agents", config.agents.len());
 
     // 2. Perform system discovery
-    let report = match system::discovery::DiscoveryEngine::scan().await {
-        Ok(r) => Some(r),
-        Err(_) => None,
-    };
+    let report = system::discovery::DiscoveryEngine::scan().await.ok();
 
     // 3. Initialize the orchestrator
     let orchestrator = mcp::Orchestrator::new(config, report).await?;
@@ -92,7 +89,7 @@ async fn main() -> Result<()> {
         match cmd {
             Commands::Delegate { task_type, prompt } => {
                 run_interactive_delegate(orchestrator, task_type, prompt).await?;
-            },
+            }
             Commands::Search { query, fuzzy } => {
                 tracing::info!("🔍 Searching agents for: '{}'", query);
                 let results = orchestrator.registry_service.search_agents(&query, fuzzy);
@@ -103,7 +100,7 @@ async fn main() -> Result<()> {
                         println!("- Agent: {}, Score: {:.2}", res.id, res.score);
                     }
                 }
-            },
+            }
         }
     } else {
         // Run the MCP server
@@ -114,13 +111,9 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn run_interactive_delegate(
-    orchestrator: mcp::Orchestrator,
-    task_type: String,
-    prompt: String,
-) -> Result<()> {
-    use std::io::{self, Write};
+async fn run_interactive_delegate(orchestrator: mcp::Orchestrator, task_type: String, prompt: String) -> Result<()> {
     use crate::mcp::DelegateTaskArgs;
+    use std::io::{self, Write};
 
     let args = DelegateTaskArgs {
         task_type,
@@ -137,15 +130,17 @@ async fn run_interactive_delegate(
         println!("\n🤖 PROPOSED PLAN:");
         println!("   Agent: {}", proposal.agent_name);
         println!("   Reason: {}", proposal.reasoning);
-        
+
         print!("\nProceed? [Y/n]: ");
         io::stdout().flush()?;
         let mut input = String::new();
         io::stdin().read_line(&mut input)?;
-        
+
         if input.trim().to_lowercase() != "n" {
             let res = orchestrator.approve_task_internal(output.task_id, None).await?;
-            if let Some(r) = res.result { println!("\n✅ Result:\n{}", r); }
+            if let Some(r) = res.result {
+                println!("\n✅ Result:\n{}", r);
+            }
         }
     } else if let Some(r) = output.result {
         println!("\n✅ Result:\n{}", r);

@@ -1,23 +1,19 @@
-# Rustfmt configuration
-# https://rust-lang.github.io/rustfmt/
+# ==============================================================================
+# Rustfmt Configuration for BL1NK Agents Manager (Stable Compatible)
+# ==============================================================================
 
+# General
 edition = "2021"
-max_width = 100
-tab_spaces = 4
 newline_style = "Unix"
-indent_style = "Block"
-indent_width = 4
 
-# Import organization
-reorder_imports = true
-merge_imports = true
-group_imports = "StdExternalCrate"
+# Formatting
+max_width = 120
+tab_spaces = 4
+use_field_init_shorthand = true
+use_try_shorthand = true
 
-# Code style
-where_style = "Mixed"
-wrap_match_arms = true
-match_arm_blocks = "Block"
-struct_lit_width = 100
-
-# Comments
-comment_width = 120
+# Unstable features disabled for Stable compatibility
+# match_arm_blocks = true
+# combine_control_expr = true
+# group_imports = "StdExternalCrate"
+# imports_granularity = "Crate"

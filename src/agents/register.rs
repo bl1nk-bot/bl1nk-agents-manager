@@ -1,13 +1,14 @@
-use crate::config::{AgentConfig, AgentToolPermissions};
-use crate::system::discovery::DiscoveryReport;
 use crate::agents::router::PlanProposal;
-use std::collections::HashMap;
-use anyhow::{Result, Context};
+use crate::config::AgentConfig;
+use crate::system::discovery::DiscoveryReport;
+use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum AgentAvailability {
     Ready,
+    #[allow(dead_code)]
     MissingTools(Vec<String>),
 }
 
@@ -35,7 +36,13 @@ pub struct TaskInfo {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum TaskStatus { Pending, AwaitingApproval, Running, Completed, Failed }
+pub enum TaskStatus {
+    Pending,
+    AwaitingApproval,
+    Running,
+    Completed,
+    Failed,
+}
 
 impl AgentRegistry {
     pub fn new(agents: Vec<AgentConfig>, report: Option<&DiscoveryReport>) -> Self {
@@ -44,11 +51,13 @@ impl AgentRegistry {
             let availability = Self::calculate_availability(&config, report);
             agents_map.insert(config.id.clone(), AgentState { config, availability });
         }
-        Self { agents: agents_map, active_tasks: HashMap::new() }
+        Self {
+            agents: agents_map,
+            active_tasks: HashMap::new(),
+        }
     }
 
-    fn calculate_availability(config: &AgentConfig, _report: Option<&DiscoveryReport>) -> AgentAvailability {
-        // ในเฟสนี้เราเน้นความง่าย ปรับให้พร้อมใช้งานเสมอ (Ready)
+    fn calculate_availability(_config: &AgentConfig, _report: Option<&DiscoveryReport>) -> AgentAvailability {
         AgentAvailability::Ready
     }
 
@@ -81,11 +90,22 @@ impl AgentRegistry {
     }
 
     pub fn update_task_status(&mut self, task_id: &str, status: TaskStatus) -> Result<()> {
-        self.active_tasks.get_mut(task_id).map(|task| task.status = status).context("Task not found")
+        self.active_tasks
+            .get_mut(task_id)
+            .map(|task| task.status = status)
+            .context("Task not found")
     }
 
     pub fn active_task_count(&self) -> usize {
-        self.active_tasks.values().filter(|task| matches!(task.status, TaskStatus::Running | TaskStatus::Pending | TaskStatus::AwaitingApproval)).count()
+        self.active_tasks
+            .values()
+            .filter(|task| {
+                matches!(
+                    task.status,
+                    TaskStatus::Running | TaskStatus::Pending | TaskStatus::AwaitingApproval
+                )
+            })
+            .count()
     }
 
     pub fn get_task(&self, task_id: &str) -> Option<&TaskInfo> {
@@ -93,6 +113,11 @@ impl AgentRegistry {
     }
 
     pub fn cleanup_finished_tasks(&mut self) {
-        self.active_tasks.retain(|_, task| matches!(task.status, TaskStatus::Running | TaskStatus::Pending | TaskStatus::AwaitingApproval));
+        self.active_tasks.retain(|_, task| {
+            matches!(
+                task.status,
+                TaskStatus::Running | TaskStatus::Pending | TaskStatus::AwaitingApproval
+            )
+        });
     }
 }

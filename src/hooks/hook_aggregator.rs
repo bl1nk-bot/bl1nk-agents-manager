@@ -115,10 +115,7 @@ impl HookAggregator {
     ///
     /// # Returns
     /// AggregatedHookResult ที่มีผลลัพธ์รวมและข้อมูลสรุป
-    pub fn aggregate_results(
-        results: Vec<HookExecutionResult>,
-        event_name: HookEventName,
-    ) -> AggregatedHookResult {
+    pub fn aggregate_results(results: Vec<HookExecutionResult>, event_name: HookEventName) -> AggregatedHookResult {
         let mut all_outputs = Vec::new();
         let mut errors = Vec::new();
         let mut total_duration = Duration::ZERO;
@@ -150,10 +147,7 @@ impl HookAggregator {
     }
 
     /// รวมผลลัพธ์หลายตัวตามประเภทของเหตุการณ์
-    fn merge_outputs(
-        outputs: &[HookOutput],
-        event_name: HookEventName,
-    ) -> Option<HookOutput> {
+    fn merge_outputs(outputs: &[HookOutput], event_name: HookEventName) -> Option<HookOutput> {
         if outputs.is_empty() {
             return None;
         }
@@ -169,12 +163,8 @@ impl HookAggregator {
             | HookEventName::PostToolUseFailure
             | HookEventName::Stop
             | HookEventName::SubagentStop
-            | HookEventName::UserPromptSubmit => {
-                Self::merge_with_or_logic(outputs)
-            }
-            HookEventName::PermissionRequest => {
-                Self::merge_permission_request_outputs(outputs)
-            }
+            | HookEventName::UserPromptSubmit => Self::merge_with_or_logic(outputs),
+            HookEventName::PermissionRequest => Self::merge_permission_request_outputs(outputs),
         };
 
         Some(merged)
@@ -354,7 +344,10 @@ impl HookAggregator {
         }
 
         if !all_updated_permissions.is_empty() {
-            merged_decision.insert("updatedPermissions".to_string(), serde_json::Value::Array(all_updated_permissions));
+            merged_decision.insert(
+                "updatedPermissions".to_string(),
+                serde_json::Value::Array(all_updated_permissions),
+            );
         }
 
         // ใส่ decision object ลงใน hook_specific_output

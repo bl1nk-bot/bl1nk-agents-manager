@@ -1,9 +1,9 @@
 // src/agents/creator.rs
+use crate::registry::schema::{AgentJsonEntry, AgentToolPermissions, Registry};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
-use crate::registry::schema::{AgentJsonEntry, Registry, AgentToolPermissions};
 
 /// รายละเอียดข้อกำหนดของเอเจนต์สำหรับการสร้างใหม่
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -57,9 +57,17 @@ impl AgentCreator {
         // 2. อัปเดต agents.json (Technical Metadata)
         let mut registry: Registry = if Path::new(&json_path).exists() {
             let data = fs::read_to_string(&json_path)?;
-            serde_json::from_str(&data).unwrap_or_else(|_| Registry { version: "1.7.0".into(), last_updated: None, agents: vec![] })
+            serde_json::from_str(&data).unwrap_or_else(|_| Registry {
+                version: "1.7.0".into(),
+                last_updated: None,
+                agents: vec![],
+            })
         } else {
-            Registry { version: "1.7.0".into(), last_updated: None, agents: vec![] }
+            Registry {
+                version: "1.7.0".into(),
+                last_updated: None,
+                agents: vec![],
+            }
         };
 
         let new_entry = AgentJsonEntry {

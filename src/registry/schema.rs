@@ -3,8 +3,8 @@
 //! กำหนด types สำหรับ Registry และ Agent Metadata
 //! รองรับโครงสร้างแบบแยกส่วน (Split Structure) ระหว่าง .md และ agents.json
 
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 
 // ============================================================================
 // Registry & Agent Types
@@ -116,15 +116,53 @@ pub struct MonitoringRecord {
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
-pub enum Trend { Improving, Stable, Degrading }
+pub enum Trend {
+    Improving,
+    Stable,
+    Degrading,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "evidence_type", rename_all = "snake_case")]
 pub enum EvidenceRecord {
-    TestResults { command: String, output: String, pass_count: usize, fail_count: usize, coverage_percentage: Option<f32> },
-    FileChanges { files: Vec<String>, diff_summary: String, lines_added: usize, lines_removed: usize },
-    CommandOutput { command: String, stdout: String, stderr: String, exit_code: i32, execution_time: std::time::Duration },
-    DecisionLog { decision: String, reasoning: String, alternatives_considered: Vec<String>, why_this_choice: String, risk_assessment: Option<String> },
-    ProgressMetrics { metric_name: String, before_value: f32, after_value: f32, improvement_percentage: f32, trend: Trend },
-    AlternativePath { original_path: String, alternative_path: String, why_alternative: String, success_rate_comparison: Option<(f32, f32)> },
+    TestResults {
+        command: String,
+        output: String,
+        pass_count: usize,
+        fail_count: usize,
+        coverage_percentage: Option<f32>,
+    },
+    FileChanges {
+        files: Vec<String>,
+        diff_summary: String,
+        lines_added: usize,
+        lines_removed: usize,
+    },
+    CommandOutput {
+        command: String,
+        stdout: String,
+        stderr: String,
+        exit_code: i32,
+        execution_time: std::time::Duration,
+    },
+    DecisionLog {
+        decision: String,
+        reasoning: String,
+        alternatives_considered: Vec<String>,
+        why_this_choice: String,
+        risk_assessment: Option<String>,
+    },
+    ProgressMetrics {
+        metric_name: String,
+        before_value: f32,
+        after_value: f32,
+        improvement_percentage: f32,
+        trend: Trend,
+    },
+    AlternativePath {
+        original_path: String,
+        alternative_path: String,
+        why_alternative: String,
+        success_rate_comparison: Option<(f32, f32)>,
+    },
 }

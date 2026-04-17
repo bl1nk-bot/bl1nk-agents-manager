@@ -29,46 +29,50 @@ impl Persistence {
     fn validate_relative_path(&self, relative_path: &str) -> Result<PathBuf> {
         let path = Path::new(relative_path);
         if path.is_absolute()
-            || path.components().any(|c| matches!(c, std::path::Component::ParentDir | std::path::Component::Prefix(_)))
+            || path
+                .components()
+                .any(|c| matches!(c, std::path::Component::ParentDir | std::path::Component::Prefix(_)))
         {
-            return Err(anyhow::anyhow!("relative_path must not be an absolute path or contain path traversal: {}", relative_path));
+            return Err(anyhow::anyhow!(
+                "relative_path must not be an absolute path or contain path traversal: {}",
+                relative_path
+            ));
         }
         Ok(self.base_path.join(relative_path))
     }
 
     pub async fn save_json<T: Serialize>(&self, relative_path: &str, data: &T) -> Result<()> {
         let path = self.validate_relative_path(relative_path)?;
-        let content = serde_json::to_string_pretty(data)
-            .context("Failed to serialize to JSON")?;
+        let content = serde_json::to_string_pretty(data).context("Failed to serialize to JSON")?;
         self.atomic_write(&path, content).await
     }
 
     pub async fn load_json<T: DeserializeOwned>(&self, relative_path: &str) -> Result<T> {
         let path = self.validate_relative_path(relative_path)?;
-        let content = fs::read_to_string(&path).await
+        let content = fs::read_to_string(&path)
+            .await
             .with_context(|| format!("Failed to read file: {:?}", path))?;
-        serde_json::from_str(&content)
-            .with_context(|| format!("Failed to deserialize JSON from {:?}", path))
+        serde_json::from_str(&content).with_context(|| format!("Failed to deserialize JSON from {:?}", path))
     }
 
     pub async fn save_toml<T: Serialize>(&self, relative_path: &str, data: &T) -> Result<()> {
         let path = self.validate_relative_path(relative_path)?;
-        let content = toml::to_string_pretty(data)
-            .context("Failed to serialize to TOML")?;
+        let content = toml::to_string_pretty(data).context("Failed to serialize to TOML")?;
         self.atomic_write(&path, content).await
     }
 
     pub async fn load_toml<T: DeserializeOwned>(&self, relative_path: &str) -> Result<T> {
         let path = self.validate_relative_path(relative_path)?;
-        let content = fs::read_to_string(&path).await
+        let content = fs::read_to_string(&path)
+            .await
             .with_context(|| format!("Failed to read file: {:?}", path))?;
-        toml::from_str(&content)
-            .with_context(|| format!("Failed to deserialize TOML from {:?}", path))
+        toml::from_str(&content).with_context(|| format!("Failed to deserialize TOML from {:?}", path))
     }
 
     async fn atomic_write(&self, path: &Path, content: String) -> Result<()> {
         if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent).await
+            fs::create_dir_all(parent)
+                .await
                 .with_context(|| format!("Failed to create directory: {:?}", parent))?;
         }
 
@@ -80,7 +84,8 @@ impl Persistence {
         temp_name.push(format!(".{}.{}.tmp", std::process::id(), nonce));
         let temp_path = PathBuf::from(temp_name);
 
-        fs::write(&temp_path, content).await
+        fs::write(&temp_path, content)
+            .await
             .with_context(|| format!("Failed to write to temporary file: {:?}", temp_path))?;
 
         let result = async {
@@ -96,10 +101,12 @@ impl Persistence {
                 }
             }
 
-            fs::rename(&temp_path, path).await
+            fs::rename(&temp_path, path)
+                .await
                 .with_context(|| format!("Failed to rename {:?} to {:?}", temp_path, path))?;
             Ok(())
-        }.await;
+        }
+        .await;
 
         if result.is_err() {
             let _ = fs::remove_file(&temp_path).await;

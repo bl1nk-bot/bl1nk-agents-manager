@@ -1,8 +1,8 @@
-use crate::config::{RateLimitingConfig, RateLimit}; // เพิ่ม RateLimit เข้ามา
-use std::collections::HashMap;
-use chrono::{DateTime, Utc, Duration};
-use serde::{Deserialize, Serialize};
+use crate::config::{RateLimit, RateLimitingConfig}; // เพิ่ม RateLimit เข้ามา
 use crate::persistence::{Persistence, StorageLocation};
+use chrono::{DateTime, Duration, Utc};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 pub struct RateLimitTracker {
     config: RateLimitingConfig,
@@ -33,13 +33,15 @@ impl AgentUsage {
         let now = Utc::now();
 
         // Reset daily counter
-        if now.signed_duration_since(self.day_start) >= Duration::days(1) { // ใช้ >= เพื่อความแน่นอน
+        if now.signed_duration_since(self.day_start) >= Duration::days(1) {
+            // ใช้ >= เพื่อความแน่นอน
             self.requests_today = 0;
             self.day_start = now;
         }
 
         // Reset minute counter
-        if now.signed_duration_since(self.minute_start) >= Duration::minutes(1) { // ใช้ >= เพื่อความแน่นอน
+        if now.signed_duration_since(self.minute_start) >= Duration::minutes(1) {
+            // ใช้ >= เพื่อความแน่นอน
             self.requests_this_minute = 0;
             self.minute_start = now;
         }
@@ -102,7 +104,10 @@ impl RateLimitTracker {
         if let Some(ref p) = self.persistence {
             // Validate that usage_db_path is not absolute to avoid bypassing Global storage
             if std::path::Path::new(&self.config.usage_db_path).is_absolute() {
-                anyhow::bail!("usage_db_path must not be an absolute path: {}", self.config.usage_db_path);
+                anyhow::bail!(
+                    "usage_db_path must not be an absolute path: {}",
+                    self.config.usage_db_path
+                );
             }
 
             p.save_json(&self.config.usage_db_path, &self.usage).await?;
@@ -119,9 +124,7 @@ impl RateLimitTracker {
         }
 
         let (can_proceed, daily_limit, minute_limit, requests_today, requests_this_minute) = {
-            let usage = self.usage
-                .entry(agent_id.to_string())
-                .or_insert_with(AgentUsage::new);
+            let usage = self.usage.entry(agent_id.to_string()).or_insert_with(AgentUsage::new);
 
             usage.reset_if_needed();
 
@@ -130,30 +133,44 @@ impl RateLimitTracker {
             let minute_limit = agent_limit.requests_per_minute;
 
             if usage.requests_today >= daily_limit {
-                tracing::warn!(
-                    "Agent {} hit daily rate limit ({} requests)",
-                    agent_id, daily_limit
-                );
-                (false, daily_limit, minute_limit, usage.requests_today, usage.requests_this_minute)
+                tracing::warn!("Agent {} hit daily rate limit ({} requests)", agent_id, daily_limit);
+                (
+                    false,
+                    daily_limit,
+                    minute_limit,
+                    usage.requests_today,
+                    usage.requests_this_minute,
+                )
             } else if usage.requests_this_minute >= minute_limit {
                 tracing::warn!(
                     "Agent {} hit per-minute rate limit ({} requests)",
-                    agent_id, minute_limit
+                    agent_id,
+                    minute_limit
                 );
-                (false, daily_limit, minute_limit, usage.requests_today, usage.requests_this_minute)
+                (
+                    false,
+                    daily_limit,
+                    minute_limit,
+                    usage.requests_today,
+                    usage.requests_this_minute,
+                )
             } else {
                 // Increment counters
                 usage.requests_today += 1;
                 usage.requests_this_minute += 1;
-                (true, daily_limit, minute_limit, usage.requests_today, usage.requests_this_minute)
+                (
+                    true,
+                    daily_limit,
+                    minute_limit,
+                    usage.requests_today,
+                    usage.requests_this_minute,
+                )
             }
-
         };
 
         if !can_proceed {
             return false;
         }
-
 
         tracing::debug!(
             "Agent {} usage: {}/{} per day, {}/{} per minute",
@@ -169,9 +186,9 @@ impl RateLimitTracker {
 
     /// Get current usage for an agent
     pub fn get_usage(&self, agent_id: &str) -> Option<(u32, u32)> {
-        self.usage.get(agent_id).map(|usage| {
-            (usage.requests_today, usage.requests_this_minute)
-        })
+        self.usage
+            .get(agent_id)
+            .map(|usage| (usage.requests_today, usage.requests_this_minute))
     }
 
     /// Reset all usage counters (for testing)
@@ -193,7 +210,7 @@ mod tests {
         };
 
         let mut tracker = RateLimitTracker::new(config);
-        
+
         // กำหนด limit สำหรับ agent นี้โดยเฉพาะ
         let agent_limit = RateLimit {
             requests_per_minute: 10,
@@ -228,7 +245,8 @@ mod tests {
         for i in 0..5 {
             assert!(
                 tracker.check_and_increment("test-agent", &agent_limit).await,
-                "Request {} should have succeeded", i + 1
+                "Request {} should have succeeded",
+                i + 1
             );
         }
 
@@ -248,7 +266,10 @@ mod tests {
         };
 
         let mut tracker = RateLimitTracker::new(config);
-        let agent_limit = RateLimit { requests_per_minute: 1, requests_per_day: 1 };
+        let agent_limit = RateLimit {
+            requests_per_minute: 1,
+            requests_per_day: 1,
+        };
 
         // ควรจะผ่านเสมอแม้ว่าจะเกิน limit
         assert!(tracker.check_and_increment("test-agent", &agent_limit).await);
@@ -263,8 +284,11 @@ mod tests {
             usage_db_path: "/tmp/boundary.db".to_string(),
         };
         let mut tracker = RateLimitTracker::new(config);
-        let limits = RateLimit { requests_per_minute: 0, requests_per_day: 0 };
-        
+        let limits = RateLimit {
+            requests_per_minute: 0,
+            requests_per_day: 0,
+        };
+
         // เมื่อขีดจำกัดเป็น 0 ทุกอย่างควรถูกบล็อก
         assert!(!tracker.check_and_increment("agent1", &limits).await);
     }
@@ -280,8 +304,11 @@ mod tests {
             usage_db_path: "/tmp/stress.db".to_string(),
         };
         let tracker = Arc::new(Mutex::new(RateLimitTracker::new(config)));
-        let limits = RateLimit { requests_per_minute: 10, requests_per_day: 100 };
-        
+        let limits = RateLimit {
+            requests_per_minute: 10,
+            requests_per_day: 100,
+        };
+
         let mut handles = vec![];
         for _ in 0..20 {
             let t = tracker.clone();
@@ -294,7 +321,9 @@ mod tests {
 
         let mut success_count = 0;
         for h in handles {
-            if h.await.unwrap() { success_count += 1; }
+            if h.await.unwrap() {
+                success_count += 1;
+            }
         }
 
         assert_eq!(success_count, 10, "ควรอนุญาตให้ผ่านได้แค่ 10 คำขอตามกำหนด");

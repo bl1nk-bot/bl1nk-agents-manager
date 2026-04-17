@@ -1,7 +1,6 @@
 use crate::config::{AgentConfig, AgentToolPermissions, RateLimit};
-use anyhow::{Context, Result};
-use std::fs;
-use std::path::{Path, PathBuf};
+use anyhow::Result;
+use std::path::Path;
 
 pub struct DiscoveryEngine;
 
@@ -15,10 +14,8 @@ impl DiscoveryEngine {
     }
 
     pub fn parse_agent_file(path: &Path) -> Result<AgentConfig> {
-        let content = fs::read_to_string(path)?;
         let slug = path.file_stem().unwrap().to_str().unwrap();
-        
-        // Simple manual parse for legacy compatibility
+
         Ok(AgentConfig {
             id: slug.to_string(),
             name: slug.to_string(),
@@ -29,7 +26,12 @@ impl DiscoveryEngine {
             capabilities: Vec::new(),
             priority: 100,
             enabled: true,
-            tool: AgentToolPermissions { bash: false, write: false, skill: true, ask: true },
+            tool: AgentToolPermissions {
+                bash: false,
+                write: false,
+                skill: true,
+                ask: true,
+            },
             permission: 100,
             permission_policy: serde_json::json!({}),
             command: "true".to_string(),

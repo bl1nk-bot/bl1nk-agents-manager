@@ -1,12 +1,9 @@
-use crate::config::{AgentConfig, RoutingConfig, AgentToolPermissions};
-use crate::agents::register::{AgentRegistry, AgentAvailability};
+use crate::agents::register::AgentRegistry;
 use crate::registry::RegistryService;
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tokio::sync::RwLock;
-
-use schemars::JsonSchema;
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct PlanProposal {
@@ -20,16 +17,24 @@ pub struct PlanProposal {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, JsonSchema)]
-pub enum CostCategory { Free, Cheap, Standard, Premium }
+pub enum CostCategory {
+    Free,
+    Cheap,
+    Standard,
+    Premium,
+}
 
 pub struct AgentRouter {
-    config: RoutingConfig,
+    config: crate::config::RoutingConfig,
     registry_service: Option<Arc<RegistryService>>,
 }
 
 impl AgentRouter {
-    pub fn new(config: RoutingConfig) -> Self {
-        Self { config, registry_service: None }
+    pub fn new(config: crate::config::RoutingConfig) -> Self {
+        Self {
+            config,
+            registry_service: None,
+        }
     }
 
     pub fn with_registry(mut self, service: Arc<RegistryService>) -> Self {
@@ -37,33 +42,30 @@ impl AgentRouter {
         self
     }
 
-    pub async fn route_task(
-        &self,
-        registry: &AgentRegistry,
-        task_type: &str,
-        prompt: &str,
-    ) -> Result<PlanProposal> {
+    pub async fn route_task(&self, registry: &AgentRegistry, task_type: &str, prompt: &str) -> Result<PlanProposal> {
         let mut capable_agents = Vec::new();
 
-        // 1. ค้นหาจาก Registry Service (Smart Search)
         if let Some(service) = &self.registry_service {
             let matches = service.search_agents(prompt, false);
-            for m in matches { capable_agents.push(m.id); }
+            for m in matches {
+                capable_agents.push(m.id);
+            }
         }
 
-        // 2. ค้นหาจาก Routing Rules
-        let rule_based: Vec<String> = self.config.rules.iter()
+        let rule_based: Vec<String> = self
+            .config
+            .rules
+            .iter()
             .filter(|r| r.enabled && (r.task_type == task_type || r.task_type == "*"))
             .flat_map(|r| r.preferred_agents.clone())
             .collect();
-        
+
         capable_agents.extend(rule_based);
-        
+
         if capable_agents.is_empty() {
             capable_agents = registry.list_agent_ids();
         }
 
-        // เลือกเอเจนต์ที่ดีที่สุด
         let selected_id = capable_agents.first().context("No agents available")?;
         let state = registry.get_agent_state(selected_id).context("Agent not found")?;
 
@@ -71,7 +73,10 @@ impl AgentRouter {
             task_id: uuid::Uuid::new_v4().to_string(),
             agent_id: selected_id.clone(),
             agent_name: state.config.name.clone(),
-            reasoning: format!("Selected based on task type '{}' and smart capability matching.", task_type),
+            reasoning: format!(
+                "Selected based on task type '{}' and smart capability matching.",
+                task_type
+            ),
             cost_category: CostCategory::Standard,
             availability: "Ready".to_string(),
             capable_agents,
@@ -82,7 +87,7 @@ impl AgentRouter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::RateLimit;
+    use crate::config::{AgentConfig, AgentToolPermissions, RateLimit, RoutingConfig, RoutingTier};
 
     #[tokio::test]
     async fn test_router_basic() {
@@ -96,7 +101,12 @@ mod tests {
             capabilities: vec!["test".into()],
             priority: 100,
             enabled: true,
-            tool: AgentToolPermissions { bash: false, write: false, skill: true, ask: true },
+            tool: AgentToolPermissions {
+                bash: false,
+                write: false,
+                skill: true,
+                ask: true,
+            },
             permission: 100,
             permission_policy: serde_json::json!({}),
             command: "true".into(),
@@ -108,8 +118,11 @@ mod tests {
         };
 
         let registry = AgentRegistry::new(vec![agent], None);
-        let router = AgentRouter::new(RoutingConfig { rules: vec![], tier: crate::config::RoutingTier::Default });
-        
+        let router = AgentRouter::new(RoutingConfig {
+            rules: vec![],
+            tier: RoutingTier::Default,
+        });
+
         let plan = router.route_task(&registry, "general", "test").await.unwrap();
         assert_eq!(plan.agent_id, "test");
     }

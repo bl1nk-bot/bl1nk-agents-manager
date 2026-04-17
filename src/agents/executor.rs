@@ -1,20 +1,21 @@
-use crate::config::{AgentConfig, RoutingConfig, RoutingTier};
-use crate::agents::register::{AgentRegistry, TaskStatus, TaskInfo};
-use crate::rate_limit::RateLimitTracker;
+use crate::agents::register::{AgentRegistry, TaskInfo, TaskStatus};
 use crate::agents::router::AgentRouter;
+use crate::config::{AgentConfig, RoutingConfig};
+use crate::mcp::{DelegateTaskArgs, DelegateTaskOutput};
+use crate::rate_limit::RateLimitTracker;
 use crate::registry::RegistryService;
-use anyhow::{Result, Context, bail};
+use anyhow::{bail, Context, Result};
 use serde_json::Value;
 use std::sync::Arc;
-use tokio::sync::RwLock;
 use tokio::process::Command;
-use crate::mcp::{DelegateTaskArgs, DelegateTaskOutput};
+use tokio::sync::RwLock;
 
 /// ตัวรันงานของเอเจนต์ (Agent Executor)
 pub struct AgentExecutor {
     agent_registry: Arc<RwLock<AgentRegistry>>,
-    rate_limiter: Arc<RwLock<RateLimitTracker>>,
+    _rate_limiter: Arc<RwLock<RateLimitTracker>>,
     router: AgentRouter,
+    #[allow(dead_code)]
     weight_registry: Arc<RwLock<crate::registry::WeightRegistry>>,
 }
 
@@ -27,7 +28,7 @@ impl AgentExecutor {
     ) -> Self {
         Self {
             agent_registry,
-            rate_limiter,
+            _rate_limiter: rate_limiter,
             router: AgentRouter::new(routing_config),
             weight_registry,
         }
@@ -53,7 +54,11 @@ impl AgentExecutor {
             task_id: task_id.clone(),
             agent_id: agent_id.clone(),
             task_type: args.task_type.clone(),
-            status: if args.interactive { TaskStatus::AwaitingApproval } else { TaskStatus::Pending },
+            status: if args.interactive {
+                TaskStatus::AwaitingApproval
+            } else {
+                TaskStatus::Pending
+            },
             proposal: Some(proposal.clone()),
             prompt: args.prompt.clone(),
             context: args.context.clone(),
@@ -66,7 +71,6 @@ impl AgentExecutor {
 
         // 3. จัดการการรันงาน
         if args.interactive {
-            // โหมด Interactive: คืนข้อเสนอให้ผู้ใช้ตัดสินใจ
             Ok(DelegateTaskOutput {
                 task_id,
                 agent_id,
@@ -75,13 +79,14 @@ impl AgentExecutor {
                 proposal: Some(proposal),
             })
         } else {
-            // โหมดปกติ: รันทันที
             let agent = {
                 let registry = self.agent_registry.read().await;
                 registry.get_agent(&agent_id).context("Agent not found")?.clone()
             };
 
-            let result = self.execute_task_internal(&task_id, &agent, &args.prompt, args.context).await?;
+            let result = self
+                .execute_task_internal(&task_id, &agent, &args.prompt, args.context)
+                .await?;
 
             Ok(DelegateTaskOutput {
                 task_id,
@@ -93,7 +98,11 @@ impl AgentExecutor {
         }
     }
 
-    pub async fn approve_task(&self, task_id: String, confirmed_agent_id: Option<String>) -> Result<DelegateTaskOutput> {
+    pub async fn approve_task(
+        &self,
+        task_id: String,
+        confirmed_agent_id: Option<String>,
+    ) -> Result<DelegateTaskOutput> {
         let (agent_id, prompt, context) = {
             let registry = self.agent_registry.read().await;
             let task = registry.get_task(&task_id).context("Task not found")?;
@@ -118,30 +127,26 @@ impl AgentExecutor {
     }
 
     async fn execute_task_internal(
-        &self, 
-        task_id: &str, 
-        agent: &AgentConfig, 
-        prompt: &str, 
-        context: Option<Value>
+        &self,
+        task_id: &str,
+        agent: &AgentConfig,
+        prompt: &str,
+        context: Option<Value>,
     ) -> Result<String> {
-        // อัปเดตสถานะเป็น Running
         {
             let mut registry = self.agent_registry.write().await;
             registry.update_task_status(task_id, TaskStatus::Running)?;
         }
 
-        // ตรวจสอบความปลอดภัยเบื้องต้น
         if agent.permission < 100 {
             bail!("Agent permissions too low");
         }
 
-        // จำลองการรันงาน
         let result = match agent.agent_type.as_str() {
             "cli" => self.execute_cli_agent(agent, prompt, context).await,
             _ => Ok(format!("Task executed by {} (simulated)", agent.name)),
         };
 
-        // อัปเดตผลลัพธ์
         let mut registry = self.agent_registry.write().await;
         match &result {
             Ok(_) => registry.update_task_status(task_id, TaskStatus::Completed)?,
@@ -151,12 +156,7 @@ impl AgentExecutor {
         result
     }
 
-    async fn execute_cli_agent(
-        &self,
-        agent: &AgentConfig,
-        _prompt: &str,
-        _context: Option<Value>,
-    ) -> Result<String> {
+    async fn execute_cli_agent(&self, agent: &AgentConfig, _prompt: &str, _context: Option<Value>) -> Result<String> {
         let mut child = Command::new(&agent.command)
             .args(agent.args.as_deref().unwrap_or(&[]))
             .spawn()

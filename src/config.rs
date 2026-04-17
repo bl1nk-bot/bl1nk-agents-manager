@@ -1,8 +1,8 @@
-use anyhow::{Context, Result, bail};
+use crate::system::skill_discovery;
+use anyhow::{bail, Result};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::{Path, PathBuf};
-use crate::system::skill_discovery;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config {
@@ -22,7 +22,9 @@ pub struct ServerConfig {
     #[serde(default = "default_max_concurrent")]
     pub max_concurrent_tasks: usize,
 }
-fn default_max_concurrent() -> usize { 5 }
+fn default_max_concurrent() -> usize {
+    5
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct MainAgentConfig {
@@ -57,7 +59,7 @@ pub struct AgentConfig {
     pub tool: AgentToolPermissions,
     pub permission: u32,
     pub permission_policy: serde_json::Value,
-    
+
     // ฟิลด์ทางเทคนิคที่จำเป็น (รักษาไว้เพื่อให้โค้ดส่วนอื่นไม่พัง)
     #[serde(default = "default_command")]
     pub command: String,
@@ -81,8 +83,12 @@ pub struct AgentToolPermissions {
     pub ask: bool,
 }
 
-fn default_true() -> bool { true }
-fn default_command() -> String { "true".to_string() }
+fn default_true() -> bool {
+    true
+}
+fn default_command() -> String {
+    "true".to_string()
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RateLimit {
@@ -91,19 +97,22 @@ pub struct RateLimit {
 }
 
 impl Default for RateLimit {
-    fn default() -> Self { Self { requests_per_minute: 60, requests_per_day: 2000 } }
+    fn default() -> Self {
+        Self {
+            requests_per_minute: 60,
+            requests_per_day: 2000,
+        }
+    }
 }
 
 impl Config {
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
         let content = fs::read_to_string(&path)?;
         let mut config: Config = toml::from_str(&content)?;
-        
+
         let runtime = tokio::runtime::Runtime::new()?;
-        runtime.block_on(async {
-            config.auto_discover_agents().await
-        })?;
-        
+        runtime.block_on(async { config.auto_discover_agents().await })?;
+
         config.validate()?;
         Ok(config)
     }
@@ -111,20 +120,26 @@ impl Config {
     async fn auto_discover_agents(&mut self) -> Result<()> {
         let agent_dirs = vec![PathBuf::from("agents"), PathBuf::from("skills")];
         let discovered = skill_discovery::discover_validated_assets(agent_dirs).await?;
-        
+
         let registry_path = "agents/agents.json";
         let registry: crate::registry::schema::Registry = if Path::new(registry_path).exists() {
             let content = fs::read_to_string(registry_path)?;
-            serde_json::from_str(&content).unwrap_or_else(|_| crate::registry::schema::Registry { 
-                version: "1.7.0".into(), last_updated: None, agents: vec![] 
+            serde_json::from_str(&content).unwrap_or_else(|_| crate::registry::schema::Registry {
+                version: "1.7.0".into(),
+                last_updated: None,
+                agents: vec![],
             })
         } else {
-            crate::registry::schema::Registry { version: "1.7.0".into(), last_updated: None, agents: vec![] }
+            crate::registry::schema::Registry {
+                version: "1.7.0".into(),
+                last_updated: None,
+                agents: vec![],
+            }
         };
 
         for meta in discovered {
             let entry = registry.agents.iter().find(|a| a.name == meta.name);
-            
+
             let agent = if let Some(e) = entry {
                 AgentConfig {
                     id: meta.name.clone(),
@@ -162,7 +177,12 @@ impl Config {
                     capabilities: vec![meta.filename],
                     priority: 50,
                     enabled: true,
-                    tool: AgentToolPermissions { bash: false, write: false, skill: true, ask: true },
+                    tool: AgentToolPermissions {
+                        bash: false,
+                        write: false,
+                        skill: true,
+                        ask: true,
+                    },
                     permission: 100,
                     permission_policy: serde_json::json!({"hierarchy": ["default"]}),
                     command: "true".into(),
@@ -188,7 +208,9 @@ impl Config {
     }
 
     fn validate(&self) -> Result<()> {
-        if self.agents.is_empty() { bail!("At least one agent must be loaded"); }
+        if self.agents.is_empty() {
+            bail!("At least one agent must be loaded");
+        }
         Ok(())
     }
 }
@@ -201,12 +223,22 @@ pub struct RoutingConfig {
 }
 
 impl Default for RoutingConfig {
-    fn default() -> Self { Self { tier: RoutingTier::Default, rules: vec![] } }
+    fn default() -> Self {
+        Self {
+            tier: RoutingTier::Default,
+            rules: vec![],
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord, Default)]
 #[serde(rename_all = "lowercase")]
-pub enum RoutingTier { #[default] Default, User, Admin }
+pub enum RoutingTier {
+    #[default]
+    Default,
+    User,
+    Admin,
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RoutingRule {
@@ -228,7 +260,9 @@ pub struct RateLimitingConfig {
     pub strategy: String,
 }
 
-fn default_strategy() -> String { "round-robin".to_string() }
+fn default_strategy() -> String {
+    "round-robin".to_string()
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct LoggingConfig {

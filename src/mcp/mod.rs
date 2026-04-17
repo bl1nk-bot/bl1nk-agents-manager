@@ -1,10 +1,10 @@
+use crate::agents::{AgentExecutor, AgentRegistry};
 use crate::config::Config;
-use crate::agents::{AgentRegistry, AgentExecutor};
 use crate::rate_limit::RateLimitTracker;
 use anyhow::Result;
-use pmcp::{ServerBuilder, TypedTool, RequestHandlerExtra};
-use serde::{Deserialize, Serialize};
+use pmcp::{RequestHandlerExtra, ServerBuilder, TypedTool};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
@@ -85,14 +85,14 @@ impl Orchestrator {
         // โค้ดส่วนนี้ยังคงทำงานได้ถูกต้อง
         // `config.agents` จะมี pmat-internal agent รวมอยู่ด้วย
         // ถ้าเราแก้ไข `config.rs` ให้เพิ่มมันเข้าไปเมื่อเปิดฟีเจอร์ `bundle-pmat`
-        let agent_registry = Arc::new(RwLock::new(
-            AgentRegistry::new(config.agents.clone(), report.as_ref())
-        ));
+        let agent_registry = Arc::new(RwLock::new(AgentRegistry::new(config.agents.clone(), report.as_ref())));
 
         // สร้าง RegistryService เพื่อใช้ Smart Search
         let registry_path = "agents/agents.json";
         let registry_service = if std::path::Path::new(registry_path).exists() {
-            crate::registry::RegistryService::from_file(registry_path).ok().map(Arc::new)
+            crate::registry::RegistryService::from_file(registry_path)
+                .ok()
+                .map(Arc::new)
         } else {
             None
         };
@@ -105,7 +105,9 @@ impl Orchestrator {
 
         // โหลดสถิตินโยบาย (Reputation Ledger) จากไฟล์กลาง
         let weight_registry = Arc::new(RwLock::new(
-            crate::registry::WeightRegistry::load().await.unwrap_or_else(|_| crate::registry::WeightRegistry::new())
+            crate::registry::WeightRegistry::load()
+                .await
+                .unwrap_or_else(|_| crate::registry::WeightRegistry::new()),
         ));
 
         let mut executor_logic = AgentExecutor::new(
@@ -126,18 +128,32 @@ impl Orchestrator {
             rate_limiter,
             executor,
             registry_service: registry_service.unwrap_or_else(|| {
-                let registry = crate::registry::schema::Registry { version: "1.7.0".into(), last_updated: None, agents: vec![] };
+                let registry = crate::registry::schema::Registry {
+                    version: "1.7.0".into(),
+                    last_updated: None,
+                    agents: vec![],
+                };
                 Arc::new(crate::registry::RegistryService::new(registry))
             }),
         })
     }
 
     pub async fn delegate_task_internal(&self, args: DelegateTaskArgs) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.delegate_task(args).await.map_err(|e| pmcp::Error::internal(e.to_string()))
+        self.executor
+            .delegate_task(args)
+            .await
+            .map_err(|e| pmcp::Error::internal(e.to_string()))
     }
 
-    pub async fn approve_task_internal(&self, task_id: String, confirmed_agent_id: Option<String>) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.approve_task(task_id, confirmed_agent_id).await.map_err(|e| pmcp::Error::internal(e.to_string()))
+    pub async fn approve_task_internal(
+        &self,
+        task_id: String,
+        confirmed_agent_id: Option<String>,
+    ) -> pmcp::Result<DelegateTaskOutput> {
+        self.executor
+            .approve_task(task_id, confirmed_agent_id)
+            .await
+            .map_err(|e| pmcp::Error::internal(e.to_string()))
     }
 
     pub async fn run_stdio(self) -> Result<()> {
@@ -219,7 +235,9 @@ impl Orchestrator {
         }
         drop(rate_limiter_guard);
 
-        if let Some(e) = server_error { return Err(e.into()) }
+        if let Some(e) = server_error {
+            return Err(e.into());
+        }
 
         Ok(())
     }
@@ -231,22 +249,26 @@ async fn query_agent_status(
 ) -> pmcp::Result<AgentStatusOutput> {
     let registry = registry.read().await;
 
-    let agents = registry.get_agents_sorted().into_iter().map(|state| {
-        let availability = match &state.availability {
-            crate::agents::register::AgentAvailability::Ready => "Ready".to_string(),
-            crate::agents::register::AgentAvailability::MissingTools(tools) => {
-                format!("Missing Tools: {}", tools.join(", "))
-            }
-        };
+    let agents = registry
+        .get_agents_sorted()
+        .into_iter()
+        .map(|state| {
+            let availability = match &state.availability {
+                crate::agents::register::AgentAvailability::Ready => "Ready".to_string(),
+                crate::agents::register::AgentAvailability::MissingTools(tools) => {
+                    format!("Missing Tools: {}", tools.join(", "))
+                }
+            };
 
-        AgentSummary {
-            id: state.config.id.clone(),
-            name: state.config.name.clone(),
-            availability,
-            priority: state.config.priority,
-            cost: state.config.cost,
-        }
-    }).collect();
+            AgentSummary {
+                id: state.config.id.clone(),
+                name: state.config.name.clone(),
+                availability,
+                priority: state.config.priority,
+                cost: state.config.cost,
+            }
+        })
+        .collect();
 
     Ok(AgentStatusOutput {
         active_tasks: registry.active_task_count(),
