@@ -46,6 +46,7 @@ enum Commands {
         prompt: String,
     },
     /// Search for keywords in the registry
+    // คำสั่งสำหรับค้นหาคีย์เวิร์ดใน registry 👀
     Search {
         /// The keyword query
         #[arg(short, long)]
