@@ -136,6 +136,7 @@ async fn main() -> Result<()> {
                 if results.is_empty() {
                     println!("No results found for '{}'.", query);
                 } else {
+                    // แสดงผลลัพธ์การค้นหา
                     println!("Search Results for '{}':", query);
                     for res in results {
                         println!("- ID: {}, Term: {}, Score: {:.2}", res.id, res.term, res.score);
