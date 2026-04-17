@@ -1,11 +1,15 @@
 # oh-my-gemini Team Context
 
 ## Team: oh-my-gemini
+
 ## Task: task3
+
 ## Workers: 3
+
 ## State Root: /storage/emulated/0/Download/bl1nk-agents/.omg/state
 
 ## Environment Variables
+
 - `OMG_TEAM_WORKER`: `<teamName>/<workerId>` — combined identifier
 - `OMG_WORKER_NAME`: `<workerId>` — this worker's ID
 - `OMG_TEAM_STATE_ROOT`: path to `.omg/state/`
@@ -13,10 +17,12 @@
 - `OMG_WORKER_CLAIM_TOKEN`: claim token to use with transitionTaskStatus (if set)
 
 ## Worker Done Signal Protocol
+
 Write a done signal file when your task is complete:
   `$OMG_TEAM_STATE_ROOT/team/<teamName>/workers/<workerId>/done.json`
 
 Done signal format:
+
 ```json
 {
   "teamName": "<teamName>",
@@ -28,7 +34,9 @@ Done signal format:
 ```
 
 ## Available Skills
+
 Workers can leverage these skills through SKILL.md extension files:
+
 - `plan` (/plan, planning): primary role `planner` (fallback: analyst, architect, explore, scientist)
 - `team` (/team, execute, execution, implement): primary role `executor` (fallback: deep-executor, build-fixer, debugger, designer)
 - `review` (/review, reviewer, code-review, audit): primary role `code-reviewer` (fallback: quality-reviewer, critic, security-reviewer, code-simplifier)
@@ -36,17 +44,21 @@ Workers can leverage these skills through SKILL.md extension files:
 - `handoff` (/handoff, hand-over, handover, writer-docs): primary role `writer` (fallback: document-specialist, git-master)
 
 ## Learned Skills
+
 - No learned skills recorded yet.
 
 ## Project Memory
 
 ### Directives
+
 - none recorded
 
 ### Recent Tasks
+
 - none recorded
 
 ### Hot Paths
+
 - none recorded
 
 Use `omg skill list` to see all available skills.

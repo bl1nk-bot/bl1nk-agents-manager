@@ -13,12 +13,14 @@
 We take the security of BL1NK Agents Manager seriously. If you discover a security vulnerability, please follow these steps:
 
 ### DO NOT
+
 - ❌ Open a public GitHub issue
 - ❌ Discuss the vulnerability in public forums
 - ❌ Share the vulnerability details with others
 
 ### DO
-- ✅ Email us at: **security@bl1nk.dev** (if available)
+
+- ✅ Email us at: **<security@bl1nk.dev>** (if available)
 - ✅ Open a [GitHub Security Advisory](https://github.com/billlzzz18/bl1nk-agents-manager/security/advisories/new)
 - ✅ Include as much detail as possible:
   - Type of vulnerability (e.g., XSS, injection, auth bypass)
@@ -41,6 +43,7 @@ We take the security of BL1NK Agents Manager seriously. If you discover a securi
 ### For Users
 
 1. **Keep Dependencies Updated**
+
    ```bash
    # Check for outdated dependencies
    cargo outdated
@@ -59,6 +62,7 @@ We take the security of BL1NK Agents Manager seriously. If you discover a securi
 
 4. **Enable Rate Limiting**
    Configure rate limits for all agents to prevent abuse:
+
    ```toml
    [agents.qwen-coder.rate_limit]
    requests_per_minute = 60
@@ -83,6 +87,7 @@ We take the security of BL1NK Agents Manager seriously. If you discover a securi
    - Minimize `unsafe` blocks
 
 4. **Run Security Audits**
+
    ```bash
    # Install cargo-audit
    cargo install cargo-audit
@@ -119,12 +124,14 @@ We take the security of BL1NK Agents Manager seriously. If you discover a securi
 ## Third-Party Dependencies
 
 All dependencies are managed via `Cargo.toml` and `Cargo.lock`. We use:
+
 - **serde** for type-safe serialization
 - **tokio** for async runtime
 - **clap** for CLI argument parsing
 - **tracing** for structured logging
 
 Regular dependency audits should be performed using:
+
 ```bash
 cargo audit
 cargo outdated

@@ -1,6 +1,6 @@
 {
   "name": "bl1nk-agents",
-  "version": "0.2.0",
+  "version": "1.7.0",
   "description": "High-performance Rust-based MCP/ACP orchestrator for Gemini CLI. Manage a specialized AI workforce with intelligent routing.",
   "author": "billlzzz18 <team@bl1nk.site>",
   "license": "MIT",

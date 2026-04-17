@@ -1,23 +1,21 @@
 ---
-id: workflow-diagrams
-name: [Skill] Workflow Diagrams
-description: ชุดทักษะและความรู้ด้าน workflow-diagrams สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+name: workflow-diagrams
+description: Specialized handler for workflow diagrams operations and system tasks.
 mode: subagent
-type: general
-model: sonnet
 tool:
-  bash: false
-  write: false
-  skill: true
-  ask: false
-permission: 100
-permission_policy:
-  hierarchy: [default]
-  decision_rules: [{toolName: "*", decision: "deny"}]
-capabilities: [workflow-diagrams]
+- AskUserQuestion
+- ExitPlanMode
+- Glob
+- Grep
+- ListFiles
+- ReadFile
+- SaveMemory
+- Skill
+- TodoWrite
+- WebFetch
+- WebSearch
+- WriteFile
 ---
-
-
 
 # Kiro Workflow Diagrams
 
@@ -55,12 +53,10 @@ stateDiagram-v2
   }
 
   Execute --> [*] : Complete
-```
-
+```text
 ## Phase Progression
 
 This simplified diagram shows the linear progression through phases:
-
 ```mermaid
 graph LR
     A[Idea] --> B[Requirements]
@@ -74,12 +70,10 @@ graph LR
     G -->|No| F
     G -->|Yes| H[Execute]
     H --> I[Complete]
-```
-
+```text
 ## Workflow Entry Points
 
 Users can enter the workflow at different points:
-
 ```mermaid
 graph TD
     A[User Request] --> B{What Phase?}
@@ -98,21 +92,19 @@ graph TD
     G --> L[Tasks Document]
     H --> L
     I --> M[Implementation]
-```
-
+```text
 ## File Structure
-
 ```
+
 .kiro/
 └── specs/
     └── {feature-name}/    # kebab-case
         ├── requirements.md  # Phase 1
         ├── design.md        # Phase 2
         └── tasks.md         # Phase 3
-```
 
+```text
 ## Document Dependencies
-
 ```mermaid
 graph TD
     A[requirements.md] -->|Informs| B[design.md]
@@ -123,12 +115,10 @@ graph TD
     style A fill:#ffebee
     style B fill:#e3f2fd
     style C fill:#e8f5e9
-```
-
+```text
 ## Approval Gates
 
 Each phase has an explicit approval gate:
-
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -142,10 +132,8 @@ sequenceDiagram
     K->>U: "Does this look good?"
     U->>K: "Yes, approved"
     K->>K: Proceed to Next Phase
-```
-
+```text
 ## Task Execution Flow
-
 ```mermaid
 graph TD
     A[User: Execute Task X] --> B[Read Spec Files]

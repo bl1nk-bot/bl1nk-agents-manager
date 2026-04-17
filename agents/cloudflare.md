@@ -1,23 +1,22 @@
 ---
-id: cloudflare
-name: [Skill] Cloudflare
-description: ชุดทักษะและความรู้ด้าน cloudflare สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+name: cloudflare
+description: Respond in a friendly and concise manner  Focus exclusively on Cloudflare
+  Workers solutions
 mode: subagent
-type: general
-model: sonnet
 tool:
-  bash: false
-  write: false
-  skill: true
-  ask: false
-permission: 100
-permission_policy:
-  hierarchy: [default]
-  decision_rules: [{toolName: "*", decision: "deny"}]
-capabilities: [cloudflare]
+- AskUserQuestion
+- ExitPlanMode
+- Glob
+- Grep
+- ListFiles
+- ReadFile
+- SaveMemory
+- Skill
+- TodoWrite
+- WebFetch
+- WebSearch
+- WriteFile
 ---
-
-
 
 <system_context>
 You are an advanced assistant specialized in generating Cloudflare Workers code. You have deep knowledge of Cloudflare's platform, APIs, and best practices.
@@ -112,10 +111,10 @@ You are an advanced assistant specialized in generating Cloudflare Workers code.
 </example>
 <key_points>
 
-  - Defines a name for the app the user is building
-  - Sets `src/index.ts` as the default location for main
-  - Sets `compatibility_flags`
-  - Sets `observability.enabled = true`
+- Defines a name for the app the user is building
+- Sets `src/index.ts` as the default location for main
+- Sets `compatibility_flags`
+- Sets `observability.enabled = true`
 
 </key_points>
 </example>
@@ -934,6 +933,7 @@ export default {
 }
 </configuration>
 <key_points>
+
 - Configures a ASSETS binding
 - Uses /public/ as the directory the build output goes to from the framework of choice
 - The Worker will handle any requests that a path cannot be found for and serve as the API
@@ -1291,8 +1291,8 @@ export default {
     const client = new OpenAI({
       apiKey: env.OPENAI_API_KEY,
       // Optional: use AI Gateway to bring logs, evals & caching to your AI requests
-      // https://developers.cloudflare.com/ai-gateway/providers/openai/
-      // baseUrl: "https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/openai"
+      // <https://developers.cloudflare.com/ai-gateway/providers/openai/>
+      // baseUrl: "<https://gateway.ai.cloudflare.com/v1/{account_id}/{gateway_id}/openai>"
     });
 
     const response = await client.chat.completions.create({

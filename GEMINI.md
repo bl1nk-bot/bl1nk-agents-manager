@@ -13,9 +13,10 @@ This extension provides a powerful framework for managing and using specialized 
 System Agents are specialized `system.md` files that define how the Gemini CLI behaves. Instead of a generic assistant, you can load a specific persona with expert knowledge, unique speech patterns, or strict behavioral constraints.
 
 This extension provides:
-1.  **A Curated Library**: High-quality, pre-tested agents for engineering, writing, and entertainment.
-2.  **Management Commands**: CLI tools to list, inspect, and switch between agents.
-3.  **Extensibility**: A structure to add your own custom agents.
+
+1. **A Curated Library**: High-quality, pre-tested agents for engineering, writing, and entertainment.
+2. **Management Commands**: CLI tools to list, inspect, and switch between agents.
+3. **Extensibility**: A structure to add your own custom agents.
 
 ---
 
@@ -24,19 +25,22 @@ This extension provides:
 The extension comes with a built-in library of agents located in the `agents/` directory:
 
 ### 🛠️ Engineering & Development
-*   **Software Architect** (`architect`): Focuses on design, patterns, and documentation. Does *not* write implementation code.
-*   **Code Generator** (`code-generator`): Streamlined, efficient coder. Minimal chatter, maximum code.
+
+* **Software Architect** (`architect`): Focuses on design, patterns, and documentation. Does *not* write implementation code.
+* **Code Generator** (`code-generator`): Streamlined, efficient coder. Minimal chatter, maximum code.
 
 ### ✍️ Creative
-*   **Creative Writer** (`creative-writer`): Expert in poetry, prose, storytelling, and literary adaptation.
+
+* **Creative Writer** (`creative-writer`): Expert in poetry, prose, storytelling, and literary adaptation.
 
 ### 🎪 Entertainment & Comedy
-*   **Dad Joke Comedian** (`comedian`): Responds to everything with a dad joke.
-*   **Pirate** (`pirate`): Technical help delivered in authentic pirate dialect.
-*   **Shakespeare** (`shakespeare`): Codes and speaks in iambic pentameter/Elizabethan English.
-*   **Yoda** (`yoda`): Helpful he is. Code he will fix.
-*   **Cowboy** (`cowboy`): Folksy wisdom and straight-shooting technical advice.
-*   **Gen Z** (`gen-z`): Technical support, no cap.
+
+* **Dad Joke Comedian** (`comedian`): Responds to everything with a dad joke.
+* **Pirate** (`pirate`): Technical help delivered in authentic pirate dialect.
+* **Shakespeare** (`shakespeare`): Codes and speaks in iambic pentameter/Elizabethan English.
+* **Yoda** (`yoda`): Helpful he is. Code he will fix.
+* **Cowboy** (`cowboy`): Folksy wisdom and straight-shooting technical advice.
+* **Gen Z** (`gen-z`): Technical support, no cap.
 
 ---
 
@@ -62,19 +66,22 @@ The `/system-agent:switch` command will generate the exact commands you need.
 
 **Common Methods:**
 
-1.  **Temporary (One-off session):**
+1. **Temporary (One-off session):**
+
     ```bash
     GEMINI_SYSTEM_MD=~/.gemini/extensions/agents-manager/agents/pirate.md gemini
     ```
 
-2.  **Persistent (Until shell exit):**
+2. **Persistent (Until shell exit):**
+
     ```bash
     export GEMINI_SYSTEM_MD=~/.gemini/extensions/agents-manager/agents/architect.md
     gemini
     ```
 
-3.  **Aliases (Recommended):**
+3. **Aliases (Recommended):**
     Add these to your `.bashrc` or `.zshrc`:
+
     ```bash
     alias gemini-pirate="GEMINI_SYSTEM_MD=~/.gemini/extensions/agents-manager/agents/pirate.md gemini"
     alias gemini-code="GEMINI_SYSTEM_MD=~/.gemini/extensions/agents-manager/agents/code-generator.md gemini"
@@ -100,6 +107,6 @@ For developers extending this project:
 
 ### Adding a New Agent
 
-1.  Create a new `.md` file in `agents/`.
-2.  Add the agent's metadata to `agents/agents.json`.
-3.  (Optional) If it's a "custom" user agent (not built-in), the logic in `system-agent.toml` looks for a `custom/agents.json` file relative to the extension path.
+1. Create a new `.md` file in `agents/`.
+2. Add the agent's metadata to `agents/agents.json`.
+3. (Optional) If it's a "custom" user agent (not built-in), the logic in `system-agent.toml` looks for a `custom/agents.json` file relative to the extension path.

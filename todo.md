@@ -1,15 +1,16 @@
 # TODO: bl1nk-agents
 
-## [2026-04-12] Codebase Stabilization
-- [x] ID 0: Fix failing AgentCreator test case
-- [x] ID 1: P1 Cleanup: Registry & Config (Zero Warnings)
-- [x] ID 2: P1 Fix: Unreachable pattern in hook_aggregator.rs
-- [~] ID 3: P1 Test: Unit Tests for RegistryService (In Progress)
-    - [x] Write failing unit tests (Red Phase)
-    - [x] Implement/Fix logic to pass tests (Green Phase)
-    - [ ] Verify coverage > 90%
-- [~] ID 4: P2 Cleanup: mcp, register, creator (In Progress)
-- [ ] ID 5: P2 Test: Orchestrator Logic Tests
-- [ ] ID 6: P3 Implementation: Error Handling & Pattern
-- [ ] ID 7: P3 Global Cleanup: Remaining Warnings
-- [ ] ID 8: P3 Final Verification
+## [2026-04-17] Split Metadata & Discovery Upgrade (v1.7.0)
+
+- [x] ID 9: Port Skill Discovery from TS to Rust
+- [x] ID 10: Implement Split Metadata Architecture (Clean 4 fields in .md)
+- [x] ID 11: Unified Registry & Schema v1.7.0 Enforcement
+- [x] ID 12: Organize Conductor Tracks & Archive old work
+- [x] ID 13: Standardize Markdown Formatting (markdownlint-cli2)
+- [~] ID 14: Track: Context Management Implementation (Current Focus)
+  - [ ] Phase 1: Context Data Structures
+  - [ ] Phase 2: JSON Persistence
+
+## [2026-04-12] Codebase Stabilization (Archived Context)
+
+- [x] ID 0-8: Stabilization tasks completed in v1.0.x

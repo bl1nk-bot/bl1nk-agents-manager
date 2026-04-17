@@ -40,38 +40,42 @@
    - รัน test อีกครั้งเพื่อยืนยันว่ายังผ่าน
 
 8. **Verify Coverage:**
+
    ```bash
    cargo test --all-features -- --test-threads=1
    cargo tarpaulin --out Html --output-dir coverage
-   ```
-   **Target: >90% coverage** สำหรับโค้ดใหม่
+   ```text
 
-9. **Document Deviations:** หาก implementation ต่างจาก tech-stack.md:
+**Target: >90% coverage** สำหรับโค้ดใหม่
+
+1. **Document Deviations:** หาก implementation ต่างจาก tech-stack.md:
    - **หยุด** implementation
    - อัปเดต `tech-stack.md` พร้อมเหตุผล
    - ใส่วันที่และคำอธิบาย
    - ทำงานต่อ
 
-10. **Commit Code Changes:**
+2. **Commit Code Changes:**
     - Stage ไฟล์ที่เกี่ยวข้อง
     - Proposed commit message เช่น `feat(mcp): เพิ่ม delegate_task tool พร้อม proposal system`
     - ทำการ commit
 
-11. **Attach Task Summary (Both Methods):**
+3. **Attach Task Summary (Both Methods):**
     - **Step 11.1: Get Commit Hash:** `git log -1 --format="%H"`
     - **Step 11.2: Draft Note (Thai):** สรุปงานที่เสร็จ รวมถึงไฟล์ที่สร้าง/แก้ไข และเหตุผล
     - **Step 11.3: Attach Git Note:**
+
       ```bash
       git notes add -m "<สรุปงานภาษาไทย>" <commit_hash>
       ```
+
     - **Step 11.4: Also in Commit Message Body:** ใส่สรุปเดียวกันใน commit message
 
-12. **Get and Record Task Commit SHA:**
+4. **Get and Record Task Commit SHA:**
     - **Step 12.1: Update Plan:** แก้ไข `plan.md` จาก `[~]` เป็น `[x]` พร้อม commit hash 7 ตัวแรก
     - **Step 12.2: Update todo.md:** อัปเดต checklist ให้สอดคล้อง
     - **Step 12.3: Write Files:** บันทึกการเปลี่ยนแปลง
 
-13. **Commit Plan Update:**
+5. **Commit Plan Update:**
     - Stage `plan.md` และ `todo.md`
     - Commit ด้วย message เช่น `conductor(plan): Mark task 'เพิ่ม BM25 routing' as complete`
 
@@ -103,6 +107,7 @@
    - สร้าง step-by-step plan สำหรับ user ตรวจสอบ:
 
    **For Backend/CLI Change:**
+
    ```
    Test ผ่านแล้ว กรุณาตรวจสอบด้วยมือตามขั้นตอน:
 
@@ -156,6 +161,7 @@
 ## Development Commands (Rust/bl1nk-agents-manager)
 
 ### Setup
+
 ```bash
 # ติดตั้ง dependencies
 cargo fetch
@@ -165,8 +171,7 @@ cargo install cargo-tarpaulin
 
 # Verify build
 cargo build --all-features
-```
-
+```text
 ### Daily Development
 ```bash
 # Build (debug)
@@ -195,8 +200,7 @@ cargo check
 
 # Run with config
 cargo run -- --config config.toml
-```
-
+```text
 ### Coverage
 ```bash
 # Generate coverage report
@@ -204,19 +208,18 @@ cargo tarpaulin --out Html --output-dir coverage
 
 # Generate coverage (Termux/Android compatible)
 cargo test --all-features -- --test-threads=1
-```
-
+```text
 ### Before Committing
 ```bash
 # Full pre-commit check
 cargo fmt --check && cargo clippy -- -D warnings && cargo test --all-features
-```
-
+```text
 ---
 
 ## Testing Requirements
 
 ### Unit Testing
+
 - ทุก module ต้องมี tests สอดคล้อง
 - ใช้ `#[cfg(test)]` mod tests
 - Mock external dependencies ด้วย `mockall`
@@ -224,12 +227,14 @@ cargo fmt --check && cargo clippy -- -D warnings && cargo test --all-features
 - ใช้ `serial_test` สำหรับ tests ที่ต้องรันตามลำดับ
 
 ### Integration Testing
+
 - ทดสอบ end-to-end MCP protocol flows
 - ทดสอบ agent routing และ rate limiting
 - ทดสอบ config parsing และ validation
 - ทดสอบ CLI delegation workflow
 
 ### Edge Case Testing
+
 - Input validation (empty, null, malformed)
 - Rate limit boundary conditions
 - Concurrent access to shared state
@@ -237,6 +242,7 @@ cargo fmt --check && cargo clippy -- -D warnings && cargo test --all-features
 - Config file missing or corrupted
 
 ### Mobile/Termux Testing
+
 - ทดสอบบน Android/Termux environment
 - ตรวจสอบ path resolution (`/data/data/com.termux/...`)
 - ทดสอบ file permissions และ access
@@ -244,6 +250,7 @@ cargo fmt --check && cargo clippy -- -D warnings && cargo test --all-features
 - ทดสอบ cross-compilation จาก dev machine ไป Termux
 
 ### BM25 Search Testing
+
 - เพิ่ม search quality benchmarks เมื่อใช้ BM25
 - ทดสอบ search accuracy กับ test corpus
 - ทดสอบ performance (latency <100ms)
@@ -255,6 +262,7 @@ cargo fmt --check && cargo clippy -- -D warnings && cargo test --all-features
 ## Code Review Process
 
 ### Self-Review Checklist
+
 ก่อนขอ review:
 
 1. **Functionality**
@@ -296,16 +304,19 @@ cargo fmt --check && cargo clippy -- -D warnings && cargo test --all-features
 
 ### Message Format
 ```
+
 <type>(<scope>): <description>
 
 <สรุปงานภาษาไทย - รายละเอียดการเปลี่ยนแปลง>
 
 ไฟล์ที่สร้าง/แก้ไข:
+
 - src/xxx.rs: รายละเอียด
 - tests/xxx.rs: รายละเอียด
-```
 
+```text
 ### Types
+
 - `feat`: ฟีเจอร์ใหม่
 - `fix`: แก้ bug
 - `docs`: เอกสารเท่านั้น
@@ -355,6 +366,7 @@ Task ถือว่าเสร็จเมื่อ:
 ## Emergency Procedures
 
 ### Critical Bug in Production
+
 1. สร้าง hotfix branch จาก main
 2. เขียน failing test สำหรับ bug
 3. Implement minimal fix
@@ -363,6 +375,7 @@ Task ถือว่าเสร็จเมื่อ:
 6. บันทึกใน `plan.md` และ `todo.md`
 
 ### Data Loss
+
 1. หยุด write operations ทั้งหมด
 2. Restore จาก backup ล่าสุด
 3. ตรวจสอบ data integrity
@@ -370,6 +383,7 @@ Task ถือว่าเสร็จเมื่อ:
 5. อัปเดต backup procedures
 
 ### Security Breach
+
 1. Rotate secrets ทันที
 2. ตรวจสอบ access logs
 3. Patch vulnerability
@@ -381,6 +395,7 @@ Task ถือว่าเสร็จเมื่อ:
 ## Deployment Workflow
 
 ### Pre-Deployment Checklist
+
 - [ ] Tests ทั้งหมดผ่าน
 - [ ] Coverage >90%
 - [ ] ไม่มี clippy warnings
@@ -390,6 +405,7 @@ Task ถือว่าเสร็จเมื่อ:
 - [ ] Backup created
 
 ### Deployment Steps
+
 1. Merge feature branch ไป main
 2. Tag release ด้วย version
 3. Build release binary
@@ -397,6 +413,7 @@ Task ถือว่าเสร็จเมื่อ:
 5. Monitor errors
 
 ### Post-Deployment
+
 1. Monitor logs
 2. ตรวจสอบ error rate
 3. เก็บ user feedback

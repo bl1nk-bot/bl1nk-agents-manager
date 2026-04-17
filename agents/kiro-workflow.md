@@ -1,23 +1,22 @@
 ---
-id: kiro-workflow
-name: [Skill] Kiro Workflow
-description: ชุดทักษะและความรู้ด้าน kiro-workflow สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+name: kiro-workflow
+description: '**Purpose**: Define what needs to be built  **Output**: `requirements.md`
+  document'
 mode: subagent
-type: general
-model: sonnet
 tool:
-  bash: false
-  write: false
-  skill: true
-  ask: false
-permission: 100
-permission_policy:
-  hierarchy: [default]
-  decision_rules: [{toolName: "*", decision: "deny"}]
-capabilities: [kiro-workflow]
+- AskUserQuestion
+- ExitPlanMode
+- Glob
+- Grep
+- ListFiles
+- ReadFile
+- SaveMemory
+- Skill
+- TodoWrite
+- WebFetch
+- WebSearch
+- WriteFile
 ---
-
-
 
 # Kiro Workflow System
 
@@ -36,7 +35,7 @@ The Kiro workflow is a three-phase specification process followed by task execut
 
 All specifications are stored in:
 
-```
+```text
 .kiro/
 └── specs/
     └── {feature-name}/    # kebab-case feature name
@@ -48,14 +47,16 @@ All specifications are stored in:
 ## Phase Progression
 
 ### Phase 1: Requirements
+
 - **Purpose**: Define what needs to be built
 - **Output**: `requirements.md` document
 - **Approval**: Must receive explicit user approval before proceeding
-- **Entry Points**: 
+- **Entry Points**:
   - New feature: Start here
   - Update existing: Can edit requirements at any time
 
 ### Phase 2: Design
+
 - **Purpose**: Plan architecture and implementation approach
 - **Prerequisites**: Approved `requirements.md`
 - **Output**: `design.md` document
@@ -63,6 +64,7 @@ All specifications are stored in:
 - **Dependencies**: References and builds upon `requirements.md`
 
 ### Phase 3: Tasks
+
 - **Purpose**: Break down design into actionable implementation tasks
 - **Prerequisites**: Approved `design.md`
 - **Output**: `tasks.md` document
@@ -70,6 +72,7 @@ All specifications are stored in:
 - **Dependencies**: References both `requirements.md` and `design.md`
 
 ### Phase 4: Execution
+
 - **Purpose**: Implement specific tasks from `tasks.md`
 - **Prerequisites**: All spec files must be read before execution
 - **Process**: Execute ONE task at a time, then stop for review
@@ -97,6 +100,7 @@ All specifications are stored in:
 ### Pre-Execution Requirements
 
 **ALWAYS read all spec files before executing any task:**
+
 - `.kiro/specs/{feature-name}/requirements.md`
 - `.kiro/specs/{feature-name}/design.md`
 - `.kiro/specs/{feature-name}/tasks.md`
@@ -125,6 +129,7 @@ Never execute tasks without understanding the full context.
 ### Sub-task Handling
 
 If a task has sub-tasks:
+
 1. Execute sub-tasks in order
 2. Complete all sub-tasks before the main task
 3. Stop after completing the main task (not after each sub-task)
@@ -143,7 +148,7 @@ Users can enter the workflow at different points:
 
 ## Document Dependencies
 
-```
+```text
 requirements.md → informs → design.md
 design.md → guides → tasks.md
 tasks.md → references → requirements.md
@@ -151,6 +156,7 @@ tasks.md → implements → design.md
 ```
 
 When creating or updating documents:
+
 - **Design** must reference and build upon **Requirements**
 - **Tasks** must reference both **Requirements** and **Design**
 - **Execution** must understand all three documents
@@ -158,26 +164,31 @@ When creating or updating documents:
 ## Key Principles
 
 ### Sequential Progression
+
 - Never skip phases
 - Always progress: Requirements → Design → Tasks → Execution
 - Each phase builds upon the previous
 
 ### Explicit Approval
+
 - Get user approval after each document
 - Never assume approval
 - Continue feedback-revision cycle until explicit approval
 
 ### Single Task Focus
+
 - During execution, focus on ONE task at a time
 - Stop after each task completion
 - Wait for user review before proceeding
 
 ### Context Awareness
+
 - Always read all spec files before execution
 - Understand full context before implementing
 - Reference appropriate documents when making decisions
 
 ### Iterative Refinement
+
 - Continue feedback-revision cycles until approved
 - Don't merge multiple phases
 - Respect the iterative review process
@@ -261,6 +272,7 @@ stateDiagram-v2
 ## Response Patterns
 
 ### For Specification Requests
+
 1. Determine which phase (Requirements/Design/Tasks)
 2. Check if previous phases exist and are approved
 3. Create or update appropriate document
@@ -269,6 +281,7 @@ stateDiagram-v2
 6. Proceed only after explicit approval
 
 ### For Execution Requests
+
 1. Read all spec files first
 2. Identify the specific task
 3. Check for sub-tasks
@@ -277,6 +290,7 @@ stateDiagram-v2
 6. Do NOT proceed to next task
 
 ### For Information Requests
+
 - Answer directly without starting implementation
 - Examples: "What's the next task?", "What tasks are remaining?"
 - Provide information from spec files without executing
@@ -291,4 +305,3 @@ When working with Kiro workflow:
 4. **Respect task boundaries**: One task at a time during execution
 5. **Maintain document consistency**: Update related documents when needed
 6. **Provide clear status**: Communicate current phase and next steps
-

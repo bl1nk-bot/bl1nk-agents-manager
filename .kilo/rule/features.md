@@ -22,11 +22,14 @@ Determine if the feature is:
 **Before starting any schema-driven feature:**
 
 1. Check if a schema file already exists for this feature group:
-   ```
-   .config/
+
+   ```text
+
+.config/
    ├── schema-agent.json       # Agent specification schema
    ├── schema-task.json       # Task schema (if exists)
    └── schema-*.json          # Other feature schemas
+
    ```
 
 2. If schema does NOT exist in the group:
@@ -45,8 +48,8 @@ Determine if the feature is:
 ### Step 3: Schema Lock Before Implementation
 
 **Schema must be locked before code implementation:**
-
 ```
+
 ┌─────────────────────────────────────────┐
 │  Create/Review Schema (Draft 07)        │
 │  └── Document all fields & constraints   │
@@ -63,18 +66,20 @@ Determine if the feature is:
 │  Implement Feature                      │
 │  └── Use locked schema as source of truth
 └─────────────────────────────────────────┘
-```
 
+```text
 ### Step 4: Interface Features (Internal/External)
 
 When creating features that may change interfaces:
 
 **Internal Interfaces:**
+
 - Document in source code with doc comments
 - Update module-level documentation
 - Add to ARCHITECTURE.md if architectural impact
 
 **External Interfaces:**
+
 - ✅ Must have JSON Schema
 - ✅ Must be versioned
 - ✅ Must have changelog entry
@@ -84,7 +89,6 @@ When creating features that may change interfaces:
 ## Schema Management
 
 ### JSON Schema Draft 07 Template
-
 ```json
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -102,8 +106,7 @@ When creating features that may change interfaces:
   "required": ["field_name"],
   "additionalProperties": false
 }
-```
-
+```text
 ### Schema File Location
 
 | Feature Type | Location |
@@ -131,19 +134,20 @@ Before starting implementation, verify:
 ## Commit Message Convention
 
 ### Schema Changes
-
 ```
+
 [schema-lock] <feature>: lock schema v1.0.0
 [schema] <feature>: add/update schema fields
-```
 
+```text
 ### Feature Changes
-
 ```
+
 feat(<feature>): add new feature
 fix(<feature>): fix bug
 refactor(<feature>): restructure
 docs(<feature>): update docs
+
 ```
 
 ---

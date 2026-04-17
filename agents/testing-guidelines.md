@@ -1,36 +1,36 @@
 ---
-id: testing-guidelines
-name: [Skill] Testing Guidelines
-description: ชุดทักษะและความรู้ด้าน testing-guidelines สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+name: testing-guidelines
+description: '[test_system.py](mdc:test_system.py)  ทดสอบระบบหลัก'
 mode: subagent
-type: general
-model: sonnet
 tool:
-  bash: false
-  write: false
-  skill: true
-  ask: false
-permission: 100
-permission_policy:
-  hierarchy: [default]
-  decision_rules: [{toolName: "*", decision: "deny"}]
-capabilities: [testing-guidelines]
+- AskUserQuestion
+- ExitPlanMode
+- Glob
+- Grep
+- ListFiles
+- ReadFile
+- SaveMemory
+- Skill
+- TodoWrite
+- WebFetch
+- WebSearch
+- WriteFile
 ---
-
-
 
 # Testing Guidelines
 
 ## การทดสอบระบบ
 
-### ไฟล์ทดสอบหลัก:
+### ไฟล์ทดสอบหลัก
+
 - [test_system.py](mdc:test_system.py) - ทดสอบระบบหลัก
 - [run_chonost.py](mdc:run_chonost.py) - ทดสอบ FastAPI server
 - [src/core/enhanced_ai_agents.py](mdc:src/core/enhanced_ai_agents.py) - ทดสอบ AI agents
 
-### ขั้นตอนการทดสอบ:
+### ขั้นตอนการทดสอบ
 
 1. **ทดสอบ Azure Connection:**
+
 ```bash
 # ทดสอบ endpoint
 Invoke-WebRequest -Uri "https://billl-mer7xd8i-eastus2.openai.azure.com/" -Method Head
@@ -39,12 +39,14 @@ Invoke-WebRequest -Uri "https://billl-mer7xd8i-eastus2.openai.azure.com/" -Metho
 python -c "import openai; client = openai.AzureOpenAI(api_key='YOUR_KEY', api_version='2024-02-15-preview', azure_endpoint='YOUR_ENDPOINT'); print('Success')"
 ```
 
-2. **ทดสอบระบบหลัก:**
+1. **ทดสอบระบบหลัก:**
+
 ```bash
 python test_system.py
 ```
 
-3. **ทดสอบ FastAPI Server:**
+1. **ทดสอบ FastAPI Server:**
+
 ```bash
 python run_chonost.py
 # เปิด http://localhost:8000/docs
@@ -52,7 +54,8 @@ python run_chonost.py
 
 ## การทดสอบ Prompt Template System
 
-### ทดสอบ Context Manager:
+### ทดสอบ Context Manager
+
 ```python
 from src.core.context_manager import context_manager
 
@@ -65,7 +68,8 @@ print(f"Story context loaded: {len(story_context)} items")
 print(f"Project status: {project_status}")
 ```
 
-### ทดสอบ Prompt Templates:
+### ทดสอบ Prompt Templates
+
 ```python
 from src.core.prompt_templates import prompt_template_manager, PromptType
 from src.core.context_manager import context_manager
@@ -79,7 +83,8 @@ prompt = prompt_template_manager.get_prompt(
 print("Scene Architect prompt generated successfully")
 ```
 
-### ทดสอบ Model Router:
+### ทดสอบ Model Router
+
 ```python
 from src.core.model_router import model_router
 
@@ -92,12 +97,14 @@ print(f"Selected model: {model_name}, Category: {task_category.value}")
 
 ## การทดสอบ API Endpoints
 
-### ทดสอบ Health Check:
+### ทดสอบ Health Check
+
 ```bash
 curl http://localhost:8000/health
 ```
 
-### ทดสอบ AI Completion:
+### ทดสอบ AI Completion
+
 ```bash
 curl -X POST "http://localhost:8000/api/ai/enhanced/completion" \
   -H "Content-Type: application/json" \
@@ -109,14 +116,16 @@ curl -X POST "http://localhost:8000/api/ai/enhanced/completion" \
   }'
 ```
 
-### ทดสอบ Swagger Documentation:
-- เปิด http://localhost:8000/docs
+### ทดสอบ Swagger Documentation
+
+- เปิด <http://localhost:8000/docs>
 - ทดสอบ endpoints ผ่าน Swagger UI
 - ตรวจสอบ request/response schemas
 
 ## การทดสอบ AI Agents
 
-### ทดสอบ Azure Models:
+### ทดสอบ Azure Models
+
 ```python
 from src.core.enhanced_ai_agents import enhanced_ai_agent_system
 from src.core.enhanced_ai_agents import AIRequest, IntentType
@@ -135,7 +144,8 @@ print(f"Model used: {response.model_used}")
 print(f"Cost estimate: {response.cost_estimate}")
 ```
 
-### ทดสอบ Embedding System:
+### ทดสอบ Embedding System
+
 ```python
 from sentence_transformers import SentenceTransformer
 
@@ -148,7 +158,8 @@ print(f"Embeddings shape: {embeddings.shape}")
 
 ## การทดสอบ Error Handling
 
-### ทดสอบ Connection Errors:
+### ทดสอบ Connection Errors
+
 ```python
 # ทดสอบ Azure connection error
 try:
@@ -159,7 +170,8 @@ except Exception as e:
     print(f"Expected error: {e}")
 ```
 
-### ทดสอบ Model Selection:
+### ทดสอบ Model Selection
+
 ```python
 # ทดสอบ model router fallback
 model_name, category, tier = await model_router.route_request(
@@ -170,7 +182,8 @@ assert category.value == "ambiguous"
 
 ## การทดสอบ Performance
 
-### ทดสอบ Latency:
+### ทดสอบ Latency
+
 ```python
 import time
 
@@ -182,7 +195,8 @@ latency = (end_time - start_time) * 1000
 print(f"Response time: {latency:.2f}ms")
 ```
 
-### ทดสอบ Cost Estimation:
+### ทดสอบ Cost Estimation
+
 ```python
 # ทดสอบ cost calculation
 cost = model_router.get_cost_estimate("gpt-4.1-mini", 1000)
@@ -191,7 +205,8 @@ print(f"Estimated cost for 1000 tokens: ${cost:.6f}")
 
 ## การทดสอบ Context Injection
 
-### ทดสอบ Story Context:
+### ทดสอบ Story Context
+
 ```python
 # ทดสอบการ inject story context
 prompt = prompt_template_manager.get_prompt(
@@ -205,7 +220,8 @@ assert "Mia" in prompt
 assert "Bound Fate" in prompt
 ```
 
-### ทดสอบ Project Status:
+### ทดสอบ Project Status
+
 ```python
 # ทดสอบการ inject project status
 prompt = prompt_template_manager.get_prompt(
@@ -220,7 +236,8 @@ assert "azure_models" in prompt
 
 ## การบันทึกผลการทดสอบ
 
-### สร้างไฟล์ test_results.md:
+### สร้างไฟล์ test_results.md
+
 ```markdown
 # Test Results - [วันที่]
 
@@ -247,17 +264,20 @@ assert "azure_models" in prompt
 
 ## การแก้ไขปัญหาที่พบบ่อย
 
-### Azure Connection Issues:
+### Azure Connection Issues
+
 1. ตรวจสอบ API key และ endpoint
 2. ตรวจสอบ network connectivity
 3. ตรวจสอบ Azure service status
 
-### Import Errors:
+### Import Errors
+
 1. ตรวจสอบ Python path
 2. ตรวจสอบ dependencies
 3. ตรวจสอบ file structure
 
-### Context Injection Issues:
+### Context Injection Issues
+
 1. ตรวจสอบ JSON format
 2. ตรวจสอบ placeholder names
 3. ตรวจสอบ encoding (ensure_ascii=False)

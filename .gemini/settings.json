@@ -1,17 +1,17 @@
 {
-  "tools": {
-    "sandbox": "docker"
-  },
   "mcpServers": {
-    "omg_cli_tools": {
-      "command": "oh-my-gemini",
+    "": {
+      "command": "http",
       "args": [
-        "tools",
-        "serve"
+        "craft",
+        "https://connect.craft.do/links/4hD3qTwgwc1/api/v1"
+      ]
+    },
+    "linear": {
+      "command": "",
+      "args": [
+        "https://mcp.linear.app/mcp"
       ]
     }
-  },
-  "experimental": {
-    "enableAgents": true
   }
 }

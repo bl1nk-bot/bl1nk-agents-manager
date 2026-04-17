@@ -3,16 +3,18 @@
 ## 🔥 Quick Start
 
 ### 1. ติดตั้ง Kilo CLI
+
 ```bash
 # จาก root ของโปรเจค
 kilo github install
 
 # หรือ manual
 curl -fsSL https://kilo.ai/cli/install | bash
-```
-
+```text
 ### 2. ตั้งค่า Secrets ใน GitHub
+
 ไปที่ **Settings → Secrets and variables → Actions** เพิ่ม:
+
 - `KILO_API_KEY` - API key จาก Kilo
 - `KILO_ORG_ID` - Organization ID (ถ้ามี)
 
@@ -21,6 +23,7 @@ curl -fsSL https://kilo.ai/cli/install | bash
 ## 💬 Trigger Commands
 
 ใช้ `/kilo` หรือ `/kc` ใน:
+
 - ✅ GitHub Issue comments
 - ✅ Pull Request comments
 - ✅ Code review comments (specific lines)
@@ -30,11 +33,12 @@ curl -fsSL https://kilo.ai/cli/install | bash
 ## 📋 Prompt Templates
 
 ### 🔍 Review PR
-
 ```
+
 /kilo review this PR
 
 เน้นตรวจสอบ:
+
 - Code quality และ best practices
 - Security vulnerabilities
 - Performance issues
@@ -42,14 +46,15 @@ curl -fsSL https://kilo.ai/cli/install | bash
 - TypeScript/Rust type safety
 
 ให้คะแนนจาก 1-10 พร้อมเหตุผล
-```
 
+```text
 ### 🐛 Fix Issue
-
 ```
+
 /kilo fix this issue
 
 Requirements:
+
 - สร้าง branch ใหม่จาก main
 - เขียน tests ก่อน (TDD)
 - แก้ไขโค้ดให้ tests ผ่าน
@@ -57,28 +62,30 @@ Requirements:
 - เปิด PR กลับมา
 
 ใช้ Rust patterns ที่มีอยู่ในโปรเจค
-```
 
+```text
 ### 📝 Explain Code
-
 ```
+
 /kilo explain this code
 
 อธิบาย:
+
 - Architecture และการออกแบบ
 - Data flow
 - Error handling
 - Performance characteristics
 
 ตอบเป็นภาษาไทย
-```
 
+```text
 ### 🧪 Add Tests
-
 ```
+
 /kilo add tests for this file
 
 Requirements:
+
 - Unit tests สำหรับทุก public function
 - Edge cases
 - Integration tests (ถ้าจำเป็น)
@@ -86,14 +93,15 @@ Requirements:
 
 ใช้ mockall สำหรับ mocking
 ใช้ serial_test สำหรับ tests ที่ต้องรันตามลำดับ
-```
 
+```text
 ### 🛡️ Security Review
-
 ```
+
 /kilo security review
 
 ตรวจสอบ:
+
 - Hardcoded secrets
 - Unsafe blocks
 - Input validation
@@ -101,58 +109,62 @@ Requirements:
 - Permission bypass
 
 รายงานผลในรูปแบบ table พร้อม severity
-```
 
+```text
 ### 📊 Generate Documentation
-
 ```
+
 /kilo generate documentation for src/registry/
 
 Requirements:
+
 - Rustdoc สำหรับทุก public API
 - README section
 - Usage examples
 - Inline comments เป็นภาษาไทย
-```
 
+```text
 ### 🔄 Refactor
-
 ```
+
 /kilo refactor this code
 
 Goals:
+
 - Reduce complexity
 - Improve readability
 - Follow project conventions
 - Keep tests passing
 
 อย่าเปลี่ยน behavior
-```
 
+```text
 ### 🚀 Performance Optimization
-
 ```
+
 /kilo optimize performance
 
 Target:
+
 - Reduce allocations
 - Minimize clones
 - Use async efficiently
 - Add benchmarks
 
 วัดผลก่อน-หลัง
-```
 
+```text
 ---
 
 ## 🎯 Custom Prompts สำหรับโปรเจคนี้
 
 ### Rust-Specific
-
 ```
+
 /kilo
 
 Analyze this Rust code for:
+
 1. Ownership/borrowing issues
 2. Unnecessary clones
 3. Error handling patterns
@@ -160,14 +172,15 @@ Analyze this Rust code for:
 5. Memory efficiency
 
 Suggest improvements with code examples
-```
 
+```text
 ### Conductor Workflow
-
 ```
+
 /kilo
 
 ตาม Conductor workflow:
+
 1. อ่าน plan.md และ spec.md
 2. ตรวจสอบ task status
 3. รัน tests (cargo test)
@@ -175,21 +188,22 @@ Suggest improvements with code examples
 5. อัปเดต plan.md ถ้า task เสร็จ
 
 Report ผลเป็นภาษาไทย
-```
 
+```text
 ### Commit Message
-
 ```
+
 /kilo generate commit message for these changes
 
 ตาม conventional commit:
+
 - type(scope): description
 - Types: feat, fix, docs, style, refactor, perf, test, chore, security, conductor
 - Max 72 characters
 
 ให้ commit message ที่เหมาะสม + body อธิบายการเปลี่ยนแปลง
-```
 
+```text
 ---
 
 ## 🔧 Configuration
@@ -203,8 +217,7 @@ Workflow นี้ใช้ **`qwen/qwen3.6-plus:free`** ผ่าน **Kilo Gat
 with:
   model: qwen/qwen3.6-plus:free              # ใช้ผ่าน Kilo (แนะนำ)
   # หรือ model อื่นๆที่ Kilo รองรับ
-```
-
+```text
 ### Environment Variables
 
 ตั้งค่า secrets ใน GitHub Settings → Secrets:
@@ -216,19 +229,19 @@ KILO_ORG_ID=your_org_id        # ถ้ามี
 # Kilo ใช้ gateway ของตัวเอง ไม่ต้องใช้ API keys อื่น
 # ❌ ไม่ต้องใช้ ANTHROPIC_API_KEY
 # ❌ ไม่ต้องใช้ OPENAI_API_KEY
-```
-
+```text
 ---
 
 ## 📝 ตัวอย่างการใช้งานจริง
 
 ### 1. Review PR พร้อมขอ changes
-
 ```
+
 /kc review this PR and fix any issues you find
-```
 
+```text
 Kilo จะ:
+
 - อ่าน PR diff ทั้งหมด
 - ตรวจสอบ code quality
 - แก้ไขปัญหาที่พบ
@@ -238,39 +251,43 @@ Kilo จะ:
 
 เลือก code lines ใน PR → comment:
 ```
-/kc explain this function
-```
 
+/kc explain this function
+
+```text
 Kilo จะ:
+
 - อ่าน file + line ที่เลือก
 - อธิบาย logic
 - ให้ข้อเสนอแนะ
 
 ### 3. Fix issue จาก comment
-
 ```
+
 /kilo fix this bug
 
 Steps to reproduce:
+
 1. Run cargo test
 2. Test X fails
 3. Expected: pass
 
 Fix the issue and push changes
-```
 
+```text
 ### 4. Generate tests
-
 ```
+
 /kc add comprehensive tests for src/registry/schema.rs
 
 Cover:
+
 - All public functions
 - Error cases
 - Edge cases
 - Serialization/deserialization
-```
 
+```text
 ---
 
 ## 🚨 ข้อควรระวัง
@@ -286,21 +303,26 @@ Cover:
 
 ### ใช้ /kc สั้นๆ สำหรับ quick tasks
 ```
+
 /kc fix this
 /kc explain
 /kc add tests
-```
 
+```text
 ### ใช้ /kilo สำหรับ detailed prompts
 ```
+
 /kilo refactored this code using the repository patterns.
 Please:
+
 1. Verify the changes match the spec
 2. Check for edge cases
 3. Suggest improvements
+
 ```
 
 ### Manual trigger
+
 ไปที่ **Actions → kilo → Run workflow** ใส่ prompt เองได้เลย
 
 ---

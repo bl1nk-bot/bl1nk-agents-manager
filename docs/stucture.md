@@ -4,7 +4,7 @@
 
 ## 📋 ภาพรวมการผสานรวม
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
 │         Ashval Task Assistant Pro (Frontend)             │
 │  ┌──────────────────────────────────────────────────┐   │
@@ -61,14 +61,12 @@ project-root/
 ├── docs/
 │   └── agents/                       # ไฟล์ system prompts
 └── package.json
-````
-
+````text
 ---
 
 ### **ขั้นที่ 2: สร้าง Agent Interface (TypeScript)**
 
 สร้างไฟล์ `service/types/agent.ts`:
-
 ````typescript
 // Agent Base Interface
 export interface Agent {
@@ -109,14 +107,12 @@ export interface WorkflowState {
   completedTasks: string[];
   blockers: string[];
 }
-````
-
+````text
 ---
 
 ### **ขั้นที่ 3: สร้าง Agent Orchestrator**
 
 สร้างไฟล์ `service/orchestrator/agent-runner.ts`:
-
 ````typescript
 import { Agent, AgentInput, AgentOutput, Task, WorkflowState } from '../types/agent';
 
@@ -192,14 +188,12 @@ export class AgentOrchestrator {
     return this.workflowState;
   }
 }
-````
-
+````text
 ---
 
 ### **ขั้นที่ 4: สร้าง Agent ตัวอย่าง (Project Manager)**
 
 สร้างไฟล์ `service/agents/project-manager.ts`:
-
 ````typescript
 import { Agent, AgentInput, AgentOutput } from '../types/agent';
 
@@ -279,14 +273,12 @@ export class ProjectManagerAgent implements Agent {
     return assignments;
   }
 }
-````
-
+````text
 ---
 
 ### **ขั้นที่ 5: สร้าง API Server**
 
 สร้างไฟล์ `service/server.ts`:
-
 ````typescript
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
@@ -367,14 +359,12 @@ app.get('/api/health', (req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`🚀 Agent Orchestrator running on http://localhost:${PORT}`);
 });
-````
-
+````text
 ---
 
 ## 📱 การเชื่อมต่อ Frontend กับ Backend
 
 แก้ไขไฟล์ `index.html` ส่วน Alpine.js:
-
 ````javascript
 // เพิ่มใน ashvalApp() function
 async function connectToBackend() {
@@ -417,14 +407,12 @@ async function checkWorkflowStatus() {
     console.error('Error checking status:', error);
   }
 }
-````
-
+````text
 ---
 
 ## 🔧 ไฟล์ Configuration
 
 สร้างไฟล์ `package.json`:
-
 ````json
 {
   "name": "ashval-agent-system",
@@ -449,12 +437,10 @@ async function checkWorkflowStatus() {
     "ts-node": "^10.9.1"
   }
 }
-````
-
+````text
 ---
 
 ## 📊 Workflow ตัวอย่าง
-
 ```
 User Input (Frontend)
         │
@@ -515,16 +501,19 @@ User Input (Frontend)
 ## 🎯 ขั้นตอนถัดไป
 
 1. **ติดตั้ง Dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **รัน Backend:**
+
    ```bash
    npm run dev
    ```
 
 3. **เปิด Frontend:**
+
    ```
    http://localhost:5173 (หรือ file://path/to/index.html)
    ```

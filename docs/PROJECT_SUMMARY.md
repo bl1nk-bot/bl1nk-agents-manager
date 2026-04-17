@@ -29,7 +29,7 @@
 
 ### Core Modules
 
-```
+```text
 src/
 ├── main.rs                 # Entry point
 ├── lib.rs                  # Library exports
@@ -74,7 +74,7 @@ src/
 
 ### Configuration & Data
 
-```
+```text
 .config/
 ├── config.example.toml     # Example config
 ├── schema-agent.json       # Agent schema validation
@@ -83,7 +83,7 @@ src/
 
 ### Testing
 
-```
+```text
 tests/
 ├── registry_schema_test.rs # 🔥 NEW: 23 tests (all passing)
 └── (other integration tests)
@@ -128,6 +128,7 @@ tests/
 **Current Task:** 1.2 - Keyword Mapping & Basic Search
 
 **What's Done:**
+
 - ✅ Schema types defined (Registry, KeywordEntry, etc.)
 - ✅ JSON schema generated
 - ✅ serde serialization/deserialization
@@ -135,6 +136,7 @@ tests/
 - ✅ 23 unit tests passing
 
 **What's Next:**
+
 - [ ] Implement `RegistryService::load_from_file()`
 - [ ] Support loading from `.config/registry.json` or embedded default
 - [ ] Implement `RegistryService::search_keywords()`
@@ -253,7 +255,7 @@ We use **Conductor** for spec-driven development:
 
 ### Task Lifecycle
 
-```
+```text
 1. Read Context (todo.md, plan.md)
 2. Select Task
 3. Write Failing Tests (Red Phase)

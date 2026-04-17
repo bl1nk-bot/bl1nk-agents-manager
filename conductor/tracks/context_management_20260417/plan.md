@@ -1,0 +1,35 @@
+# Implementation Plan: Context Management
+
+## Phase 1: Context Data Structures and Storage Trait [checkpoint: pending]
+
+- [ ] Task: Write failing tests for context data structures (Conversation, Workspace, Secrets).
+- [ ] Task: Implement core data structures and `ContextStore` trait to abstract storage mechanisms.
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Context Data Structures and Storage Trait' (Protocol in workflow.md)
+
+## Phase 2: JSON/File-based Storage Implementation [checkpoint: pending]
+
+- [ ] Task: Write failing tests for saving/loading context using JSON files.
+- [ ] Task: Implement JSON-based `ContextStore` for `.omg/state/` persistence.
+- [ ] Task: Write failing tests for handling missing or corrupted context files.
+- [ ] Task: Implement robust async error handling for file I/O.
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: JSON/File-based Storage Implementation' (Protocol in workflow.md)
+
+## Phase 3: Context Compaction & Size Management [checkpoint: pending]
+
+- [ ] Task: Write failing tests for context compaction logic (e.g., retaining top 20%).
+- [ ] Task: Implement sliding window or compaction logic to safely manage token limits.
+- [ ] Task: Write failing tests for offloading overflow context to readable files.
+- [ ] Task: Implement file-based context offloading.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Context Compaction & Size Management' (Protocol in workflow.md)
+
+## Phase 4: Environment & Secrets Handling [checkpoint: pending]
+
+- [ ] Task: Write failing tests for securely loading, masking, and injecting secrets.
+- [ ] Task: Implement secure handling of environment variables within the context system.
+- [ ] Task: Conductor - User Manual Verification 'Phase 4: Environment & Secrets Handling' (Protocol in workflow.md)
+
+## Phase 5: Integration with Orchestrator [checkpoint: pending]
+
+- [ ] Task: Write integration tests for context injection into the agent execution loop.
+- [ ] Task: Integrate context loading and updating into `src/agents/executor.rs` and the MCP gateway.
+- [ ] Task: Conductor - User Manual Verification 'Phase 5: Integration with Orchestrator' (Protocol in workflow.md)

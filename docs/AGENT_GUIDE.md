@@ -9,6 +9,7 @@ This guide shows how to create agents that work with Gemini MCP Proxy.
 Agents must communicate via JSON-RPC 2.0 over stdin/stdout:
 
 **Request Format:**
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -25,6 +26,7 @@ Agents must communicate via JSON-RPC 2.0 over stdin/stdout:
 ```
 
 **Response Format:**
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -34,6 +36,7 @@ Agents must communicate via JSON-RPC 2.0 over stdin/stdout:
 ```
 
 **Error Format:**
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -217,6 +220,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"execute_ta
 ```
 
 Expected output:
+
 ```json
 {"jsonrpc":"2.0","id":1,"result":"Processed: test"}
 ```
@@ -224,6 +228,7 @@ Expected output:
 ### Integration with Proxy
 
 1. Add agent to config:
+
 ```toml
 [[agents]]
 id = "my-agent"
@@ -235,7 +240,8 @@ capabilities = ["custom-task"]
 priority = 1
 ```
 
-2. Add routing rule:
+1. Add routing rule:
+
 ```toml
 [[routing.rules]]
 task_type = "custom-task"
@@ -243,7 +249,8 @@ keywords = ["custom"]
 preferred_agents = ["my-agent"]
 ```
 
-3. Test delegation:
+1. Test delegation:
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -426,6 +433,7 @@ Before deploying:
 ---
 
 **Need help?** Check examples in `/examples` directory or open an issue.
+
 ## Hooks and Event Handling
 
 The system supports hooks that can intercept and modify behavior at various points. As an agent developer, you can write custom hooks to extend functionality.
@@ -515,6 +523,7 @@ if __name__ == "__main__":
 ### Registering Hooks
 
 Hooks are registered in the system configuration. Each hook specifies:
+
 - Event name to listen for
 - Command to execute
 - Priority/order (optional)
@@ -537,4 +546,3 @@ When the event occurs, all registered hooks are executed, and their results are 
 - **Dynamic routing**: Modify agent selection based on conditions
 
 ---
-

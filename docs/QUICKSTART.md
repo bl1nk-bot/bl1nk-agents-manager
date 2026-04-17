@@ -12,10 +12,8 @@ source $HOME/.cargo/env
 # Verify installation
 rustc --version
 cargo --version
-```
-
+```text
 ### Step 2: Project Setup
-
 ```bash
 # Navigate to project directory
 cd bl1nk-agents-manager
@@ -25,10 +23,8 @@ make setup
 
 # Build the project
 make build-bundled
-```
-
+```text
 ### Step 3: Configuration
-
 ```bash
 # Create config directory
 mkdir -p ~/.config/bl1nk-agents-manager
@@ -38,10 +34,8 @@ cp .config/config.example.toml ~/.config/bl1nk-agents-manager/config.toml
 
 # Edit config to add your agents
 nano ~/.config/bl1nk-agents-manager/config.toml
-```
-
+```text
 **Minimal working config:**
-
 ```toml
 [server]
 host = "127.0.0.1"
@@ -73,10 +67,8 @@ usage_db_path = "~/.config/gemini-mcp-proxy/usage.db"
 [logging]
 level = "info"
 output = "stdout"
-```
-
+```text
 ### Step 4: Run the Server
-
 ```bash
 # Run with bundled PMAT (recommended)
 make run-bundled
@@ -86,19 +78,18 @@ make dev
 
 # Or with debug logging
 RUST_LOG=debug cargo run --release --features bundle-pmat
-```
-
+```text
 Expected output:
 ```
+
 2026-04-11T00:00:00Z INFO  Starting BL1NK Agents Manager
 2026-04-11T00:00:00Z INFO  Loaded configuration with 3 agents
 2026-04-11T00:00:00Z INFO  Starting MCP server on stdio
-```
 
+```text
 ### Step 5: Test with MCP Client
 
 Create a test script `test-client.sh`:
-
 ```bash
 #!/bin/bash
 
@@ -106,24 +97,20 @@ Create a test script `test-client.sh`:
 cat << 'EOF' | ./target/release/bl1nk-agents-manager
 {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0.0"}}}
 EOF
-```
-
+```text
 Run test:
 ```bash
 chmod +x test-client.sh
 ./test-client.sh
-```
-
+```text
 Run test:
 ```bash
 chmod +x test-client.sh
 ./test-client.sh
-```
-
+```text
 ## Common Use Cases
 
 ### Use Case 1: Delegate Task to Agent
-
 ```json
 {
   "jsonrpc": "2.0",
@@ -135,10 +122,8 @@ chmod +x test-client.sh
     "background": false
   }
 }
-```
-
+```text
 ### Use Case 2: Check Agent Status
-
 ```json
 {
   "jsonrpc": "2.0",
@@ -149,10 +134,8 @@ chmod +x test-client.sh
     "arguments": {}
   }
 }
-```
-
+```text
 ### Use Case 3: Background Task
-
 ```json
 {
   "jsonrpc": "2.0",
@@ -167,23 +150,19 @@ chmod +x test-client.sh
     }
   }
 }
-```
-
+```text
 ## Integration with Gemini CLI
 
 ### Option 1: Direct stdio
-
 ```bash
 # Run as MCP server
 bl1nk-agents-manager
 
 # Gemini CLI connects via stdio
-```
-
+```text
 ### Option 2: MCP Config
 
 Add to your MCP client configuration:
-
 ```json
 {
   "mcpServers": {
@@ -194,29 +173,25 @@ Add to your MCP client configuration:
     }
   }
 }
-```
-
+```text
 ## Troubleshooting
 
 ### Error: "cargo: not found"
-
 ```bash
 # Install Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
-```
-
+```text
 ### Error: "No config file found"
-
 ```bash
 # Create config
 mkdir -p ~/.config/bl1nk-agents-manager
 cp .config/config.example.toml ~/.config/bl1nk-agents-manager/config.toml
-```
-
+```text
 ### Error: "Agent command not found"
 
 Check:
+
 1. Command exists: `which qwencode`
 2. Command is executable: `chmod +x /path/to/qwencode`
 3. PATH is correct: `echo $PATH`
@@ -226,8 +201,7 @@ Check:
 Reset usage database:
 ```bash
 rm ~/.config/bl1nk-agents-manager/usage.db
-```
-
+```text
 ## Next Steps
 
 1. **Read Architecture**: See `ARCHITECTURE.md` for design details
@@ -236,7 +210,6 @@ rm ~/.config/bl1nk-agents-manager/usage.db
 4. **Deploy**: Use `make install` to install system-wide
 
 ## Development Workflow
-
 ```bash
 # 1. Make changes to src/
 # 2. Format code

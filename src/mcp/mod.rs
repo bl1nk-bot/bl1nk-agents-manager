@@ -115,8 +115,8 @@ impl Orchestrator {
             weight_registry.clone(),
         );
 
-        if let Some(service) = registry_service {
-            executor_logic = executor_logic.with_registry(service);
+        if let Some(ref service) = registry_service {
+            executor_logic = executor_logic.with_registry(service.clone());
         }
 
         let executor = Arc::new(executor_logic);
@@ -125,6 +125,10 @@ impl Orchestrator {
             agent_registry,
             rate_limiter,
             executor,
+            registry_service: registry_service.unwrap_or_else(|| {
+                let registry = crate::registry::schema::Registry { version: "1.7.0".into(), last_updated: None, agents: vec![] };
+                Arc::new(crate::registry::RegistryService::new(registry))
+            }),
         })
     }
 

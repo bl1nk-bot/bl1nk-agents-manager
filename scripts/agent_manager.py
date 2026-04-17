@@ -1,114 +1,55 @@
-#!/usr/bin/env python3
-import json
 import os
-import sys
+import json
+import yaml
 import argparse
+import glob
 
-def load_agents(base_dir):
-    """Load agents from built-in and custom locations."""
-    agents = {}
+def load_all_assets():
+    """Load both agents and skills from their respective directories."""
+    assets = {}
+    directories = [('agents', 'Agent'), ('skills', 'Skill')]
     
-    # Define paths
-    extension_root = os.path.dirname(base_dir) # parent of scripts/
-    builtin_json = os.path.join(extension_root, 'agents', 'agents.json')
-    custom_json = os.path.join(extension_root, 'custom', 'agents.json')
-
-    # Load Built-in Agents
-    if os.path.exists(builtin_json):
-        try:
-            with open(builtin_json, 'r') as f:
-                data = json.load(f)
-                for agent in data.get('agents', []):
-                    agent['type'] = 'built-in'
-                    # Resolve full path to the .md file
-                    agent['full_path'] = os.path.join(extension_root, 'agents', agent['file'])
-                    agents[agent['id']] = agent
-        except Exception as e:
-            print(f"Warning: Failed to load built-in agents: {e}", file=sys.stderr)
-
-    # Load Custom Agents
-    if os.path.exists(custom_json):
-        try:
-            with open(custom_json, 'r') as f:
-                data = json.load(f)
-                for agent in data.get('agents', []):
-                    agent['type'] = 'custom'
-                    # Resolve full path, assuming relative to custom/ directory
-                    agent['full_path'] = os.path.join(extension_root, 'custom', agent['file'])
-                    agents[agent['id']] = agent
-        except Exception as e:
-            # It's okay if custom loading fails, just warn
-            print(f"Warning: Failed to load custom agents: {e}", file=sys.stderr)
-    
-    return agents
-
-def cmd_list(agents):
-    """List all available agents in a formatted table."""
-    print(f"{ 'ID':<20} { 'Name':<25} { 'Type':<10} {'Category'}")
-    print("="*80)
-    
-    # Sort by ID
-    for agent_id in sorted(agents.keys()):
-        agent = agents[agent_id]
-        category = agent.get('category', 'Uncategorized')
-        print(f"{agent_id:<20} {agent['name']:<25} {agent['type']:<10} {category}")
-
-def cmd_info(agents, agent_id):
-    """Show detailed info for a specific agent."""
-    agent = agents.get(agent_id)
-    if not agent:
-        print(f"Error: Agent '{agent_id}' not found.", file=sys.stderr)
-        sys.exit(1)
-    
-    print(f"[{agent['name']}]")
-    print(f"ID:          {agent['id']}")
-    print(f"Type:        {agent['type']}")
-    print(f"Category:    {agent.get('category', 'N/A')}")
-    print(f"Description: {agent.get('description', '')}")
-    print(f"Path:        {agent['full_path']}")
-    
-    if 'use_cases' in agent and agent['use_cases']:
-        print("\nUse Cases:")
-        for uc in agent['use_cases']:
-            print(f"  - {uc}")
+    for base_dir, asset_type in directories:
+        if not os.path.exists(base_dir): continue
+        
+        # Scan for .md files
+        md_files = glob.glob(os.path.join(base_dir, "**/*.md"), recursive=True)
+        for md_path in md_files:
+            filename = os.path.basename(md_path)
+            if filename in ['README.md', 'CHANGELOG.md']: continue
             
-    if 'personality' in agent:
-        print(f"\nPersonality: {agent['personality']}")
+            with open(md_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                if content.startswith('---'):
+                    try:
+                        # Extract frontmatter
+                        parts = content.split('---')
+                        data = yaml.safe_load(parts[1])
+                        name = data.get('name', os.path.splitext(filename)[0])
+                        assets[name] = {
+                            'name': name,
+                            'type': asset_type,
+                            'path': md_path,
+                            'description': data.get('description', 'No description')
+                        }
+                    except: pass
+    return assets
 
-def cmd_path(agents, agent_id):
-    """Output only the absolute path of the agent file (for scripting)."""
-    agent = agents.get(agent_id)
-    if not agent:
-        print(f"Error: Agent '{agent_id}' not found.", file=sys.stderr)
-        sys.exit(1)
-    print(os.path.abspath(agent['full_path']))
-
-def main():
-    parser = argparse.ArgumentParser(description="Gemini System Agent Manager")
-    subparsers = parser.add_subparsers(dest='command', required=True)
-
-    # Subcommands
-    subparsers.add_parser('list', help='List all agents')
-    
-    info_parser = subparsers.add_parser('info', help='Get agent details')
-    info_parser.add_argument('agent_id', help='Agent ID')
-    
-    path_parser = subparsers.add_parser('path', help='Get agent file path')
-    path_parser.add_argument('agent_id', help='Agent ID')
-
-    args = parser.parse_args()
-    
-    # Setup paths
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    agents = load_agents(script_dir)
-
-    # Dispatch
-    if args.command == 'list':
-        cmd_list(agents)
-    elif args.command == 'info':
-        cmd_info(agents, args.agent_id)
-    elif args.command == 'path':
-        cmd_path(agents, args.agent_id)
+def cmd_list():
+    assets = load_all_assets()
+    print(f"{'TYPE':<10} {'NAME':<30} {'PATH'}")
+    print("-" * 80)
+    for name in sorted(assets.keys()):
+        item = assets[name]
+        print(f"{item['type']:<10} {item['name']:<30} {item['path']}")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="BL1NK Asset Manager")
+    parser.add_argument("command", choices=["list", "check"])
+    args = parser.parse_args()
+    
+    if args.command == "list":
+        cmd_list()
+    elif args.command == "check":
+        # Will be handled by validate_agents.py
+        pass

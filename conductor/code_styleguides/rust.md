@@ -3,6 +3,7 @@
 ## 1. Project-Specific Conventions (bl1nk-agents-manager)
 
 ### 1.1 Module Structure
+
 ```
 src/
 ├── main.rs           # Entry point, CLI parsing
@@ -24,6 +25,7 @@ src/
 ```
 
 ### 1.2 Naming Conventions
+
 - **Modules:** `snake_case` filenames (`rate_limit.rs`, `agent_registry.rs`)
 - **Structs/Enums:** `PascalCase` (`AgentConfig`, `RoutingTier`)
 - **Functions/Methods:** `snake_case` (`load_default()`, `get_agents_by_capability()`)
@@ -31,7 +33,9 @@ src/
 - **Type Aliases:** `PascalCase` with `Type` suffix if ambiguous
 
 ### 1.3 Module Exports
+
 ใช้ explicit re-exports ใน `mod.rs`:
+
 ```rust
 pub mod register;
 pub mod router;
@@ -44,6 +48,7 @@ pub use router::AgentRouter;
 ## 2. Formatting Rules (rustfmt)
 
 ### 2.1 Base Configuration
+
 ```toml
 edition = "2024"
 max_width = 100
@@ -53,6 +58,7 @@ indent_style = "Block"
 ```
 
 ### 2.2 Import Organization
+
 ```rust
 // เรียงตามกลุ่ม: std → external → crate
 use std::collections::HashMap;
@@ -67,6 +73,7 @@ use crate::agents::AgentRegistry;
 ```
 
 ### 2.3 Code Style Rules
+
 - **Line length:** 100 characters max
 - **Where clauses:** Mixed style (prefer single-line when short)
 - **Match arms:** Wrap when complex, inline when simple
@@ -77,7 +84,9 @@ use crate::agents::AgentRegistry;
 ## 3. Documentation & Comments (ภาษาไทย)
 
 ### 3.1 Rustdoc Comments
+
 ใช้ `///` สำหรับ public API:
+
 ```rust
 /// โหลดค่ากำหนดจากพาธ
 ///
@@ -91,12 +100,14 @@ use crate::agents::AgentRegistry;
 /// # Examples
 /// ```no_run
 /// let config = Config::load("./config.toml")?;
-/// ```
+/// ```rust
 pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
 ```
 
 ### 3.2 Internal Comments
+
 ใช้ `//` พร้อมภาษาไทยสำหรับ logic ภายใน:
+
 ```rust
 // ตรวจสอบว่ามี agent ID ซ้ำหรือไม่
 let mut seen_ids = std::collections::HashSet::new();
@@ -110,6 +121,7 @@ for agent in &self.agents {
 ```
 
 ### 3.3 TODO Convention
+
 ```rust
 // TODO: <รายละเอียดสิ่งที่ต้องทำ>
 // TODO: ย้าย logic การ routing ไปใช้ BM25 แทน keyword matching
@@ -121,6 +133,7 @@ for agent in &self.agents {
 ## 4. Error Handling
 
 ### 4.1 Use `anyhow` for Application Code
+
 ```rust
 use anyhow::{Context, Result};
 
@@ -136,6 +149,7 @@ pub fn load<P: AsRef<Path>>(path: P) -> Result<Self> {
 ```
 
 ### 4.2 Use `thiserror` for Library Code
+
 ```rust
 use thiserror::Error;
 
@@ -153,6 +167,7 @@ pub enum AgentError {
 ```
 
 ### 4.3 Error Messages (Verbose + Recovery)
+
 ```rust
 tracing::error!(
     agent_id = %agent.id,
@@ -166,6 +181,7 @@ tracing::error!(
 ## 5. Async & Concurrency
 
 ### 5.1 Tokio Patterns
+
 ```rust
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -183,6 +199,7 @@ async fn main() -> Result<()> {
 ```
 
 ### 5.2 Read/Write Lock Usage
+
 ```rust
 // อ่านข้อมูล (multiple readers)
 let config = self.config.read().await;
@@ -196,6 +213,7 @@ let mut config = self.config.write().await;
 ## 6. Testing Standards
 
 ### 6.1 Unit Tests
+
 ```rust
 #[cfg(test)]
 mod tests {
@@ -215,6 +233,7 @@ mod tests {
 ```
 
 ### 6.2 Async Tests
+
 ```rust
 #[cfg(test)]
 mod tests {
@@ -230,6 +249,7 @@ mod tests {
 ```
 
 ### 6.3 Coverage Requirement
+
 - **Minimum:** 80% line coverage
 - **Critical paths:** 100% (routing, rate limiting, permissions)
 - **Test types:** unit + integration + property-based (proptest)
@@ -239,6 +259,7 @@ mod tests {
 ## 7. CLI Conventions
 
 ### 7.1 Output Format
+
 ```rust
 // ใช้ emoji สำหรับ status
 tracing::info!("🚀 Starting BL1NK Agents Manager");
@@ -250,6 +271,7 @@ tracing::info!("🔍 Scanning system resources...");
 ```
 
 ### 7.2 Command Structure
+
 ```rust
 #[derive(Parser, Debug)]
 struct Args {
@@ -278,6 +300,7 @@ enum Commands {
 ## 8. Configuration Standards
 
 ### 8.1 TOML Config Structure
+
 ```toml
 [server]
 host = "127.0.0.1"
@@ -311,6 +334,7 @@ output = "stdout"
 ```
 
 ### 8.2 Config Path Resolution (Priority Order)
+
 1. `--config <path>` (CLI flag)
 2. `./config.toml` (current directory)
 3. `./.bl1nk-agents-manager.toml` (current directory, hidden)
@@ -322,10 +346,12 @@ output = "stdout"
 ## 9. Security Guidelines
 
 ### 9.1 No `unsafe` Blocks
+
 - **ห้ามใช้** `unsafe` ยกเว้นมีเหตุผลชัดเจน
 - ต้องผ่าน review และคอมเมนต์อธิบายว่าทำไมจำเป็น
 
 ### 9.2 Secrets Management
+
 ```rust
 // ❌ อย่าเก็บ API keys ใน config ตรงๆ
 // ✅ ใช้ environment variables หรือ secret managers
@@ -334,6 +360,7 @@ let token = std::env::var("AGENT_TOKEN")
 ```
 
 ### 9.3 Permission Sandboxing
+
 ```rust
 // ตรวจสอบ commands ที่ agent รันได้
 pub fn is_command_allowed(command: &str) -> bool {
@@ -346,6 +373,7 @@ pub fn is_command_allowed(command: &str) -> bool {
 ## 10. Linting & CI
 
 ### 10.1 Required Checks
+
 ```bash
 # ก่อน commit ทุกครั้ง
 cargo fmt --check
@@ -354,6 +382,7 @@ cargo test --all-features
 ```
 
 ### 10.2 Clippy Pedantic (Optional)
+
 ```bash
 cargo clippy -- -W clippy::pedantic -A clippy::missing-errors-doc
 ```
@@ -363,6 +392,7 @@ cargo clippy -- -W clippy::pedantic -A clippy::missing-errors-doc
 ## 11. Platform-Specific Code
 
 ### 11.1 Conditional Compilation
+
 ```rust
 #[cfg(windows)]
 use windows_sys::Win32::Storage::FileSystem::*;
@@ -372,6 +402,7 @@ use std::os::unix::fs::PermissionsExt;
 ```
 
 ### 11.2 Android/Termux Support
+
 ```rust
 // ใช้ path ที่รองรับ Termux
 let config_dir = if cfg!(target_os = "android") {

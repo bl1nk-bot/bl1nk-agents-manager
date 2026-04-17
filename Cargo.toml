@@ -1,6 +1,6 @@
 [package]
 name = "bl1nk-agents-manager"
-version = "0.1.0"
+version = "1.7.0"
 edition = "2021"
 authors = ["billlzzz18"]
 description = "Intelligent MCP/ACP orchestrator with bundled PMAT support"
@@ -75,10 +75,6 @@ once_cell = "1.19"
 [[bin]]
 name = "bl1nk-agents-manager"
 path = "src/main.rs"
-
-[[bin]]
-name = "validate-real-data"
-path = "scripts/validate_real_data.rs"
 
 [profile.release]
 opt-level = 3

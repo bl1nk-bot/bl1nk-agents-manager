@@ -34,24 +34,28 @@
 ## Detailed Checks
 
 ### 1. Event → Lane Mapping
+
 - **Status:** ⚠️ Implicit
 - Native events exist but no explicit lane assignment in config
 - Events likely route by plugin trigger logic, not config-driven
 - **Risk:** Nondeterminism if multiple plugins claim same event
 
 ### 2. Cyclic Trigger Chains
+
 - **Status:** ✅ No cycles detected
 - `continuation_reenters_safety_lane: true` prevents loops
 - `token-burst: false` disables a potential burst cycle
 - Flow: `pre-verify → post-verify → checkpoint-save` is linear, not cyclic
 
 ### 3. Ordering Determinism
+
 - **Status:** ⚠️ Partial
 - Lifecycle order is deterministic (session-start → ... → session-stop)
 - Within-lane ordering is undefined (no priority field)
 - **Recommendation:** Add `priority` field to plugins for deterministic intra-lane order
 
 ### 4. Timeout & Debounce Budgets
+
 - **Status:** ✅ Reasonable
 | Lane | Timeout | Debounce | Assessment |
 |------|---------|----------|------------|
@@ -60,6 +64,7 @@
 | P2-optimization | 600ms | 500ms | ✅ Higher debounce reduces noise |
 
 ### 5. Lifecycle Symmetry
+
 - **Status:** ✅ Symmetric
 - `before_after_symmetry: true` — each entry has matching exit
 - `continuation_reenters_safety_lane: true` — blocked → P0 → retry
@@ -67,11 +72,13 @@
 - No double-fire: terminal outcomes recorded once per agent turn
 
 ### 6. Team-Safety Policy
+
 - **Status:** ✅ Configured
 - `disable_side_effects_for_worker_sessions: true` — workers can't trigger side effects
 - **Gap:** No explicit user confirmation requirement for high-risk hooks
 
 ### 7. Plugin Configuration
+
 - **Status:** ✅ All 3 plugins enabled and mapped
 | Plugin | Lane | Enabled | Status |
 |--------|------|:-------:|--------|

@@ -6,7 +6,7 @@
 
 Comment ใน PR หรือ Issue:
 
-```
+```text
 /kilo review this PR
 
 Focus on:
@@ -24,14 +24,11 @@ git diff
 
 # แล้วใช้ Kilo review
 kilo run "review these local changes and provide feedback"
-```
-
+```text
 ### แบบที่ 3: Review File เฉพาะ
-
 ```bash
 kilo run "review src/registry/schema.rs for correctness, security, and code quality"
-```
-
+```text
 ---
 
 ## 📋 Review Checklist สำหรับ Kilo
@@ -40,44 +37,52 @@ kilo run "review src/registry/schema.rs for correctness, security, and code qual
 
 ### 1. Correctness & Security
 ```
+
 /kilo review this code
 
 Focus:
+
 - Logic errors และ edge cases
 - Null/undefined handling
 - Security vulnerabilities
 - Error handling gaps
 - Type safety issues
-```
 
+```text
 ### 2. Code Quality
 ```
+
 /kilo review this code
 
 Focus:
+
 - Code style consistency
 - Naming conventions
 - Code duplication
 - Over-engineering
 - Dead code
-```
 
+```text
 ### 3. Performance
 ```
+
 /kilo review this code
 
 Focus:
+
 - Performance bottlenecks
 - Memory usage
 - Inefficient algorithms
 - Missing caching opportunities
-```
 
+```text
 ### 4. Complete Review
 ```
+
 /kilo do a comprehensive code review
 
 Check:
+
 1. Correctness & Security
 2. Code Quality
 3. Performance
@@ -86,43 +91,48 @@ Check:
 6. Hidden side effects
 
 Return findings with:
+
 - File and line reference
 - What's wrong
 - Why it matters
 - Suggested fix
 - Severity (Critical/Suggestion/Nice to have)
-```
 
+```text
 ---
 
 ## 🎯 ตัวอย่างการใช้งานจริง
 
 ### Review PR
 ```
+
 /kilo review this PR #123
 
 Provide findings in this format:
+
 - **File:** <path>:<line>
 - **Issue:** <description>
 - **Impact:** <why it matters>
 - **Fix:** <suggestion>
 - **Severity:** Critical | Suggestion | Nice to have
-```
 
+```text
 ### Review Before Commit
 ```bash
 git diff | kilo run "review these changes for bugs and security issues"
-```
-
+```text
 ### Review Specific Feature
 ```
+
 /kilo review the registry schema implementation
 
 Check for:
+
 - Proper error handling
 - Type safety
 - Performance with large datasets
 - Edge cases
+
 ```
 
 ---

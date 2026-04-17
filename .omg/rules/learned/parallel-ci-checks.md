@@ -11,6 +11,7 @@ globs:
 # Parallel CI Checks
 
 ## วิธีใช้
+
 ```bash
 # เร็วกว่า make all-check
 make parallel
@@ -25,11 +26,13 @@ make test-only
 ```
 
 ## ทำไมต้อง parallel
+
 - `cargo fmt` ไม่ขึ้นกับ `cargo clippy` หรือ `cargo test`
 - รันพร้อมกันได้ → ประหยัดเวลา
 - เก็บ logs ไว้ที่ `target/check-logs/`
 
 ## Scripts ที่เกี่ยวข้อง
+
 - `scripts/parallel-check.sh` - script หลัก
 - `scripts/bumpversion.sh` - bump version + tag
 - `scripts/generate-changelog.sh` - สร้าง changelog จาก commits

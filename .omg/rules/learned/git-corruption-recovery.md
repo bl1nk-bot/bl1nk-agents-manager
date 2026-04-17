@@ -10,11 +10,11 @@ globs:
 # Git Corruption Recovery (Android/Termux)
 
 ## อาการ
-```
-fatal: unable to read tree (c8b88da1642da556dddeba341eacdc94d640323d)
-error: object file .git/objects/XX/XXX... is empty
-```
 
+```yaml
+unable to read tree (c8b88da1642da556dddeba341eacdc94d640323d)
+error: object file .git/objects/XX/XXX... is empty
+```text
 ## วิธีแก้
 ```bash
 # 1. ลบ corrupted object
@@ -29,6 +29,7 @@ git commit -m "<message>"
 ```
 
 ## Prevention
+
 - บ่อยครั้งเกิดจาก storage เปลี่ยนแปลงขณะ git กำลังเขียน
 - อย่า kill git process กลางคัน
 - ใช้ `git fsck --full` เพื่อตรวจสอบ

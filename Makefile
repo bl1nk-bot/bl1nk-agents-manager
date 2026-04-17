@@ -1,141 +1,95 @@
 # ==============================================================================
-# Makefile for BL1NK Agents Manager
+# Makefile for BL1NK Agents Manager (v1.7.0)
 # ==============================================================================
 
-.PHONY: help build build-bundled build-full run dev test check fmt clippy clean install doc setup lint spellcheck all-check \
-        parallel parallel-verbose fmt-only clippy-only test-only review review-comment \
-        commitlint commitlint-range changelog \
-        bump-patch bump-minor bump-major security-check security-update
+.PHONY: help build build-bundled run dev test check fmt clippy clean install doc setup lint lint-md md-fix all-check \
+        parallel parallel-verbose agents-check agents-list skills-check skills-list review \
+        bump-patch bump-minor bump-major changelog commitlint
 
 # --- Default Behavior ---
 all: build
 
 # --- Help & Documentation ---
 help:
-	@echo "BL1NK Agents Manager - Development Commands"
+	@echo "🤖 BL1NK Agents Manager v1.7.0 - Development Commands"
 	@echo ""
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "Build Targets:"
 	@echo "  build                 - Build standard release binary"
-	@echo "  build-bundled         - Build with bundled PMAT (recommended)"
-	@echo "  build-full            - Build with bundled PMAT + all features"
+	@echo "  build-bundled         - Build with bundled PMAT support"
 	@echo ""
-	@echo "Development:"
-	@echo "  run                   - Run standard release binary"
-	@echo "  run-bundled           - Run bundled PMAT binary"
-	@echo "  dev                   - Hot-reload development mode"
+	@echo "Agent & Skill Management:"
+	@echo "  agents-list           - List all discovered agents and skills"
+	@echo "  agents-check          - Validate schemas for all agents and skills"
+	@echo "  skills-list           - Alias for agents-list"
+	@echo "  skills-check          - Alias for agents-check"
 	@echo ""
 	@echo "Quality Checks:"
-	@echo "  test                  - Run all tests"
-	@echo "  check                 - Quick compilation check"
-	@echo "  fmt                   - Format code"
+	@echo "  test                  - Run all Rust tests"
+	@echo "  fmt                   - Format Rust code"
 	@echo "  clippy                - Run clippy linter"
-	@echo "  lint                  - Run all linters (fmt + clippy + check)"
-	@echo "  spellcheck            - Check spelling"
-	@echo "  all-check             - Run all checks sequentially"
-	@echo "  parallel              - Run fmt + clippy + test in PARALLEL (fast)"
-	@echo "  parallel-verbose      - Run parallel with verbose output"
-	@echo "  review [TARGET]       - Code review (local changes, PR#, or file)"
-	@echo "  review-comment PR#    - Code review + post inline comments"
+	@echo "  lint-md               - Lint Markdown documentation"
+	@echo "  md-fix                - Auto-fix Markdown formatting"
+	@echo "  parallel              - Run fmt + clippy + test + agents in PARALLEL (fast)"
 	@echo ""
-	@echo "Release Management:"
-	@echo "  bump-patch            - Bump patch version (0.1.0 -> 0.1.1)"
-	@echo "  bump-minor            - Bump minor version (0.1.0 -> 0.2.0)"
-	@echo "  bump-major            - Bump major version (0.1.0 -> 1.0.0)"
-	@echo "  changelog             - Generate CHANGELOG.md from commits"
-	@echo "  commitlint            - Lint last commit message"
-	@echo "  commitlint-range      - Lint last 10 commits"
+	@echo "Development:"
+	@echo "  run                   - Run the orchestrator"
+	@echo "  dev                   - Watch mode with auto-reload"
+	@echo "  review                - Run code review on changes"
 	@echo ""
-	@echo "Security:"
-	@echo "  security-check        - Check dependencies for vulnerabilities"
-	@echo "  security-update       - Update dependencies and check security"
-	@echo ""
-	@echo "Deployment:"
-	@echo "  install               - Install to ~/.local/bin"
-	@echo "  install-bundled       - Install bundled binary"
-	@echo "  clean                 - Clean build artifacts"
-	@echo ""
-	@echo "Documentation:"
-	@echo "  doc                   - Generate documentation"
-	@echo "  setup                 - Install dev tools"
-
+	@echo "Release:"
+	@echo "  bump-patch            - v1.7.0 -> v1.7.1"
+	@echo "  bump-minor            - v1.7.0 -> v1.8.0"
+	@echo "  bump-major            - v1.7.0 -> v2.0.0"
+	@echo "  changelog             - Update CHANGELOG.md"
 
 # ==============================================================================
-# Build Commands
+# Build & Run
 # ==============================================================================
 
 build:
-	@echo "Building standard release binary..."
+	@echo "🚀 Building release binary..."
 	cargo build --release
 
 build-bundled:
-	@echo "Building release binary with bundled PMAT..."
+	@echo "📦 Building with bundled PMAT..."
 	cargo build --release --features bundle-pmat
 
-build-full:
-	@echo "Building release binary with bundled PMAT (full language support)..."
-	cargo build --release --features bundle-pmat-full
-
-
-# ==============================================================================
-# Run Commands
-# ==============================================================================
-
-run: build
-	@echo "Running standard release binary..."
-	./target/release/bl1nk-agents-manager
-
-run-bundled: build-bundled
-	@echo "Running release binary with bundled PMAT..."
-	./target/release/bl1nk-agents-manager
+run:
+	@./target/release/bl1nk-agents-manager
 
 dev:
-	@echo "Starting development mode with hot-reload..."
 	cargo watch -x 'run --features bundle-pmat'
 
+# ==============================================================================
+# Agent & Skill Management
+# ==============================================================================
+
+agents-list skills-list:
+	@python3 scripts/agent_manager.py list
+
+agents-check skills-check:
+	@python3 scripts/validate_agents.py
 
 # ==============================================================================
-# Testing and Quality (Sequential)
+# Quality & Linting
 # ==============================================================================
 
 test:
-	@echo "Running all tests..."
 	cargo test --all-features
 
-check:
-	@echo "Running cargo check..."
-	cargo check --all-features
-
 fmt:
-	@echo "Formatting code..."
 	cargo fmt --all
 
 clippy:
-	@echo "Running clippy linter..."
 	cargo clippy --all-features -- -D warnings
 
-lint:
-	@echo "Running all linters..."
-	@echo "--- Running cargo fmt ---"
-	cargo fmt --all --check
-	@echo "--- Running cargo check ---"
-	cargo check --all-features
-	@echo "--- Running cargo clippy ---"
-	cargo clippy --all-features -- -D warnings
-	@echo "Lint check complete!"
+lint-md:
+	@npx -y markdownlint-cli2 "**/*.md"
 
-spellcheck:
-	@echo "Running spell check..."
-	@command -v codespell >/dev/null 2>&1 && codespell --config .codespellrc . || echo "codespell not installed, skipping..."
-
-all-check: lint spellcheck test
-	@echo "All checks passed!"
-
-
-# ==============================================================================
-# Parallel Checks (Fast)
-# ==============================================================================
+md-fix:
+	@npx -y markdownlint-cli2 "**/*.md" --fix
 
 parallel:
 	@bash scripts/parallel-check.sh
@@ -143,25 +97,16 @@ parallel:
 parallel-verbose:
 	@bash scripts/parallel-check.sh --verbose
 
-fmt-only:
-	@bash scripts/parallel-check.sh --fmt
-
-clippy-only:
-	@bash scripts/parallel-check.sh --clippy
-
-test-only:
-	@bash scripts/parallel-check.sh --test
-
-review:
-	@bash scripts/review.sh $(filter-out $@,$(MAKECMDGOALS))
-
-review-comment:
-	@bash scripts/review.sh $(filter-out $@,$(MAKECMDGOALS)) --comment
-
+all-check: fmt clippy test agents-check lint-md
+	@echo "✅ All checks passed!"
 
 # ==============================================================================
-# Release Management
+# Maintenance
 # ==============================================================================
+
+clean:
+	cargo clean
+	rm -rf target/check-logs
 
 bump-patch:
 	@bash scripts/bumpversion.sh patch
@@ -175,57 +120,10 @@ bump-major:
 changelog:
 	@bash scripts/generate-changelog.sh
 
-commitlint:
-	@bash scripts/commitlint.sh --last
-
-commitlint-range:
-	@bash scripts/commitlint.sh --range HEAD~10..HEAD
-
-
-# ==============================================================================
-# Security
-# ==============================================================================
-
-security-check:
-	@bash scripts/update-security.sh --check-only
-
-security-update:
-	@bash scripts/update-security.sh
-
-
-# ==============================================================================
-# Installation and Cleanup
-# ==============================================================================
-
-clean:
-	@echo "Cleaning build artifacts..."
-	cargo clean
-
-install: build
-	@echo "Installing standard binary to ~/.local/bin..."
-	@mkdir -p ~/.local/bin
-	@cp target/release/bl1nk-agents-manager ~/.local/bin/
-	@echo "Installed to ~/.local/bin/bl1nk-agents-manager"
-	@echo "Make sure ~/.local/bin is in your PATH"
-
-install-bundled: build-bundled
-	@echo "Installing bundled PMAT binary to ~/.local/bin..."
-	@mkdir -p ~/.local/bin
-	@cp target/release/bl1nk-agents-manager ~/.local/bin/
-	@echo "Installed to ~/.local/bin/bl1nk-agents-manager"
-	@echo "Make sure ~/.local/bin is in your PATH"
-
-
-# ==============================================================================
-# Documentation & Setup
-# ==============================================================================
-
-doc:
-	@echo "Generating documentation..."
-	cargo doc --no-deps --open
+review:
+	@bash scripts/review.sh
 
 setup:
-	@echo "Installing development tools..."
 	rustup component add rustfmt clippy
 	cargo install cargo-watch
-	@echo "Development tools installed successfully!"
+	@echo "✅ Development environment ready!"

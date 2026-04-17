@@ -11,11 +11,13 @@ globs:
 # Conventional Commit Linting
 
 ## Format
-```
+
+```text
 type(scope): description
 ```
 
 ## Types ที่อนุญาต
+
 - `feat` - ฟีเจอร์ใหม่
 - `fix` - แก้ไข bug
 - `docs` - เอกสาร
@@ -31,13 +33,15 @@ type(scope): description
 - `revert` - Revert previous commit
 
 ## Rules
+
 1. Subject line ≤ 72 ตัวอักษร
 2. Type ต้องเป็นตัวพิมพ์เล็กเท่านั้น
 3. Description ต้องไม่เป็น empty
 4. Description ไม่ควรลงท้ายด้วย `.`
 
 ## ตัวอย่าง
-```
+
+```text
 ✅ feat(registry): Task 1.1 - Define Unified Registry Schema
 ✅ fix(kilo): ลบ KILO_ORG_ID - ใช้แค่ KILO_API_KEY เท่านั้น
 ✅ docs: อัปเดต PROJECT_SUMMARY และ README
@@ -46,6 +50,7 @@ type(scope): description
 ```
 
 ## วิธีใช้
+
 ```bash
 make commitlint          # ตรวจสอบ commit ล่าสุด
 make commitlint-range    # ตรวจสอบ 10 commits ล่าสุด

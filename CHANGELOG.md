@@ -2,8 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [1.7.0] - 2026-04-17
+
+### Added
+
+- **Split Metadata Architecture**: ระบบแยกข้อมูลเอเจนต์ออกเป็นสองส่วนเพื่อความสะอาดและประสิทธิภาพ (Human-readable `.md` vs Technical `.json`).
+- **Dynamic Auto-discovery Engine**: พอร์ตระบบค้นหาเอเจนต์อัตโนมัติจาก TypeScript มาเป็น Rust ช่วยให้โหลดเอเจนต์จากโฟลเดอร์ `agents/` และ `skills/` ได้ทันทีโดยไม่ต้องแก้ไขคอนฟิกแมนนวล.
+- **Strict Schema Enforcement**: เพิ่มการตรวจสอบความถูกต้องของไฟล์เอเจนต์ด้วย JSON Schema v1.7.0 ตั้งแต่ขั้นตอนการค้นพบไฟล์ (Discovery Phase).
+- **12 Core Tools Standard**: กำหนดมาตรฐานชุดเครื่องมือพื้นฐาน 12+ ชนิด (เช่น Glob, Grep, ReadFile, WriteFile) ให้กับเอเจนต์ทุกตัวเพื่อความพร้อมในการปฏิบัติงานเต็มรูปแบบ.
+- **Comprehensive Test Suite**: เพิ่มชุดการทดสอบสำหรับโมดูล `skill_discovery` ครอบคลุมทั้ง Unit, Security, และ Integration tests (6/6 passing).
+- **Documentation**: เพิ่ม `scripts/README.md` สำหรับคู่มือเครื่องมือพัฒนา และอัปเดต root `README.md` ให้ตรงตามสถาปัตยกรรมปัจจุบัน.
+
+### Changed
+
+- **Unified Registry System**: อัปเกรดระบบ Registry ใน Rust ให้สามารถผสาน (Merge) ข้อมูลระหว่าง Markdown และ JSON ได้แบบเรียลไทม์.
+- **Smart Routing & Search**: ปรับปรุงระบบ Router ให้ค้นหาเอเจนต์ตามความสามารถ (Capabilities) และชื่อ (Slug) ได้แม่นยำขึ้นผ่าน Fuzzy Search.
+- **CI/CD Consolidation**: รวมเวิร์กโฟลว์คุณภาพทั้งหมด (Fmt, Clippy, Test, Agent Validation) เข้าสู่ `ci.yml` เพียงจุดเดียวเพื่อประหยัดทรัพยากรและลดความซ้ำซ้อน.
+- **Project Restructuring**:
+  - เปลี่ยนชื่อ `extractor.rs` เป็น `executor.rs` ให้ตรงตามหน้าที่จริง.
+  - ย้าย `bl1nk-keyword-validator` จาก Submodule มาเป็น Vendor dependency ถาวรเพื่อความเสถียร.
+- **Permission Scoring**: ปรับปรุงระบบคำนวณคะแนนสิทธิ์ (Policy Evaluator) ให้รองรับโครงสร้างข้อมูลแบบแยกส่วน.
+
+### Removed
+
+- **Legacy Registry Structure**: ยกเลิกระบบการลงทะเบียนเอเจนต์แบบ Manual ในไฟล์ JSON ชุดเก่า.
+- **Obsolete Scripts**: ลบสคริปต์ Migration ชั่วคราวและสคริปต์จัดการเอเจนต์แบบเก่า (Legacy) รวมกว่า 10 ไฟล์.
+- **Outdated Tests**: ลบไฟล์เทสที่ล้าสมัยและขวางทางการ Compile ของสถาปัตยกรรมใหม่.
+
+### Fixed
+
+- **Ownership & Move Errors**: แก้ปัญหา Memory Ownership ในโมดูล Orchestrator และ Router.
+- **Compilation Deadlock**: แก้ปัญหาฟิลด์หายและ Type mismatch ทั่วทั้งโปรเจกต์ที่เกิดจากการเปลี่ยนโครงสร้างข้อมูลหลัก.
+- **Main Command Logic**: ซ่อมแซมระบบจัดการ Subcommands ใน `src/main.rs` ที่ทำงานผิดพลาด.
+
+### Security
+
+- **Anti-Shadowing Protection**: เพิ่มระบบป้องกันเอเจนต์ตั้งชื่อทับคำสั่งหลักของระบบ (เช่น model, resume, help).
+- **Enhanced Security Audit**: อัปเกรด CI ให้สแกนหา Hardcoded Secrets และเฝ้าระวังการใช้นโยบายแบบ Wildcard (*) ที่ไม่เหมาะสม.
 
 ---
 

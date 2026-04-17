@@ -10,9 +10,11 @@ globs:
 # Create Scripts for Repetitive Tasks
 
 ## กฎ
+
 เมื่อพบงานที่ทำซ้ำหรือมีแนวโน้มจะทำซ้ำ → สร้าง script
 
 ## ตัวอย่างที่สร้างแล้ว
+
 | Script |做什么 |
 |--------|------|
 | `scripts/bumpversion.sh` | Bump version + git tag |
@@ -23,6 +25,7 @@ globs:
 | `scripts/review.sh` | Code review wrapper |
 
 ## Pattern การสร้าง Script
+
 1. ระบุงานที่ทำซ้ำ
 2. สร้าง bash script ที่ automate งานนั้น
 3. เพิ่ม Makefile target
@@ -31,11 +34,13 @@ globs:
 6. เก็บ logs ใน `target/` หรือ temp dir
 
 ## ควรเสนอให้ผู้ใช้
+
 - "งานนี้ทำได้ด้วย script ให้สร้างไหม?"
 - "ต้องการให้เพิ่ม Makefile target ด้วยไหม?"
 - "script นี้รองรับ options อะไรบ้าง?"
 
 ## ทำไมสำคัญ
+
 - ลดเวลาของผู้ใช้
 - ลดงานของ agent
 - ทำให้ workflow เป็นระบบ

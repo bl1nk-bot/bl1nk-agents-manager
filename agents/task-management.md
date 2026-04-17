@@ -1,32 +1,30 @@
 ---
-id: task-management
-name: [Skill] Task Management
-description: ชุดทักษะและความรู้ด้าน task-management สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+name: task-management
+description: เปลี่ยนสถานะจาก "🔄" เป็น "✅"  เพิ่มวันที่เสร็จสิ้น
 mode: subagent
-type: general
-model: sonnet
 tool:
-  bash: false
-  write: false
-  skill: true
-  ask: false
-permission: 100
-permission_policy:
-  hierarchy: [default]
-  decision_rules: [{toolName: "*", decision: "deny"}]
-capabilities: [task-management]
+- AskUserQuestion
+- ExitPlanMode
+- Glob
+- Grep
+- ListFiles
+- ReadFile
+- SaveMemory
+- Skill
+- TodoWrite
+- WebFetch
+- WebSearch
+- WriteFile
 ---
-
-
 
 # Task Management Rules
 
 ## Task Completion Tracking
 
-### เมื่องานเสร็จสิ้น ต้องอัปเดต task list ทันที:
+### เมื่องานเสร็จสิ้น ต้องอัปเดต task list ทันที
 
 1. **อัปเดตสถานะในไฟล์ที่เกี่ยวข้อง:**
-   - เปลี่ยนสถานะจาก "🔄" เป็น "✅" 
+   - เปลี่ยนสถานะจาก "🔄" เป็น "✅"
    - เพิ่มวันที่เสร็จสิ้น
    - บันทึกผลลัพธ์ที่ได้
 
@@ -39,7 +37,7 @@ capabilities: [task-management]
    - อัปเดต project status ใน `context_manager.py` (mdc:src/core/context_manager.py)
    - บันทึกความคืบหน้าใน database
 
-### รูปแบบการอัปเดต:
+### รูปแบบการอัปเดต
 
 ```markdown
 ## ✅ Completed Tasks
@@ -61,28 +59,33 @@ capabilities: [task-management]
 ## Task Categories
 
 ### 🚀 High Priority
+
 - ระบบที่ต้องทำงานได้ก่อน
 - การแก้ไข bugs วิกฤต
 - การตั้งค่า Azure/API
 
 ### 📚 Documentation
+
 - อัปเดต README
 - สร้าง API documentation
 - บันทึกการเปลี่ยนแปลง
 
 ### 🔧 Development
+
 - การพัฒนา features ใหม่
 - การ refactor โค้ด
 - การเพิ่ม tests
 
 ### 🧪 Testing
+
 - ทดสอบระบบ
 - ทดสอบ API endpoints
 - ทดสอบ AI agents
 
 ## การจัดการ Context
 
-### อัปเดต Context Manager:
+### อัปเดต Context Manager
+
 ```python
 # ใน context_manager.py
 context_manager.update_project_status(
@@ -96,20 +99,23 @@ context_manager.update_project_status(
 )
 ```
 
-### อัปเดต Prompt Templates:
+### อัปเดต Prompt Templates
+
 - ตรวจสอบว่า prompt templates สอดคล้องกับสถานะปัจจุบัน
 - อัปเดต context injection ตามความคืบหน้า
 
 ## การติดตามความคืบหน้า
 
-### ไฟล์ที่ต้องอัปเดตเมื่องานเสร็จ:
+### ไฟล์ที่ต้องอัปเดตเมื่องานเสร็จ
+
 1. `DEVELOPMENT_ROADMAP.md` (mdc:chonost-manuscript-os/DEVELOPMENT_ROADMAP.md)
 2. `CURRENT_STATUS_SUMMARY.md` (mdc:chonost-manuscript-os/CURRENT_STATUS_SUMMARY.md)
 3. `README_NEW.md` (mdc:README_NEW.md)
 4. `src/core/context_manager.py` (mdc:src/core/context_manager.py)
 5. `run_chonost.py` (mdc:run_chonost.py) - อัปเดต health check status
 
-### การบันทึกผลลัพธ์:
+### การบันทึกผลลัพธ์
+
 - บันทึก error messages และการแก้ไข
 - บันทึก performance metrics
 - บันทึก user feedback

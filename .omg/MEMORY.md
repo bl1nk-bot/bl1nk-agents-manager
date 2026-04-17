@@ -5,6 +5,7 @@
 ---
 
 ## Architecture
+
 - **Product:** Intelligent MCP/ACP orchestrator with bundled PMAT support
 - **Core:** Rust 2024, tokio async, clap CLI
 - **Protocol:** MCP (pmcp 1.8) + ACP (agent-client-protocol 0.10)
@@ -12,6 +13,7 @@
 - **Conductor:** Spec-driven development workflow enabled
 
 ## Key Decisions
+
 | Date | Decision | Reason |
 |------|----------|--------|
 | 2026-04-12 | KiloCode shell ไม่ใช่ Qwen Code | User correction — agent วาง skill ผิดที่ |
@@ -21,6 +23,7 @@
 | 2026-04-12 | Rust `DateTime<Utc>` → `String` สำหรับ JsonSchema | schemars 1.0 ไม่มี impl สำหรับ DateTime |
 
 ## Critical Patterns
+
 - Git corruption บน Android/Termux → `rm corrupted object` + `git reset --hard`
 - Parallel CI checks → fmt+clippy+test พร้อมกัน (ประหยัด 2-3x)
 - Output language: Thai เสมอ
@@ -28,11 +31,13 @@
 - สร้าง scripts สำหรับงานซ้ำๆ
 
 ## Active Track
+
 - **Track:** Unified Registry, Monitoring & Honesty Layer
 - **Phase:** 1 - Foundation (Task 1.1 complete, Task 1.2 next)
 - **Commit:** `afead8b`
 
 ## See Also
+
 - [Conductor Product](../../conductor/product.md)
 - [Conductor Tech Stack](../../conductor/tech-stack.md)
 - [Conductor Workflow](../../conductor/workflow.md)

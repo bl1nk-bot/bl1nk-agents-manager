@@ -10,6 +10,7 @@ globs:
 # Rust: schemars + DateTime Workaround
 
 ## ปัญหา
+
 ```rust
 // ❌ compile error: DateTime<Utc> ไม่มี JsonSchema
 #[derive(JsonSchema)]
@@ -19,6 +20,7 @@ struct MyStruct {
 ```
 
 ## วิธีแก้
+
 ```rust
 // ✅ ใช้ String แทน
 #[derive(JsonSchema)]
@@ -31,5 +33,6 @@ timestamp: Utc::now().to_rfc3339()
 ```
 
 ## กฎ
+
 - ถ้า struct ต้องมี `#[derive(JsonSchema)]` → ใช้ `String` สำหรับ timestamps
 - ถ้าไม่ต้องการ JSON schema → ใช้ `DateTime<Utc>` ได้ปกติ

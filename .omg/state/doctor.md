@@ -40,23 +40,28 @@ None — all critical workflows functional.
 ## Warnings (P1)
 
 ### 1. Missing `.omg/MEMORY.md`
+
 **Impact:** Project-critical patterns not escalated to memory
 **Fix:** Create `.omg/MEMORY.md` with architecture notes and key decisions
 
 ### 2. Missing `.omg/rules/learn.json`
+
 **Impact:** No cooldown policy for learning nudges → may repeat learn suggestions
 **Fix:** Create with cooldown settings
 
 ### 3. Dirty working tree
+
 **Impact:** `.qwen/settings.json` has unstaged changes
 **Fix:** Review and commit or discard
 
 ## Info (P2)
 
 ### 1. `commands/omg/` not present
+
 This is expected — OmG commands come from the extension, not the repo.
 
 ### 2. `context/omg-core.md` not local
+
 Imported from the oh-my-gemini-cli extension context. Expected behavior.
 
 ---

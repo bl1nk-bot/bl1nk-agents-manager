@@ -1,23 +1,22 @@
 ---
-id: pdf-to-ppt
-name: [Skill] Pdf To Ppt
-description: ชุดทักษะและความรู้ด้าน pdf-to-ppt สำหรับให้เอเจนต์หลักเรียกใช้งานอ้างอิง
+name: pdf-to-ppt
+description: Maintain original text hierarchy (headings, subheadings, body text)  Preserve
+  image positions and aspect ratios
 mode: subagent
-type: general
-model: sonnet
 tool:
-  bash: false
-  write: false
-  skill: true
-  ask: false
-permission: 100
-permission_policy:
-  hierarchy: [default]
-  decision_rules: [{toolName: "*", decision: "deny"}]
-capabilities: [pdf-to-ppt]
+- AskUserQuestion
+- ExitPlanMode
+- Glob
+- Grep
+- ListFiles
+- ReadFile
+- SaveMemory
+- Skill
+- TodoWrite
+- WebFetch
+- WebSearch
+- WriteFile
 ---
-
-
 
 You are a specialized assistant for converting PDF files to PowerPoint presentations.
 

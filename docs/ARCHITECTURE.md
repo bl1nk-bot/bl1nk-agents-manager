@@ -3,6 +3,7 @@
 ## System Overview
 
 BL1NK Agents Manager is a **dual-protocol orchestrator** that bridges:
+
 - **MCP (Model Context Protocol)** - For AI assistant integration
 - **ACP (Agent Client Protocol)** - For sub-agent communication
 
@@ -12,7 +13,7 @@ BL1NK Agents Manager is a **dual-protocol orchestrator** that bridges:
 
 **Philosophy**: Every agent is both a server and a client.
 
-```
+```text
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │   Gemini    │────▶│    Proxy    │────▶│    Qwen     │
 │     CLI     │◀────│ Orchestrator│◀────│   Agent     │
@@ -27,11 +28,13 @@ All communication uses **JSON-RPC 2.0** regardless of protocol.
 The proxy operates in two modes simultaneously:
 
 **Mode 1: MCP Server**
+
 - Listens on stdio
 - Exposes tools to Gemini CLI
 - Uses PMCP (Pragmatic MCP) SDK
 
 **Mode 2: ACP Client**
+
 - Spawns sub-agent processes
 - Sends JSON-RPC requests over stdin
 - Reads JSON-RPC responses from stdout
@@ -51,10 +54,8 @@ The proxy operates in two modes simultaneously:
 │  Transport: stdio                   │
 │  Protocol: JSON-RPC 2.0 (MCP)       │
 └─────────────────────────────────────┘
-```
-
+```text
 ### Layer 2: Orchestration Logic
-
 ```rust
 ┌─────────────────────────────────────┐
 │        Orchestrator                 │
@@ -65,10 +66,8 @@ The proxy operates in two modes simultaneously:
 │  • AgentExecutor (Arc)              │
 │  • AgentRouter                      │
 └─────────────────────────────────────┘
-```
-
+```text
 ### Layer 3: Agent Management
-
 ```rust
 ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐
 │  AgentRegistry   │  │   AgentRouter    │  │  AgentExecutor   │  │  HookAggregator  │
@@ -77,8 +76,7 @@ The proxy operates in two modes simultaneously:
 │ • Task tracking  │  │ • Capability     │  │ • ACP protocol   │  │ • Result merging │
 │ • Status updates │  │   matching       │  │ • Background     │  │ • Event handling │
 └──────────────────┘  └──────────────────┘  └──────────────────┘  └──────────────────┘
-```
-
+```text
 ### Hook Events
 
 The system supports several hook events that can intercept and modify behavior:
@@ -94,7 +92,6 @@ The system supports several hook events that can intercept and modify behavior:
 Hooks can return decisions (allow/block/deny), reasons, system messages, and hook-specific outputs that are merged according to event-specific logic.
 
 ### Layer 4: Rate Limiting
-
 ```rust
 ┌─────────────────────────────────────┐
 │      RateLimitTracker               │
@@ -104,13 +101,12 @@ Hooks can return decisions (allow/block/deny), reasons, system messages, and hoo
 │  • Requests/day                     │
 │  • Auto-reset timers                │
 └─────────────────────────────────────┘
-```
-
+```text
 ## Data Flow
 
 ### Synchronous Task Execution
-
 ```
+
 1. Gemini CLI sends MCP request
    ├─> MCP Server receives via stdio
    ├─> Parses TypedTool arguments
@@ -131,23 +127,22 @@ Hooks can return decisions (allow/block/deny), reasons, system messages, and hoo
    ├─> Format MCP response
    ├─> Send via stdio
    └─> Update task status
-```
 
+```text
 ### Background Task Execution
-
 ```
+
 1. Gemini CLI → delegate_task(background: true)
 2. Proxy spawns tokio task
 3. Returns immediately with task_id
 4. Background task runs independently
 5. Results stored in registry
 6. Query via agent_status(task_id)
-```
 
+```text
 ## Configuration Architecture
 
 ### TOML Structure
-
 ```toml
 [server]           # MCP server settings
 [main_agent]       # Gemini CLI config
@@ -155,10 +150,8 @@ Hooks can return decisions (allow/block/deny), reasons, system messages, and hoo
 [[routing.rules]]  # Task routing rules
 [rate_limiting]    # Rate limit settings
 [logging]          # Log configuration
-```
-
+```text
 ### Agent Definition
-
 ```rust
 pub struct AgentConfig {
     id: String,              // Unique identifier
@@ -170,38 +163,31 @@ pub struct AgentConfig {
     capabilities: Vec<String>, // e.g., ["code-generation"]
     priority: u8,             // Higher = preferred
 }
-```
-
+```text
 ### Routing Rule
-
 ```rust
 pub struct RoutingRule {
     task_type: String,        // e.g., "code-generation"
     keywords: Vec<String>,    // Prompt matching
     preferred_agents: Vec<String>, // Agent IDs
 }
-```
-
+```text
 ## Concurrency Model
 
 ### Thread Safety
 
 All shared state uses `Arc<RwLock<T>>`:
-
 ```rust
 Arc<RwLock<AgentRegistry>>    // Read-heavy workload
 Arc<RwLock<RateLimitTracker>> // Write-heavy workload
 Arc<AgentExecutor>            // Immutable (safe to share)
-```
-
+```text
 ### Background Tasks
-
 ```rust
 tokio::spawn(async move {
     executor.execute_agent_task(...).await
 });
-```
-
+```text
 - Non-blocking delegation
 - Isolated task contexts
 - Automatic cleanup on completion
@@ -226,7 +212,6 @@ tokio::spawn(async move {
    - Network errors (future)
 
 ### Error Propagation
-
 ```rust
 MCP Request
     ↓
@@ -237,8 +222,7 @@ Agent execution (anyhow::Result)
 Convert to pmcp::Error
     ↓
 MCP Response (error field)
-```
-
+```text
 ## Performance Considerations
 
 ### PMCP Advantages
@@ -267,36 +251,29 @@ MCP Response (error field)
 ## Future Enhancements
 
 ### 1. Persistent Task Storage
-
 ```rust
 // Current: In-memory HashMap
 active_tasks: HashMap<String, TaskInfo>
 
 // Future: SQLite/RocksDB
 task_store: Arc<dyn TaskStore>
-```
-
+```text
 ### 2. Agent Warm Pools
-
 ```rust
 // Keep agents running for faster response
 struct AgentPool {
     ready_agents: VecDeque<ChildProcess>,
     max_size: usize,
 }
-```
-
+```text
 ### 3. HTTP/WebSocket Transport
-
 ```rust
 // Add to Orchestrator
 pub async fn run_http(&self, addr: SocketAddr) -> Result<()> {
     // SSE transport via pmcp
 }
-```
-
+```text
 ### 4. Bidirectional ACP
-
 ```rust
 // Allow agents to call back to orchestrator
 struct BidirectionalAgent {
@@ -304,18 +281,15 @@ struct BidirectionalAgent {
     stdout: ChildStdout,
     callback: Arc<dyn Fn(Request) -> Response>,
 }
-```
-
+```text
 ### 5. Metrics & Observability
-
 ```rust
 struct Metrics {
     tasks_completed: AtomicU64,
     tasks_failed: AtomicU64,
     avg_latency: AtomicF64,
 }
-```
-
+```text
 ## Testing Strategy
 
 ### Unit Tests
@@ -331,7 +305,6 @@ struct Metrics {
 - ACP communication
 
 ### Property Tests (Future)
-
 ```rust
 #[cfg(test)]
 proptest! {
@@ -413,6 +386,7 @@ Each hook returns a `HookOutput` structure containing decisions, reasons, and ot
 ### Integration Points
 
 Hooks can be registered to listen on specific events. The aggregator collects results and produces a final merged output that influences system behavior. This allows for:
+
 - Custom validation and authorization
 - Audit logging
 - Dynamic behavior modification
