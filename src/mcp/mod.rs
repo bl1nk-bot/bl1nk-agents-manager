@@ -12,6 +12,7 @@ pub struct Orchestrator {
     agent_registry: Arc<RwLock<AgentRegistry>>,
     rate_limiter: Arc<RwLock<RateLimitTracker>>,
     executor: Arc<AgentExecutor>,
+    pub registry_service: Arc<crate::registry::RegistryService>,
 }
 
 /// Arguments for delegating a task to a sub-agent
@@ -128,11 +129,11 @@ impl Orchestrator {
     }
 
     pub async fn delegate_task_internal(&self, args: DelegateTaskArgs) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.delegate_task(args).await.map_err(|e| pmcp::Error::internal(&e.to_string()))
+        self.executor.delegate_task(args).await.map_err(|e| pmcp::Error::internal(e.to_string()))
     }
 
     pub async fn approve_task_internal(&self, task_id: String, confirmed_agent_id: Option<String>) -> pmcp::Result<DelegateTaskOutput> {
-        self.executor.approve_task(task_id, confirmed_agent_id).await.map_err(|e| pmcp::Error::internal(&e.to_string()))
+        self.executor.approve_task(task_id, confirmed_agent_id).await.map_err(|e| pmcp::Error::internal(e.to_string()))
     }
 
     pub async fn run_stdio(self) -> Result<()> {
