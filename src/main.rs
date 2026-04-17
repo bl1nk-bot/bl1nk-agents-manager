@@ -1,12 +1,4 @@
-mod config;
-mod mcp;
-mod agents;
-mod rate_limit;
-mod system;
-mod persistence;
-mod hooks;
-use bl1nk_agents_manager::{config, mcp, system};
-
+use bl1nk_agents_manager::*;
 use anyhow::Result;
 use clap::Parser;
 use std::path::PathBuf;
@@ -51,6 +43,15 @@ enum Commands {
         /// Prompt for the agent
         #[arg(short, long)]
         prompt: String,
+    },
+    /// Search for keywords in the registry
+    Search {
+        /// The keyword query
+        #[arg(short, long)]
+        query: String,
+        /// Perform fuzzy search
+        #[arg(short, long)]
+        fuzzy: bool,
     },
 }
 
@@ -124,7 +125,19 @@ async fn main() -> Result<()> {
         match cmd {
             Commands::Delegate { task_type, prompt } => {
                 run_interactive_delegate(orchestrator, task_type, prompt).await?;
-            }
+            },
+            Commands::Search { query, fuzzy } => {
+                tracing::info!("🔍 Searching registry for: '{}' (fuzzy: {})", query, fuzzy);
+                let results = orchestrator.registry_service.search_keywords(&query, fuzzy);
+                if results.is_empty() {
+                    println!("No results found for '{}'.", query);
+                } else {
+                    println!("Search Results for '{}':", query);
+                    for res in results {
+                        println!("- ID: {}, Term: {}, Score: {:.2}", res.id, res.term, res.score);
+                    }
+                }
+            },
         }
     } else {
         // Run the MCP server
