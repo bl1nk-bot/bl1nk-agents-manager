@@ -332,11 +332,7 @@ Body content"#;
 
         // ทดสอบ logic การบล็อกชื่อต้องห้าม (Shadowing)
         let name = raw["name"].as_str().unwrap();
-        if BUILTIN_COMMANDS.contains(&name.to_lowercase().as_str()) {
-            // ผ่าน: ระบบต้องตรวจจับได้ว่าเป็นชื่อต้องห้าม
-            assert!(true);
-        } else {
-            panic!("ควรจะตรวจพบว่าชื่อ 'model' เป็นชื่อต้องห้าม (Shadowing)");
-        }
+        let is_builtin = BUILTIN_COMMANDS.contains(&name.to_lowercase().as_str());
+        assert!(is_builtin, "ควรจะตรวจพบว่าชื่อ 'model' เป็นชื่อต้องห้าม (Shadowing)");
     }
 }
