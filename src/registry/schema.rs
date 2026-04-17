@@ -247,3 +247,4 @@ pub struct EffectivenessReport {
     pub overall_assessment: Assessment,
     pub confidence_level: f32,
 }
+
