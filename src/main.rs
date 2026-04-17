@@ -130,7 +130,6 @@ async fn main() -> Result<()> {
             },
                 // บันทึกข้อมูลการค้นหาใน log
                 tracing::info!("🔍 Searching registry for: '{}' (fuzzy: {})", query, fuzzy);
-                tracing::info!("🔍 Searching registry for: '{}' (fuzzy: {})", query, fuzzy);
                 // เรียกฟังก์ชันค้นหาคีย์เวิร์ดจาก registry service
                 let results = orchestrator.registry_service.search_keywords(&query, fuzzy);
                 if results.is_empty() {
