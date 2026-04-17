@@ -128,7 +128,8 @@ async fn main() -> Result<()> {
             Commands::Delegate { task_type, prompt } => {
                 run_interactive_delegate(orchestrator, task_type, prompt).await?;
             },
-            Commands::Search { query, fuzzy } => {
+                // บันทึกข้อมูลการค้นหาใน log
+                tracing::info!("🔍 Searching registry for: '{}' (fuzzy: {})", query, fuzzy);
                 tracing::info!("🔍 Searching registry for: '{}' (fuzzy: {})", query, fuzzy);
                 let results = orchestrator.registry_service.search_keywords(&query, fuzzy);
                 if results.is_empty() {
