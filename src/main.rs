@@ -1,12 +1,5 @@
-mod config;
-mod mcp;
-mod agents;
-mod rate_limit;
-mod system;
-mod persistence;
-mod hooks;
-use bl1nk_agents_manager::{config, mcp, system};
-
+// นี่คือการนำเข้าโมดูลทั้งหมดจาก crate bl1nk_agents_manager เพื่อให้ใช้งานได้ง่าย 👀
+use bl1nk_agents_manager::*;
 use anyhow::Result;
 use clap::Parser;
 use std::path::PathBuf;
@@ -51,6 +44,16 @@ enum Commands {
         /// Prompt for the agent
         #[arg(short, long)]
         prompt: String,
+    },
+    /// Search for keywords in the registry
+    // คำสั่งสำหรับค้นหาคีย์เวิร์ดใน registry 👀
+    Search {
+        /// The keyword query
+        #[arg(short, long)]
+        query: String,
+        /// Perform fuzzy search
+        #[arg(short, long)]
+        fuzzy: bool,
     },
 }
 
@@ -124,7 +127,21 @@ async fn main() -> Result<()> {
         match cmd {
             Commands::Delegate { task_type, prompt } => {
                 run_interactive_delegate(orchestrator, task_type, prompt).await?;
-            }
+            },
+                // บันทึกข้อมูลการค้นหาใน log
+                tracing::info!("🔍 Searching registry for: '{}' (fuzzy: {})", query, fuzzy);
+                // เรียกฟังก์ชันค้นหาคีย์เวิร์ดจาก registry service
+                let results = orchestrator.registry_service.search_keywords(&query, fuzzy);
+                if results.is_empty() {
+                    println!("No results found for '{}'.", query);
+                } else {
+                    // แสดงผลลัพธ์การค้นหา
+                    println!("Search Results for '{}':", query);
+                    for res in results {
+                        println!("- ID: {}, Term: {}, Score: {:.2}", res.id, res.term, res.score);
+                    }
+                }
+            },
         }
     } else {
         // Run the MCP server
