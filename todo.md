@@ -7,9 +7,16 @@
 - [x] ID 11: Unified Registry & Schema v1.7.0 Enforcement
 - [x] ID 12: Organize Conductor Tracks & Archive old work
 - [x] ID 13: Standardize Markdown Formatting (markdownlint-cli2)
-- [~] ID 14: Track: Context Management Implementation (Current Focus)
-  - [ ] Phase 1: Context Data Structures
-  - [ ] Phase 2: JSON Persistence
+- [x] ID 14: Track: Context Management Implementation (Current Focus)
+  - [x] Phase 1: Context Data Structures (21 tests passing)
+  - [x] Phase 2: JSON Persistence
+  - [x] Phases 3-5 Plan: Created at conductor/tracks/context_management_20260417/phases_3_5_plan.md
+- [x] Tool Compaction TS→Rust: Created at conductor/tracks/tool_compaction_rust/plan.md
+- [x] Tool Compaction: Task 1 - Module structure (commit ea73ffd)
+- [x] Tool Compaction: Task 2 - index_tool_calls (commit b2f585c)
+- [x] Tool Compaction: Task 3 - find_pending_compaction_candidates (commit 0e856fe)
+- [x] Tools: ask_user_question module (commit fe07b97)
+- [~] Tool Compaction: Task 4 - compact functions (Phase 2)
 
 ## [2026-04-12] Codebase Stabilization (Archived Context)
 

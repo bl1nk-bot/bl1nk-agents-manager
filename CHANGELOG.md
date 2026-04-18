@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.1] - 2026-04-18
+
+### Added
+
+- **JSON Context Persistence**: 実装ระบบจัดเก็บข้อมูลบริบท (Context) โดยใช้ไฟล์ JSON ในโฟลเดอร์ `.omg/state/` พร้อมระบบบันทึกแบบ Atomic เพื่อความปลอดภัยของข้อมูล.
+- **Context Offloading (Markdown Archive)**: เพิ่มความสามารถในการย้ายบริบทเก่าไปเก็บไว้ในไฟล์ Markdown (`.md`) ภายใต้โฟลเดอร์ `archives/` เพื่อให้มนุษย์อ่านได้ง่ายและประหยัดหน่วยความจำ.
+- **Enhanced Bash Tool**: พัฒนาเครื่องมือรันคำสั่งเชลล์ตัวใหม่ที่รองรับการกำหนด Timeout และ Working Directory พร้อมระบบป้องกันความผิดพลาดเบื้องต้น.
+- **Structured Logging with Tracing**: บูรณาการ Crate `tracing` เข้ากับระบบจัดเก็บข้อมูลและเครื่องมือใหม่เพื่อการตรวจสอบสถานะ (Observability) ที่ดีขึ้น.
+- **Track Plans**: เพิ่มแผนงานการพัฒนาเชิงลึกสำหรับ `context_management` และ `tool_compaction` เพื่อเป็นแนวทางให้เอเจนต์ทำงานตามลำดับความสำคัญ.
+
+### Changed
+
+- **Thai Documentation Standard**: แปลคอมเมนต์และเอกสารภายในโค้ดในโมดูล `context` และ `tools` เป็นภาษาไทยทั้งหมดตามมาตรฐานโปรเจกต์.
+- **Module Re-organization**: จัดระเบียบการส่งออก (Export) โมดูลใน `src/tools/mod.rs` เพื่อให้ระบบมีความเสถียรและเรียกใช้งานได้ง่ายขึ้น.
+
+### Fixed
+
+- **Clippy Stability**: แก้ไขข้อผิดพลาดและคำแนะนำจาก Clippy ในโมดูล `tool_compaction`, `json_store` และ `bash` (Zero warnings).
+- **Infinite Loop Risk**: ปรับเปลี่ยนการอ่านผลลัพธ์จาก Standard Stream ใน Bash Tool จาก `flatten()` เป็น `map_while(Result::ok)` เพื่อป้องกันลูปค้างกรณีเกิด I/O Error.
+
+---
+
 ## [1.7.0] - 2026-04-17
 
 ### Added

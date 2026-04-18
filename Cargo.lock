@@ -166,6 +166,7 @@ name = "bl1nk-agents-manager"
 version = "1.7.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "base64",
  "bl1nk-keyword-core",
  "chrono",

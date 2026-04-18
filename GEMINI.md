@@ -110,3 +110,10 @@ For developers extending this project:
 1. Create a new `.md` file in `agents/`.
 2. Add the agent's metadata to `agents/agents.json`.
 3. (Optional) If it's a "custom" user agent (not built-in), the logic in `system-agent.toml` looks for a `custom/agents.json` file relative to the extension path.
+
+---
+
+## 🧭 Strategic Directions (Memory)
+
+- **Main Project (bl1nk-agents-manager)**: Focuses strictly on **Agent Orchestration & Management**. This includes agent lifecycle, context management (compaction/persistence), and tool execution logic.
+- **Vendor Project (bl1nk-keyword-validator)**: Focuses strictly on **Keyword Search & Validation Infrastructure**. This provides the "Knowledge Backbone", including BM25 smart search, Thai NLP optimization, and schema integrity checks.
