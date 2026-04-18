@@ -1,8 +1,10 @@
 pub mod agents;
 pub mod config;
+pub mod context;
 pub mod hooks;
 pub mod mcp;
 pub mod persistence;
 pub mod rate_limit;
 pub mod registry;
 pub mod system;
+pub mod tools;
