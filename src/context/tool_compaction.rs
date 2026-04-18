@@ -73,10 +73,56 @@ mod tests {
 
     #[test]
     fn test_index_tool_calls_empty() {
-        // Test that index_tool_calls function exists
         let messages: Vec<crate::context::Message> = vec![];
         let result = index_tool_calls(&messages);
         assert!(result.ordered_keys.is_empty());
         assert!(result.by_location.is_empty());
+    }
+
+    #[test]
+    fn test_index_tool_calls_with_tool_call_json() {
+        // Test with actual tool call JSON content
+        let messages = vec![
+            crate::context::Message {
+                role: MessageRole::Assistant,
+                content: r#"{"type":"tool-call","tool_call_id":"call_123","tool_name":"bash","input":{"command":"ls"}}"#.to_string(),
+                timestamp: chrono::Utc::now(),
+            },
+        ];
+        let result = index_tool_calls(&messages);
+        
+        assert_eq!(result.ordered_keys.len(), 1);
+        assert!(result.by_location.contains_key(&0));
+    }
+
+    #[test]
+    fn test_index_tool_calls_multiple_in_one_message() {
+        // Multiple tool calls in single message
+        let messages = vec![
+            crate::context::Message {
+                role: MessageRole::Assistant,
+                content: r#"[{"type":"tool-call","tool_call_id":"call_1"},{"type":"tool-call","tool_call_id":"call_2"}]"#.to_string(),
+                timestamp: chrono::Utc::now(),
+            },
+        ];
+        let result = index_tool_calls(&messages);
+        
+        // Should detect at least one tool call
+        assert!(!result.ordered_keys.is_empty());
+    }
+
+    #[test]
+    fn test_index_tool_calls_text_only_message() {
+        // Text message without tool calls
+        let messages = vec![
+            crate::context::Message {
+                role: MessageRole::User,
+                content: "Hello, how are you?".to_string(),
+                timestamp: chrono::Utc::now(),
+            },
+        ];
+        let result = index_tool_calls(&messages);
+        
+        assert!(result.ordered_keys.is_empty());
     }
 }
