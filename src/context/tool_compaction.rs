@@ -28,8 +28,6 @@ pub fn index_tool_calls(messages: &[crate::context::Message]) -> ToolCallIndex {
     let mut ordered_keys: Vec<String> = Vec::new();
 
     for (msg_idx, msg) in messages.iter().enumerate() {
-        // For now, check if content contains tool call JSON
-        // This is a placeholder - will be extended in later tasks
         if msg.content.contains("\"type\":\"tool-call\"") || msg.content.contains("tool_call_id") {
             let indexed_parts = by_location.entry(msg_idx).or_default();
             indexed_parts.insert(0, format!("msg:{}", msg_idx));
@@ -40,6 +38,38 @@ pub fn index_tool_calls(messages: &[crate::context::Message]) -> ToolCallIndex {
     ToolCallIndex {
         by_location,
         ordered_keys,
+    }
+}
+
+// ========== Task 3: find_pending_compaction_candidates function ==========
+
+/// Parameters for find_pending_compaction_candidates
+pub struct FindPendingParams<'a> {
+    pub messages: &'a [crate::context::Message],
+    pub tool_call_index: &'a ToolCallIndex,
+    pub recent_tool_call_keys: &'a HashSet<String>,
+    pub compacted_notice: &'a str,
+}
+
+/// Find tool calls that are candidates for compaction (not in recent keys)
+pub fn find_pending_compaction_candidates(params: &FindPendingParams) -> PendingCompactionCandidates {
+    let mut pending_tool_call_keys: HashSet<String> = HashSet::new();
+    let mut pending_anonymous_tool_results: usize = 0;
+    
+    // Find tool calls not in recent keys
+    for (msg_idx, _) in params.messages.iter().enumerate() {
+        if let Some(parts) = params.tool_call_index.by_location.get(&msg_idx) {
+            for (part_idx, key) in parts {
+                if !params.recent_tool_call_keys.contains(key) {
+                    pending_tool_call_keys.insert(key.clone());
+                }
+            }
+        }
+    }
+    
+    PendingCompactionCandidates {
+        pending_tool_call_keys,
+        pending_anonymous_tool_results,
     }
 }
 
@@ -113,16 +143,37 @@ mod tests {
 
     #[test]
     fn test_index_tool_calls_text_only_message() {
-        // Text message without tool calls
-        let messages = vec![
-            crate::context::Message {
-                role: MessageRole::User,
-                content: "Hello, how are you?".to_string(),
-                timestamp: chrono::Utc::now(),
-            },
-        ];
+        let messages = vec![crate::context::Message {
+            role: MessageRole::User,
+            content: "Hello, how are you?".to_string(),
+            timestamp: chrono::Utc::now(),
+        }];
         let result = index_tool_calls(&messages);
         
         assert!(result.ordered_keys.is_empty());
+    }
+
+    // ========== Task 3: find_pending_compaction_candidates Tests ==========
+
+    #[test]
+    fn test_find_pending_compaction_candidates_empty() {
+        // Test function existence
+        let messages: Vec<crate::context::Message> = vec![];
+        let index = ToolCallIndex {
+            by_location: HashMap::new(),
+            ordered_keys: Vec::new(),
+        };
+        let recent_keys: HashSet<String> = HashSet::new();
+        
+        let params = FindPendingParams {
+            messages: &messages,
+            tool_call_index: &index,
+            recent_tool_call_keys: &recent_keys,
+            compacted_notice: "[compacted]",
+        };
+        
+        let result = find_pending_compaction_candidates(&params);
+        
+        assert!(result.pending_tool_call_keys.is_empty());
     }
 }
