@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **JSON Context Persistence**: 実装ระบบจัดเก็บข้อมูลบริบท (Context) โดยใช้ไฟล์ JSON ในโฟลเดอร์ `.omg/state/` พร้อมระบบบันทึกแบบ Atomic เพื่อความปลอดภัยของข้อมูล.
+- **JSON Context Persistence**: Implement ระบบจัดเก็บข้อมูลบริบท (Context) โดยใช้ไฟล์ JSON ในโฟลเดอร์ `.omg/state/` พร้อมระบบบันทึกแบบ Atomic เพื่อความปลอดภัยของข้อมูล.
 - **Context Offloading (Markdown Archive)**: เพิ่มความสามารถในการย้ายบริบทเก่าไปเก็บไว้ในไฟล์ Markdown (`.md`) ภายใต้โฟลเดอร์ `archives/` เพื่อให้มนุษย์อ่านได้ง่ายและประหยัดหน่วยความจำ.
 - **Enhanced Bash Tool**: พัฒนาเครื่องมือรันคำสั่งเชลล์ตัวใหม่ที่รองรับการกำหนด Timeout และ Working Directory พร้อมระบบป้องกันความผิดพลาดเบื้องต้น.
 - **Structured Logging with Tracing**: บูรณาการ Crate `tracing` เข้ากับระบบจัดเก็บข้อมูลและเครื่องมือใหม่เพื่อการตรวจสอบสถานะ (Observability) ที่ดีขึ้น.

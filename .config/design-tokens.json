@@ -1,0 +1,41 @@
+{
+  "colors": {
+    "primary": {
+      "value": "#3b82f6",
+      "ansi": "blue",
+      "roles": ["action", "discovery"]
+    },
+    "secondary": {
+      "value": "#a855f7",
+      "ansi": "magenta",
+      "roles": ["sub-agents"]
+    },
+    "success": {
+      "value": "#10b981",
+      "ansi": "green",
+      "roles": ["completion", "validation"]
+    },
+    "error": {
+      "value": "#ef4444",
+      "ansi": "red",
+      "roles": ["failure", "violation"]
+    },
+    "warning": {
+      "value": "#f59e0b",
+      "ansi": "yellow",
+      "roles": ["warning", "deprecation"]
+    }
+  },
+  "typography": {
+    "font-family": "monospace",
+    "hierarchy": {
+      "h1": { "style": "bold", "color": "primary" },
+      "h2": { "style": "bold", "color": "dim" },
+      "dim": { "color": "#6b7280" }
+    }
+  },
+  "spacing": {
+    "unit": 2,
+    "scale": [2, 4, 8]
+  }
+}

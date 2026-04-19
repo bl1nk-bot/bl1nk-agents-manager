@@ -1,0 +1,34 @@
+---
+name: blk:switch
+description: Show how to switch to a different agent
+version: 1.0.0
+argument-hint: '[arguments]'
+---
+
+# Switch Command
+
+1. First, get the absolute path of the agent file by running:
+   `python3 ${extensionPath}/scripts/agent_manager.py path {{args}}`
+
+2. If the command fails (agent not found), inform the user.
+
+3. If successful, use the returned path (let's call it `<AGENT_PATH>`) to provide switching instructions:
+
+   **To switch to the '{{args}}' agent:**
+
+   a) **Current Session (Requires Restart):**
+      ```bash
+      export GEMINI_SYSTEM_MD="<AGENT_PATH>"
+      # Then restart gemini
+      ```
+   
+   b) **One-off Command:**
+      ```bash
+      GEMINI_SYSTEM_MD="<AGENT_PATH>" gemini
+      ```
+      
+   c) **Create Alias (Recommended):**
+      Add this to your `~/.zshrc` or `~/.bashrc`:
+      ```bash
+      alias gemini-{{args}}='GEMINI_SYSTEM_MD="<AGENT_PATH>" gemini'
+      ```

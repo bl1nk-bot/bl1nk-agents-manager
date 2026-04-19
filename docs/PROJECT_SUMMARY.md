@@ -34,7 +34,7 @@
 
 | Milestone | Date | Status | Description |
 |-----------|------|--------|-------------|
-| **v1.7.1** | 2026-04-18 | ✅ | 実装 JSON Context Persistence & Enhanced Bash Tool |
+| **v1.7.1** | 2026-04-18 | ✅ | Implemented JSON Context Persistence & Enhanced Bash Tool |
 | **v1.2.0 (Vendor)** | 2026-04-18 | ✅ | อัปเกรด BM25 Smart Search & Thai Language Support |
 | **v1.7.0** | 2026-04-17 | ✅ | Split Metadata Architecture & Rust Discovery Engine |
 | **v1.0.x** | 2026-04-12 | ✅ | Initial Port from TypeScript to Rust & Stabilization |
@@ -58,7 +58,7 @@
 ---
 
 ## 🚀 ทิศทางต่อไป (Next Steps)
-1. **Context Compaction**: 実装ระบบบีบอัดข้อความตามปริมาณ Token (Phase 3 Task 1)
+1. **Context Compaction**: Implement ระบบบีบอัดข้อความตามปริมาณ Token (Phase 3 Task 1)
 2. **Advanced Tooling**: เพิ่มเครื่องมือมาตรฐานสำหรับเอเจนต์ (Fetch, File Glob, Grep)
 3. **Distributed Monitoring**: ระบบติดตามประสิทธิภาพของเอเจนต์แบบเรียลไทม์
 

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "teamName": "oh-my-product",
+  "task": "Audit unused command files in commands/ by checking gemini-extension.json references.",
+  "backend": "tmux",
+  "workers": 3,
+  "maxFixLoop": 3,
+  "cwd": "/storage/emulated/0/Download/bl1nk-agents-manager",
+  "updatedAt": "2026-04-19T20:11:34.750Z"
+}

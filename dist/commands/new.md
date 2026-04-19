@@ -1,0 +1,29 @@
+---
+name: blk:new
+description: Create and register a new system agent based on your description
+version: 1.0.0
+argument-hint: '[arguments]'
+---
+
+# New Command
+
+Task: Create a new system agent based on the user's description: "{{args}}".
+
+**CRITICAL: You must use `run_shell_command` for ALL file operations. The `read_file` and `write_file` tools are restricted and will fail.**
+
+You must perform the following actions:
+
+1.  **Analyze Request**: Determine a unique `id`, `name`, `category` (engineering, creative, entertainment, or comedy), and `description` for the new agent.
+2.  **Ensure Custom Directory**: Use `run_shell_command("mkdir -p ${extensionPath}/custom")`.
+3.  **Ensure Custom Registry**: Use `run_shell_command` to check if `${extensionPath}/custom/agents.json` exists. If not, initialize it: `run_shell_command("echo '{"agents": []}' > ${extensionPath}/custom/agents.json")`.
+4.  **Generate Content**: Create the system prompt content in Markdown format.
+5.  **Write Markdown File**: Use `run_shell_command` to write the content. Use a HEREDOC or `printf` to handle special characters safely.
+    *   Example: `run_shell_command("cat <<EOF > ${extensionPath}/custom/<id>.md
+<CONTENT>
+EOF")`
+6.  **Update Custom Registry**:
+    - Read the existing registry: `run_shell_command("cat ${extensionPath}/custom/agents.json")`.
+    - Append the new agent's metadata to the `agents` array in memory.
+    - Write the updated JSON back: `run_shell_command("echo '<UPDATED_JSON_STRING>' > ${extensionPath}/custom/agents.json")`.
+
+Finally, confirm the creation and provide the command to switch to the new agent.

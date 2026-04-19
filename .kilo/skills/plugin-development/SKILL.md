@@ -1,25 +1,24 @@
 ---
 name: plugin-development
-description: Use when creating Claude Code plugins, writing skills, building commands, developing agents, or asking about "plugin development", "create skill", "write command", "build agent", "SKILL.md", "plugin structure", "progressive disclosure"
-version: 1.0.0
+description: This skill should be used when creating plugins, writing skills, building commands, developing agents, or asking about "plugin development", "create skill", "write command", "build agent", "SKILL.md", "plugin structure", "progressive disclosure".
+version: 1.2.1
 ---
 
-# Claude Code Plugin Development
+# Plugin Development Guide
 
-Guide for creating effective Claude Code plugins with skills, commands, and agents.
+General guide for creating effective plugins with skills, commands, and agents.
 
 ## Plugin Structure
 
-```
+```text
 my-plugin/
-├── .claude-plugin/
-│   └── plugin.json         # Plugin metadata
+├── .metadata/
+│   └── manifest.json       # Plugin metadata
 ├── skills/
 │   └── skill-name/
 │       ├── SKILL.md        # Required
-│       ├── references/     # Detailed docs
-│       ├── examples/       # Working code
-│       └── scripts/        # Utilities
+│       ├── references/     # Detailed docs (Optional)
+│       └── scripts/        # Utilities (Optional)
 ├── commands/
 │   └── command-name.md
 ├── agents/
@@ -41,12 +40,12 @@ version: 1.0.0
 
 # Skill Title
 
-Core content here (1,500-2,000 words ideal).
+Core content here.
 
-## Additional Resources
+## Additional Resources (Optional)
 
 - **`references/detailed.md`** - Detailed patterns
-- **`examples/working.sh`** - Working example
+- **`examples/`** - Working examples (Include only if requested or necessary)
 ```
 
 ### Progressive Disclosure
@@ -55,18 +54,17 @@ Core content here (1,500-2,000 words ideal).
 |-------|---------|-------------|
 | **Metadata** | name + description | Always (~100 words) |
 | **SKILL.md** | Core content | When triggered (<5k words) |
-| **References** | Detailed docs | As needed (unlimited) |
+| **References** | Detailed docs | As needed (Optional) |
+| **Examples** | Working code | **Optional** (Based on user request) |
 
 ### Description Best Practices
 
 **Good:**
-
 ```yaml
 description: This skill should be used when the user asks to "create a hook", "add PreToolUse hook", "validate tool use", or mentions hook events.
 ```
 
 **Bad:**
-
 ```yaml
 description: Provides hook guidance.  # Too vague
 description: Use this skill for hooks.  # Not third person
@@ -102,23 +100,6 @@ argument-hint: "[optional args]"
 Instructions for executing the command.
 ```
 
-### Example Command
-
-```yaml
----
-name: review-pr
-description: Review a GitHub PR with detailed code analysis
-argument-hint: "[PR number or URL]"
----
-
-# Review PR Command
-
-1. Fetch PR details using `gh pr view`
-2. Get changed files with `gh pr diff`
-3. Analyze each file for issues
-4. Provide summary with recommendations
-```
-
 ## Agent Development
 
 ### Agent Structure
@@ -134,7 +115,6 @@ description: |
   assistant: "How assistant responds"
   <commentary>Why this agent is appropriate</commentary>
   </example>
-model: sonnet
 tools:
   - Read
   - Glob
@@ -147,10 +127,6 @@ color: cyan
 
 Detailed instructions for the agent's behavior.
 ```
-
-### Agent Colors
-
-Valid colors: `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`
 
 ## Hooks Development
 
@@ -170,43 +146,33 @@ Valid colors: `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`
 }
 ```
 
-### Hook Events
-
-| Event | When Fired |
-|-------|-----------|
-| `SessionStart` | Session begins |
-| `PreToolUse` | Before tool execution |
-| `PostToolUse` | After tool execution |
-| `Stop` | Session ends |
-| `Notification` | Background task complete |
-
 ## Validation Checklist
 
 **Skills:**
-
 - [ ] SKILL.md has valid YAML frontmatter
 - [ ] Description uses third person with trigger phrases
-- [ ] Body is 1,500-2,000 words (detailed content in references/)
+- [ ] Body is detailed (use references/ if content is very large)
 - [ ] Uses imperative writing style
-- [ ] Referenced files exist
+- [ ] Referenced files exist (if any)
 
 **Commands:**
-
 - [ ] Has name and description in frontmatter
 - [ ] Clear instructions for execution
 - [ ] argument-hint if accepts parameters
 
 **Agents:**
-
 - [ ] Has description with examples
-- [ ] Specifies model and tools
+- [ ] Specifies required tools
 - [ ] Valid color specified
 - [ ] Detailed behavioral instructions
 
-## Common Mistakes
+**Optional Elements:**
+- [ ] Examples are provided only if explicitly requested or essential for clarity
+- [ ] References are used to keep the main SKILL.md concise
 
-1. **Weak skill descriptions** - Be specific with trigger phrases
-2. **Too much in SKILL.md** - Use progressive disclosure
-3. **Second person writing** - Use imperative form
-4. **Missing resource references** - Point to references/examples
-5. **Vague agent examples** - Include concrete user/assistant pairs
+## Common Mistakes
+- **Weak skill descriptions** - Be specific with trigger phrases
+- **Too much in SKILL.md** - Use progressive disclosure
+- **Second person writing** - Use imperative form
+- **Missing resource references** - Point to references/ as needed
+- **Vague agent examples** - Include concrete user/assistant pairs

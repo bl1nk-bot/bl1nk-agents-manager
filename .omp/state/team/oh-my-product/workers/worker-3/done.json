@@ -1,0 +1,11 @@
+{
+  "teamName": "oh-my-product",
+  "workerName": "worker-3",
+  "status": "completed",
+  "completedAt": "2026-04-19T20:11:38.611Z",
+  "summary": "Worker worker-3 completed task for team oh-my-product",
+  "metadata": {
+    "wrapperPid": 3112,
+    "signalForwardingMode": "wrapper-forward"
+  }
+}

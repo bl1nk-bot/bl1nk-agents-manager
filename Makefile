@@ -4,7 +4,7 @@
 
 .PHONY: help build build-bundled run dev test check fmt clippy clean install doc setup lint lint-md md-fix all-check \
         parallel parallel-verbose agents-check agents-list skills-check skills-list review \
-        bump-patch bump-minor bump-major changelog commitlint
+        bump-patch bump-minor bump-major changelog commitlint release
 
 # --- Default Behavior ---
 all: build
@@ -18,6 +18,7 @@ help:
 	@echo "Build Targets:"
 	@echo "  build                 - Build standard release binary"
 	@echo "  build-bundled         - Build with bundled PMAT support"
+	@echo "  release               - Build Rust binary and generate universal distribution (dist/)"
 	@echo ""
 	@echo "Agent & Skill Management:"
 	@echo "  agents-list           - List all discovered agents and skills"
@@ -55,6 +56,12 @@ build:
 build-bundled:
 	@echo "📦 Building with bundled PMAT..."
 	cargo build --release --features bundle-pmat
+
+release: build
+	@echo "🏗️ Generating universal distribution..."
+	@pip install toml pyyaml --quiet
+	@python3 scripts/build-release.py
+	@echo "🎁 Release distribution ready in dist/"
 
 run:
 	@./target/release/bl1nk-agents-manager
@@ -107,6 +114,7 @@ all-check: fmt clippy test agents-check lint-md
 clean:
 	cargo clean
 	rm -rf target/check-logs
+	rm -rf dist/
 
 bump-patch:
 	@bash scripts/bumpversion.sh patch

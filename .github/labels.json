@@ -1,0 +1,207 @@
+{
+  "presets": {
+    "feature": [
+      "stage:spec",
+      "size:m",
+      "p:p1",
+      "type:feat"
+    ],
+    "hotfix": [
+      "stage:act",
+      "size:s",
+      "p:p0",
+      "type:fix",
+      "Bug"
+    ],
+    "docs-translate": [
+      "stage:doc",
+      "size:xs",
+      "p:p2",
+      "type:docs"
+    ],
+    "mobile-ui": [
+      "stage:spec",
+      "size:m",
+      "p:p1",
+      "type:ui",
+      "constraint:mobile",
+      "lang:node",
+      "env:dev"
+    ]
+  },
+  "autoDetect": {
+    "optional": true,
+    "patterns": {
+      "type": {
+        "feat": ["\\b(feature|add|new|implement)\\b"],
+        "fix": ["\\b(fix|bug|hotfix|patch)\\b"],
+        "refactor": ["\\b(refactor|cleanup|optimize)\\b"],
+        "docs": ["\\b(doc|docs|documentation|readme)\\b"],
+        "ui": ["\\b(ui|ux|design|style|component)\\b"],
+        "migration": ["\\b(migration|migrate|upgrade)\\b"],
+        "db": ["\\b(db|database|schema|query)\\b"],
+        "sec": ["\\b(security|sec|auth|encrypt)\\b"],
+        "task": ["\\b(task|chore)\\b"],
+        "stat": ["\\b(report|stat|analytics|metric)\\b"]
+      },
+      "size": {
+        "xs": ["\\b(xs|tiny|trivial|one-liner)\\b"],
+        "s": ["\\b(small|s|minor|quick)\\b"],
+        "m": ["\\b(medium|m|mid|moderate)\\b"],
+        "l": ["\\b(large|l|major|big)\\b"],
+        "xl": ["\\b(xl|extra-large|huge)\\b"],
+        "xxl": ["\\b(xxl|massive|epic)\\b"]
+      },
+      "p": {
+        "p0": ["\\b(p0|critical|urgent|blocker|asap)\\b"],
+        "p1": ["\\b(p1|high|important|soon)\\b"],
+        "p2": ["\\b(p2|low|minor|later)\\b"],
+        "p3": ["\\b(p3|backlog|someday)\\b"]
+      },
+      "lang": {
+        "node": ["\\b(node|nodejs)\\b"],
+        "js": ["\\b(javascript|js)\\b"],
+        "ts": ["\\b(typescript|ts)\\b"],
+        "rust": ["\\b(rust|rs)\\b"],
+        "python": ["\\b(python|py)\\b"]
+      },
+      "env": {
+        "dev": ["\\b(dev|development|local|staging)\\b"],
+        "prod": ["\\b(prod|production|live)\\b"],
+        "local": ["\\b(local|localhost)\\b"]
+      },
+      "constraint": {
+        "mobile": ["\\b(mobile|mobile-first|responsive|ios|android)\\b"]
+      },
+      "plat": {
+        "vercel": ["\\b(vercel|deploy|preview)\\b"],
+        "ci": ["\\b(ci|continuous integration|github actions|jenkins)\\b"],
+        "github": ["\\b(github|gh)\\b"],
+        "gitlab": ["\\b(gitlab|gl)\\b"]
+      },
+      "rev": {
+        "ant": ["\\b(ant|refactor|restructure)\\b"],
+        "rabbit": ["\\b(rabbit|fast|quickwin)\\b"],
+        "ready": ["\\b(ready|approved|shipit)\\b"],
+        "fail": ["\\b(fail|broken|red)\\b"],
+        "translated": ["\\b(translated|i18n|l10n)\\b"],
+        "expert": ["\\b(expert|advanced|complex)\\b"]
+      }
+    },
+    "defaults": {
+      "stage": "stage:spec",
+      "size": "size:m",
+      "p": "p:p1"
+    }
+  },
+  "required": [
+    "stage",
+    "type",
+    "p"
+  ],
+  "optional": [
+    "agent",
+    "size",
+    "lang",
+    "env",
+    "constraint",
+    "rev",
+    "auto",
+    "plat"
+  ],
+  "allLabels": {
+    "agent": [
+      "agent:claude",
+      "agent:jules",
+      "agent:kilo",
+      "agent:translate",
+      "agent:gemini",
+      "agent:qwen",
+      "agent:skill"
+    ],
+    "stage": [
+      "stage:spec",
+      "stage:plan",
+      "stage:act",
+      "stage:test",
+      "stage:doc",
+      "stage:review",
+      "stage:finalize"
+    ],
+    "size": [
+      "size:xs",
+      "size:s",
+      "size:m",
+      "size:l",
+      "size:xl",
+      "size:xxl",
+      "size:xxxl"
+    ],
+    "p": [
+      "p:p0",
+      "p:p1",
+      "p:p2",
+      "p:p3",
+      "p:p4",
+      "p:backlog"
+    ],
+    "type": [
+      "type:feat",
+      "type:fix",
+      "type:ui",
+      "type:docs",
+      "type:task",
+      "type:stat",
+      "type:migration",
+      "type:refactor",
+      "type:db",
+      "type:sec",
+      "type:extension",
+      "type:plugin",
+      "type:md",
+      "type:dep"
+    ],
+    "lang": [
+      "lang:node",
+      "lang:js",
+      "lang:ts",
+      "lang:rust",
+      "lang:python"
+    ],
+    "plat": [
+      "plat:vercel",
+      "plat:ci",
+      "plat:github",
+      "plat:gitlab"
+    ],
+    "env": [
+      "env:dev",
+      "env:prod",
+      "env:local"
+    ],
+    "constraint": [
+      "constraint:mobile"
+    ],
+    "rev": [
+      "rev:ant",
+      "rev:rabbit",
+      "rev:ready",
+      "rev:fail",
+      "rev:translated",
+      "rev:expert"
+    ],
+    "auto": [
+      "auto:todo",
+      "auto:stale",
+      "auto:conflict",
+      "auto:close",
+      "auto:blocking",
+      "auto:bypass",
+      "auto:wait",
+      "auto:log"
+    ],
+    "other": [
+      "Bug"
+    ]
+  }
+}
