@@ -1,12 +1,30 @@
-//! ระบบจัดเก็บบริบทแบบไฟล์ JSON (JSON File-based Context Store)
-//!
-//! ดำเนินการตาม ContextStore trait โดยใช้ไฟล์ JSON ในโฟลเดอร์ .omg/state/
+/// ระบบจัดเก็บบริบทแบบไฟล์ JSON (JSON File-based Context Store)
+///
+/// ดำเนินการตาม ContextStore trait
+///
+/// ## Global Storage Structure:
+/// ```text
+/// ~/.bl1nk/
+/// └── sessions/
+///     ├── workspaces.json     # index
+///     ├── {uuid}.json   # workspace data
+///     └── secrets/     # API keys (ไม่ git)
+/// ```
 
 use crate::context::{secrets_file_path, workspace_file_path, Secrets, Workspace, WORKSPACES_INDEX_FILE};
 use anyhow::{Context, Result};
 use std::path::PathBuf;
 use tokio::fs;
 use uuid::Uuid;
+
+/// รับ path สำหรับ global context directory (default: ~/.bl1nk/sessions)
+pub fn context_dir() -> PathBuf {
+    std::env::var("HOME")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| PathBuf::from("."))
+        .join(".bl1nk")
+        .join("sessions")
+}
 
 /// ระบบจัดเก็บบริบทโดยใช้ไฟล์ JSON
 pub struct JsonContextStore {
@@ -19,9 +37,10 @@ impl JsonContextStore {
         Self { base_path }
     }
 
-    /// รับพาธเต็มสำหรับไฟล์ที่ระบุ (สัมพัทธ์กับโฟลเดอร์เก็บสถานะ)
+    /// รับพาธเต็มสำหรับไฟล์ที่ระบุ (สัมพัทธ์กับ base_path)
+    /// สามารถกำหนด subdirectory ได้เอง เช่น ".omg/state" หรือ "data/context"
     fn path(&self, relative: &str) -> PathBuf {
-        self.base_path.join(".omg").join("state").join(relative)
+        self.base_path.join(relative)
     }
 
     /// ตรวจสอบและสร้างไดเรกทอรีหลักหากยังไม่มี
@@ -239,6 +258,14 @@ mod tests {
     use super::*;
     use crate::context::{ContextStore, Conversation};
     use tempfile::TempDir;
+
+    #[test]
+    fn test_context_dir_path() {
+        let dir = context_dir();
+        // ควรมี ~/.bl1nk/sessions
+        assert!(dir.to_string_lossy().contains(".bl1nk"));
+        assert!(dir.to_string_lossy().contains("sessions"));
+    }
 
     fn create_test_store(temp_dir: &TempDir) -> JsonContextStore {
         JsonContextStore::new(temp_dir.path().to_path_buf())

@@ -19,7 +19,7 @@ impl Persistence {
                 let home = std::env::var("HOME")
                     .or_else(|_| std::env::var("USERPROFILE"))
                     .context("Could not find home directory")?;
-                PathBuf::from(home).join("config/bl1nk-agents-manager")
+                PathBuf::from(home).join(".bl1nk")
             }
             StorageLocation::Local => PathBuf::from("."),
         };

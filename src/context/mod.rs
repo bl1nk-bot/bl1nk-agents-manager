@@ -2,27 +2,37 @@
 //!
 //! Provides data structures for managing conversation context, workspaces, and secrets.
 //!
-//! ## Architecture
+//! ## Storage Structure
 //!
-//! - `Conversation`: A single conversation/session with messages
-//! - `Workspace`: A workspace containing multiple conversations  
-//! - `Secrets`: Secure key-value storage for sensitive data
-//! - `ContextStore`: Trait for abstracting storage mechanisms
+//! **Global** (`~/.bl1nk/sessions/`):
+//! ```text
+//! ~/.bl1nk/sessions/
+//! ├── workspaces.json
+//! ├── {uuid}.json
+//! └── secrets/
+//! ```
+//!
+//! **Per-project** (`.bl1nk/`):
+//! ```text
+//! .bl1nk/
+//! ├── todo.md
+//! └── checkpoints/
+//! ```
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-/// Workspace metadata file stored at .omg/state/workspaces.json
+/// Workspace metadata file stored at ~/.bl1nk/sessions/workspaces.json
 pub const WORKSPACES_INDEX_FILE: &str = "workspaces.json";
 
-/// Workspace data stored at .omg/state/workspaces/{id}.json
+/// Workspace data stored at ~/.bl1nk/sessions/{id}.json (flat structure)
 pub fn workspace_file_path(id: Uuid) -> String {
-    format!("workspaces/{}.json", id)
+    format!("{}.json", id)
 }
 
-/// Secrets file stored at .omg/state/secrets/{id}.json
+/// Secrets file stored at ~/.bl1nk/sessions/secrets/{id}.json
 pub fn secrets_file_path(id: Uuid) -> String {
     format!("secrets/{}.json", id)
 }
