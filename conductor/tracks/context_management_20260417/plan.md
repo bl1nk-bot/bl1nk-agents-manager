@@ -1,18 +1,18 @@
 # Implementation Plan: Context Management
 
-## Phase 1: Context Data Structures and Storage Trait [checkpoint: pending]
+## Phase 1: Context Data Structures and Storage Trait [checkpoint: 916bca0]
 
-- [ ] Task: Write failing tests for context data structures (Conversation, Workspace, Secrets).
-- [ ] Task: Implement core data structures and `ContextStore` trait to abstract storage mechanisms.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Context Data Structures and Storage Trait' (Protocol in workflow.md)
+- [x] Task: Write failing tests for context data structures (Conversation, Workspace, Secrets).
+- [x] Task: Implement core data structures and `ContextStore` trait to abstract storage mechanisms.
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Context Data Structures and Storage Trait' (Protocol in workflow.md)
 
-## Phase 2: JSON/File-based Storage Implementation [checkpoint: pending]
+## Phase 2: JSON/File-based Storage Implementation [checkpoint: 916bca0]
 
-- [ ] Task: Write failing tests for saving/loading context using JSON files.
-- [ ] Task: Implement JSON-based `ContextStore` for `.omg/state/` persistence.
-- [ ] Task: Write failing tests for handling missing or corrupted context files.
-- [ ] Task: Implement robust async error handling for file I/O.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: JSON/File-based Storage Implementation' (Protocol in workflow.md)
+- [x] Task: Write failing tests for saving/loading context using JSON files.
+- [x] Task: Implement JSON-based `ContextStore` for JSON file persistence.
+- [x] Task: Write failing tests for handling missing or corrupted context files.
+- [x] Task: Implement robust async error handling for file I/O.
+- [x] Task: Conductor - User Manual Verification 'Phase 2: JSON/File-based Storage Implementation' (Protocol in workflow.md)
 
 ## Phase 3: Context Compaction & Size Management [checkpoint: pending]
 
