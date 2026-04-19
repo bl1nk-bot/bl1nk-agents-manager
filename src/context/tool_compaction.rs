@@ -56,7 +56,7 @@ pub struct FindPendingParams<'a> {
 pub fn find_pending_compaction_candidates(params: &FindPendingParams) -> PendingCompactionCandidates {
     let mut pending_tool_call_keys: HashSet<String> = HashSet::new();
     let pending_anonymous_tool_results: usize = 0;
-    
+
     // ค้นหาการเรียกใช้เครื่องมือที่ไม่อยู่ในคีย์ล่าสุด
     for (msg_idx, _) in params.messages.iter().enumerate() {
         if let Some(parts) = params.tool_call_index.by_location.get(&msg_idx) {
@@ -67,7 +67,7 @@ pub fn find_pending_compaction_candidates(params: &FindPendingParams) -> Pending
             }
         }
     }
-    
+
     PendingCompactionCandidates {
         pending_tool_call_keys,
         pending_anonymous_tool_results,
@@ -113,15 +113,14 @@ mod tests {
     #[test]
     fn test_index_tool_calls_with_tool_call_json() {
         // Test with actual tool call JSON content
-        let messages = vec![
-            crate::context::Message {
-                role: MessageRole::Assistant,
-                content: r#"{"type":"tool-call","tool_call_id":"call_123","tool_name":"bash","input":{"command":"ls"}}"#.to_string(),
-                timestamp: chrono::Utc::now(),
-            },
-        ];
+        let messages = vec![crate::context::Message {
+            role: MessageRole::Assistant,
+            content: r#"{"type":"tool-call","tool_call_id":"call_123","tool_name":"bash","input":{"command":"ls"}}"#
+                .to_string(),
+            timestamp: chrono::Utc::now(),
+        }];
         let result = index_tool_calls(&messages);
-        
+
         assert_eq!(result.ordered_keys.len(), 1);
         assert!(result.by_location.contains_key(&0));
     }
@@ -129,15 +128,14 @@ mod tests {
     #[test]
     fn test_index_tool_calls_multiple_in_one_message() {
         // Multiple tool calls in single message
-        let messages = vec![
-            crate::context::Message {
-                role: MessageRole::Assistant,
-                content: r#"[{"type":"tool-call","tool_call_id":"call_1"},{"type":"tool-call","tool_call_id":"call_2"}]"#.to_string(),
-                timestamp: chrono::Utc::now(),
-            },
-        ];
+        let messages = vec![crate::context::Message {
+            role: MessageRole::Assistant,
+            content: r#"[{"type":"tool-call","tool_call_id":"call_1"},{"type":"tool-call","tool_call_id":"call_2"}]"#
+                .to_string(),
+            timestamp: chrono::Utc::now(),
+        }];
         let result = index_tool_calls(&messages);
-        
+
         // Should detect at least one tool call
         assert!(!result.ordered_keys.is_empty());
     }
@@ -150,7 +148,7 @@ mod tests {
             timestamp: chrono::Utc::now(),
         }];
         let result = index_tool_calls(&messages);
-        
+
         assert!(result.ordered_keys.is_empty());
     }
 
@@ -165,16 +163,16 @@ mod tests {
             ordered_keys: Vec::new(),
         };
         let recent_keys: HashSet<String> = HashSet::new();
-        
+
         let params = FindPendingParams {
             messages: &messages,
             tool_call_index: &index,
             recent_tool_call_keys: &recent_keys,
             compacted_notice: "[compacted]",
         };
-        
+
         let result = find_pending_compaction_candidates(&params);
-        
+
         assert!(result.pending_tool_call_keys.is_empty());
     }
 }

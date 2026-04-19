@@ -1,5 +1,5 @@
 //! Ask User Question Tool
-//! 
+//!
 //! Tool for asking users multiple-choice questions during AI execution.
 //! Used to gather preferences, clarify requirements, or get decisions.
 
@@ -72,15 +72,18 @@ pub fn to_model_output(output: Option<&AskUserQuestionOutput>) -> String {
     match output {
         None => "User did not respond to questions.".to_string(),
         Some(AskUserQuestionOutput::Declined(_)) => {
-            "User declined to answer questions. You should continue without this information or ask in a different way.".to_string()
+            "User declined to answer questions. You should continue without this information or ask in a different way."
+                .to_string()
         }
         Some(AskUserQuestionOutput::Answers(answers)) => {
-            let formatted = answers.answers
+            let formatted = answers
+                .answers
                 .iter()
                 .map(|(q, a)| {
                     let answer_str = match a {
                         serde_json::Value::String(s) => s.clone(),
-                        serde_json::Value::Array(arr) => arr.iter()
+                        serde_json::Value::Array(arr) => arr
+                            .iter()
                             .filter_map(|v| v.as_str().map(String::from))
                             .collect::<Vec<_>>()
                             .join(", "),
@@ -90,11 +93,14 @@ pub fn to_model_output(output: Option<&AskUserQuestionOutput>) -> String {
                 })
                 .collect::<Vec<_>>()
                 .join(", ");
-            
+
             if formatted.is_empty() {
                 "User responded to questions.".to_string()
             } else {
-                format!("User has answered your questions: {}. You can now continue with the user's answers in mind.", formatted)
+                format!(
+                    "User has answered your questions: {}. You can now continue with the user's answers in mind.",
+                    formatted
+                )
             }
         }
     }
@@ -121,7 +127,7 @@ mod tests {
             ],
             multi_select: false,
         };
-        
+
         let json = serde_json::to_string(&q).unwrap();
         assert!(json.contains("Rust"));
         assert!(json.contains("Language"));
@@ -137,7 +143,7 @@ mod tests {
                 multi_select: false,
             }],
         };
-        
+
         let json = serde_json::to_string(&input).unwrap();
         assert!(json.contains("What should I name this?"));
     }
@@ -159,10 +165,10 @@ mod tests {
     fn test_to_model_output_answers() {
         let mut answers = serde_json::Map::new();
         answers.insert("language".to_string(), serde_json::Value::String("Rust".to_string()));
-        
+
         let output = AskUserQuestionOutput::Answers(AnswersOutput { answers });
         let result = to_model_output(Some(&output));
-        
+
         assert!(result.contains("language"));
         assert!(result.contains("Rust"));
     }

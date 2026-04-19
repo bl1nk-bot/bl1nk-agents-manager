@@ -2,9 +2,7 @@
 //!
 //! ดำเนินการตาม ContextStore trait โดยใช้ไฟล์ JSON ในโฟลเดอร์ .omg/state/
 
-use crate::context::{
-    workspace_file_path, secrets_file_path, Secrets, Workspace, WORKSPACES_INDEX_FILE,
-};
+use crate::context::{secrets_file_path, workspace_file_path, Secrets, Workspace, WORKSPACES_INDEX_FILE};
 use anyhow::{Context, Result};
 use std::path::PathBuf;
 use tokio::fs;
@@ -84,8 +82,7 @@ impl crate::context::ContextStore for JsonContextStore {
 
         match fs::read_to_string(&index_path).await {
             Ok(content) => {
-                let ids: Vec<Uuid> = serde_json::from_str(&content)
-                    .with_context(|| "ไม่สามารถอ่านดัชนี workspace")?;
+                let ids: Vec<Uuid> = serde_json::from_str(&content).with_context(|| "ไม่สามารถอ่านดัชนี workspace")?;
 
                 let mut workspaces = Vec::new();
                 for id in ids {
@@ -129,8 +126,7 @@ impl crate::context::ContextStore for JsonContextStore {
         self.ensure_base_dir().await?;
 
         let path = self.path(&secrets_file_path(workspace_id));
-        let content = serde_json::to_string_pretty(secrets)
-            .context("ไม่สามารถแปลงข้อมูลลับเป็น JSON")?;
+        let content = serde_json::to_string_pretty(secrets).context("ไม่สามารถแปลงข้อมูลลับเป็น JSON")?;
 
         // ตรวจสอบว่าไดเรกทอรีสำหรับเก็บข้อมูลลับมีอยู่จริง
         if let Some(parent) = path.parent() {
@@ -152,8 +148,8 @@ impl crate::context::ContextStore for JsonContextStore {
 
         match fs::read_to_string(&path).await {
             Ok(content) => {
-                let secrets: Secrets = serde_json::from_str(&content)
-                    .with_context(|| format!("ไม่สามารถอ่านข้อมูลลับจาก {:?}", path))?;
+                let secrets: Secrets =
+                    serde_json::from_str(&content).with_context(|| format!("ไม่สามารถอ่านข้อมูลลับจาก {:?}", path))?;
                 Ok(Some(secrets))
             }
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
@@ -177,8 +173,7 @@ impl JsonContextStore {
             ids.push(id);
         }
 
-        let content = serde_json::to_string_pretty(&ids)
-            .context("ไม่สามารถแปลงดัชนี workspace เป็น JSON")?;
+        let content = serde_json::to_string_pretty(&ids).context("ไม่สามารถแปลงดัชนี workspace เป็น JSON")?;
         fs::write(&index_path, content).await?;
 
         Ok(())
@@ -196,8 +191,7 @@ impl JsonContextStore {
 
         ids.retain(|i| *i != id);
 
-        let content = serde_json::to_string_pretty(&ids)
-            .context("ไม่สามารถแปลงดัชนี workspace เป็น JSON")?;
+        let content = serde_json::to_string_pretty(&ids).context("ไม่สามารถแปลงดัชนี workspace เป็น JSON")?;
         fs::write(&index_path, content).await?;
 
         Ok(())
@@ -208,19 +202,19 @@ impl JsonContextStore {
         let workspace = <Self as crate::context::ContextStore>::load_workspace(self, workspace_id)
             .await?
             .context("ไม่พบ Workspace")?;
-        
+
         let archive_dir = self.base_path.join(".omg").join("state").join("archives");
         if !archive_dir.exists() {
             fs::create_dir_all(&archive_dir).await?;
         }
-        
+
         let filename = format!("{}_{}.md", workspace.name, workspace_id);
         let path = archive_dir.join(&filename);
-        
+
         let mut content = String::new();
         content.push_str(&format!("# Context Archive: {}\n", workspace.name));
         content.push_str(&format!("Created: {}\n\n", chrono::Utc::now()));
-        
+
         for (id, conv) in &workspace.conversations {
             content.push_str(&format!("## Conversation: {}\n", id));
             for msg in &conv.messages {
@@ -233,7 +227,7 @@ impl JsonContextStore {
             }
             content.push('\n');
         }
-        
+
         fs::write(&path, content).await?;
         tracing::info!(workspace_id = %workspace_id, path = %path.display(), "📦 ถ่ายโอน Workspace ไปยัง Archive สำเร็จ");
         Ok(path)

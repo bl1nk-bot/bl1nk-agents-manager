@@ -3,8 +3,8 @@ use crate::agents::router::AgentRouter;
 use crate::config::{AgentConfig, RoutingConfig};
 use crate::mcp::{DelegateTaskArgs, DelegateTaskOutput};
 use crate::rate_limit::RateLimitTracker;
-use crate::registry::{RegistryService, PolicyEvaluator, PolicyDecision, ViolationType};
-use anyhow::{Context, Result, bail};
+use crate::registry::{PolicyDecision, PolicyEvaluator, RegistryService, ViolationType};
+use anyhow::{bail, Context, Result};
 use serde_json::Value;
 use std::sync::Arc;
 use tokio::process::Command;
@@ -118,9 +118,7 @@ impl AgentExecutor {
             registry.get_agent(&agent_id).context("Agent not found")?.clone()
         };
 
-        let result = self
-            .execute_task_internal(&task_id, &agent, &prompt, context)
-            .await?;
+        let result = self.execute_task_internal(&task_id, &agent, &prompt, context).await?;
 
         Ok(DelegateTaskOutput {
             task_id,
@@ -144,23 +142,27 @@ impl AgentExecutor {
         let tool_name = match agent.agent_type.as_str() {
             "cli" => "bash",
             "internal" => "system",
-            _ => "unknown"
+            _ => "unknown",
         };
 
-        let decision = PolicyEvaluator::evaluate(
-            agent, 
-            tool_name, 
-            &context.clone().unwrap_or(serde_json::json!({}))
-        );
+        let decision = PolicyEvaluator::evaluate(agent, tool_name, &context.clone().unwrap_or(serde_json::json!({})));
 
         match decision {
             PolicyDecision::Deny => {
-                bail!("❌ Security Violation: Agent '{}' is DENIED from using '{}' by policy.", agent.id, tool_name);
-            },
+                bail!(
+                    "❌ Security Violation: Agent '{}' is DENIED from using '{}' by policy.",
+                    agent.id,
+                    tool_name
+                );
+            }
             PolicyDecision::AskUser => {
-                tracing::warn!("⚠️ Policy: Agent '{}' requires user approval for '{}'.", agent.id, tool_name);
+                tracing::warn!(
+                    "⚠️ Policy: Agent '{}' requires user approval for '{}'.",
+                    agent.id,
+                    tool_name
+                );
                 // ในเวอร์ชัน CLI ปัจจุบัน เราจะรันต่อแต่บันทึกคำเตือนไว้
-            },
+            }
             PolicyDecision::Allow => {}
         }
 
@@ -207,18 +209,18 @@ impl AgentExecutor {
                 Ok(_) => {
                     registry.update_task_status(task_id, TaskStatus::Completed)?;
                     weights.record_result(&agent.id, true);
-                },
+                }
                 Err(e) => {
                     registry.update_task_status(task_id, TaskStatus::Failed)?;
                     weights.record_result(&agent.id, false);
-                    
+
                     // ถ้าพยายามครบ 3 ครั้งแล้วยังล้มเหลว บันทึกเป็น Violation
                     if attempts >= 3 {
                         weights.record_violation(&agent.id, ViolationType::HiddenError);
                         tracing::error!("❌ Behavioral Violation: Agent '{}' failed after 3 attempts.", agent.id);
                     }
                     tracing::error!("Task failed: {}", e);
-                },
+                }
             }
             // บันทึกสถิติลงไฟล์ Persistence
             let _ = weights.save().await;
@@ -231,12 +233,7 @@ impl AgentExecutor {
         Ok("Internal agent task complete (simulated)".to_string())
     }
 
-    async fn execute_cli_agent(
-        &self,
-        agent: &AgentConfig,
-        _prompt: &str,
-        _context: Option<Value>,
-    ) -> Result<String> {
+    async fn execute_cli_agent(&self, agent: &AgentConfig, _prompt: &str, _context: Option<Value>) -> Result<String> {
         let mut child = Command::new(&agent.command)
             .args(agent.args.as_deref().unwrap_or(&[]))
             .spawn()
