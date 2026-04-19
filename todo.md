@@ -34,5 +34,6 @@
 
 ## 🚀 Next Focus
 - [~] **Tool Compaction TS→Rust** (Phase 2 - Task 4: compact functions)
+- [x] **Context Management Phase 1-2**: Context structures + JSON storage (`.bl1nk/` design)
 - [ ] **Context Management Phase 3**: Implement Token-based Compaction
 - [ ] **Multi-Source Loading**: Test loading agents from external Git URLs
