@@ -1,4 +1,4 @@
-//! Generate JSON schema สำหรับ Registry
+//! Generate JSON schema สำหรับ Registry (v1.7.2 Standard)
 //!
 //! รัน: cargo run --bin generate-registry-schema
 
@@ -10,11 +10,12 @@ fn main() -> anyhow::Result<()> {
     let schema = schema_for!(Registry);
     let json = serde_json::to_string_pretty(&schema)?;
 
-    let schema_path = ".config/registry-schema.json";
-    fs::create_dir_all(".config")?;
+    // อัปเดตพาธเป็นมาตรฐานใหม่ (v1.7)
+    let schema_path = "config/v1.7/policy-schema.json";
+    fs::create_dir_all("config/v1.7")?;
     fs::write(schema_path, &json)?;
 
-    println!("✅ Generated registry schema at {}", schema_path);
+    println!("✅ Generated updated registry schema at {}", schema_path);
     println!("📄 Schema size: {} bytes", json.len());
 
     Ok(())

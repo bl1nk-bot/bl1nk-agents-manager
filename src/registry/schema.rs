@@ -2,6 +2,7 @@
 //!
 //! กำหนด types สำหรับ Registry และ Agent Metadata
 //! รองรับโครงสร้างแบบแยกส่วน (Split Structure) ระหว่าง .md และ agents.json
+//! อัปเดต v1.7.2: รองรับมาตรฐาน Gemini CLI Policy Engine
 
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -20,30 +21,32 @@ pub struct Registry {
 }
 
 /// ข้อมูลทางเทคนิคของเอเจนต์ที่เก็บใน agents.json
+/// ปรับปรุงตามมาตรฐานสิทธิ์แบบลำดับชั้น (Hierarchical Governance)
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct AgentJsonEntry {
     pub name: String,
     pub file: String,
-    pub tools: Vec<String>,
     #[serde(rename = "type")]
     pub agent_type: String,
-    pub model: String,
-    pub permission: u32,
-    pub tool_permissions: AgentToolPermissions,
-    pub permission_policy: serde_json::Value,
+
+    // มาตรฐาน Gemini CLI Policy Engine
+    pub tier: u8,      // 1-5
+    pub priority: u16, // 0-999
+    pub policies: Vec<PolicyRuleJson>,
+
     #[serde(default)]
     pub capabilities: Vec<String>,
     #[serde(default)]
     pub color: Option<String>,
 }
 
-/// สิทธิ์การใช้งานเครื่องมือ (Boolean) สำหรับการประมวลผลเบื้องหลัง
+/// กฎการควบคุมสิทธิ์ตามมาตรฐาน TOML ของ Gemini CLI
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct AgentToolPermissions {
-    pub bash: bool,
-    pub write: bool,
-    pub skill: bool,
-    pub ask: bool,
+pub struct PolicyRuleJson {
+    pub tool: String,
+    pub decision: String, // "allow" | "deny" | "ask_user"
+    #[serde(default)]
+    pub modes: Option<Vec<String>>,
 }
 
 // ============================================================================

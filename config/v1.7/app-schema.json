@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Application Configuration Schema",
+  "description": "Schema for validating global orchestrator settings (v1.7.2 - Updated: 2026-04-20).",
+  "version": "1.7.2",
+  "type": "object",
+  "properties": {
+    "server": {
+      "type": "object",
+      "properties": {
+        "host": { "type": "string" },
+        "port": { "type": "integer" },
+        "max_concurrent_tasks": { "type": "integer" }
+      }
+    },
+    "main_agent": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "session_token_path": { "type": "string" }
+      }
+    }
+  },
+  "required": ["server", "main_agent"]
+}

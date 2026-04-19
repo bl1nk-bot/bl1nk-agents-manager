@@ -40,7 +40,7 @@ impl AgentExecutor {
     }
 
     pub async fn delegate_task(&self, args: DelegateTaskArgs) -> Result<DelegateTaskOutput> {
-        // 1. สร้าง Proposal ผ่าน Router (เลือกเอเจนต์ที่เหมาะสมที่สุด)
+        // ... (1. Create Proposal omitted for context)
         let proposal = {
             let registry = self.agent_registry.read().await;
             self.router.route_task(&registry, &args.task_type, &args.prompt).await?
@@ -49,7 +49,10 @@ impl AgentExecutor {
         let task_id = proposal.task_id.clone();
         let agent_id = proposal.agent_id.clone();
 
+        // บันทึกการถูกเลือกเบื้องต้น (แต่ยังไม่นับเป็นความพึงพอใจจนกว่าจะ Approve)
+
         // 2. ลงทะเบียน Task เข้าระบบสถานะ
+        // ...
         let task_info = TaskInfo {
             task_id: task_id.clone(),
             agent_id: agent_id.clone(),
@@ -112,6 +115,13 @@ impl AgentExecutor {
             let final_agent_id = confirmed_agent_id.unwrap_or_else(|| task.agent_id.clone());
             (final_agent_id, task.prompt.clone(), task.context.clone())
         };
+
+        // บันทึกความพึงพอใจของผู้ใช้ (User Approved)
+        {
+            let mut weights = self.weight_registry.write().await;
+            weights.record_user_interaction(&agent_id, true);
+            let _ = weights.save().await;
+        }
 
         let agent = {
             let registry = self.agent_registry.read().await;

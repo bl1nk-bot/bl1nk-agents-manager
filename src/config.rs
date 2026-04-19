@@ -42,7 +42,7 @@ pub struct AgentMdHeader {
     pub tool: Vec<String>,
 }
 
-/// โครงสร้างเอเจนต์สมบูรณ์ (รักษาฟิลด์เดิมไว้เพื่อความปลอดภัย)
+/// โครงสร้างเอเจนต์ตามมาตรฐาน Gemini CLI Policy Engine (v1.7.2)
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct AgentConfig {
     pub id: String,
@@ -51,16 +51,17 @@ pub struct AgentConfig {
     pub mode: String,
     #[serde(rename = "type")]
     pub agent_type: String,
-    pub model: String,
     pub capabilities: Vec<String>,
-    pub priority: u8,
+
+    // มาตรฐานสิทธิ์แบบลำดับชั้น
+    pub tier: u8,      // 1-5
+    pub priority: u16, // 0-999
+    pub policies: Vec<PolicyRule>,
+
     #[serde(default = "default_true")]
     pub enabled: bool,
-    pub tool: AgentToolPermissions,
-    pub permission: u32,
-    pub permission_policy: serde_json::Value,
 
-    // ฟิลด์ทางเทคนิคที่จำเป็น (รักษาไว้เพื่อให้โค้ดส่วนอื่นไม่พัง)
+    // ฟิลด์ทางเทคนิคที่จำเป็น
     #[serde(default = "default_command")]
     pub command: String,
     #[serde(default)]
@@ -76,11 +77,11 @@ pub struct AgentConfig {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct AgentToolPermissions {
-    pub bash: bool,
-    pub write: bool,
-    pub skill: bool,
-    pub ask: bool,
+pub struct PolicyRule {
+    pub tool: String,
+    pub decision: String, // "allow" | "deny" | "ask_user"
+    #[serde(default)]
+    pub modes: Vec<String>,
 }
 
 fn default_true() -> bool {
@@ -147,18 +148,19 @@ impl Config {
                     description: meta.description,
                     mode: meta.options.mode.clone(),
                     agent_type: e.agent_type.clone(),
-                    model: e.model.clone(),
                     capabilities: e.capabilities.clone(),
-                    priority: if e.permission > 500 { 90 } else { 50 },
+                    tier: e.tier,
+                    priority: e.priority,
+                    policies: e
+                        .policies
+                        .iter()
+                        .map(|p| PolicyRule {
+                            tool: p.tool.clone(),
+                            decision: p.decision.clone(),
+                            modes: p.modes.clone().unwrap_or_default(),
+                        })
+                        .collect(),
                     enabled: true,
-                    tool: AgentToolPermissions {
-                        bash: e.tool_permissions.bash,
-                        write: e.tool_permissions.write,
-                        skill: e.tool_permissions.skill,
-                        ask: e.tool_permissions.ask,
-                    },
-                    permission: e.permission,
-                    permission_policy: e.permission_policy.clone(),
                     command: "true".into(),
                     args: None,
                     extension_name: None,
@@ -173,18 +175,22 @@ impl Config {
                     description: meta.description,
                     mode: meta.options.mode.clone(),
                     agent_type: "general".into(),
-                    model: "sonnet".into(),
                     capabilities: vec![meta.filename],
-                    priority: 50,
+                    tier: 2, // Extension Tier
+                    priority: 100,
+                    policies: vec![
+                        PolicyRule {
+                            tool: "skill".to_string(),
+                            decision: "allow".to_string(),
+                            modes: vec![],
+                        },
+                        PolicyRule {
+                            tool: "ask".to_string(),
+                            decision: "allow".to_string(),
+                            modes: vec![],
+                        },
+                    ],
                     enabled: true,
-                    tool: AgentToolPermissions {
-                        bash: false,
-                        write: false,
-                        skill: true,
-                        ask: true,
-                    },
-                    permission: 100,
-                    permission_policy: serde_json::json!({"hierarchy": ["default"]}),
                     command: "true".into(),
                     args: None,
                     extension_name: None,

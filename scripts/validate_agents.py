@@ -3,76 +3,82 @@ import yaml
 import json
 import glob
 import sys
+from jsonschema import validate, ValidationError
 
-def validate_file(path, is_skill=False):
-    """Validate a single .md file content."""
+# --- Configuration (v1.7.2 Standard) ---
+SCHEMA_CAPABILITY = "config/v1.7/capability-schema.json"
+SCHEMA_POLICY = "config/v1.7/policy-schema.json"
+REGISTRY_FILE = "agents/agents.json"
+
+def load_schema(path):
     with open(path, 'r', encoding='utf-8') as f:
-        try:
-            content = f.read()
-        except UnicodeDecodeError:
-            return [f"Encoding error in {path}"]
+        return json.load(f)
+
+def validate_md_file(path, schema):
+    """Validate a single .md file frontmatter against a schema."""
+    with open(path, 'r', encoding='utf-8') as f:
+        content = f.read()
     
     if not content.startswith('---'):
-        return None if is_skill else [f"Missing frontmatter in Agent file {path}"]
+        return [f"Missing YAML frontmatter in {path}"]
     
     try:
         parts = content.split('---')
-        if len(parts) < 3:
-            return [f"Invalid frontmatter structure in {path}"]
-            
         data = yaml.safe_load(parts[1])
-        if not data:
-            return [f"Empty frontmatter in {path}"]
-            
-        errors = []
-        # name และ description ต้องมีเสมอ
-        required = ["name", "description"]
-        for field in required:
-            if field not in data:
-                errors.append(f"Missing required field '{field}' in {path}")
-
-        # ถ้าเป็น Agent (อยู่ใน agents/) -> บังคับ 4 ฟิลด์
-        if "agents/" in path:
-            for field in ["mode", "tool"]:
-                if field not in data:
-                    errors.append(f"Agent requires field '{field}' in {path}")
-        
-        return errors
+        validate(instance=data, schema=schema)
+        return []
+    except ValidationError as e:
+        return [f"Schema error in {path}: {e.message}"]
     except Exception as e:
-        return [f"YAML Parse error in {path}: {e}"]
+        return [f"Validation error in {path}: {e}"]
 
 def main():
-    print("🔍 Validating BL1NK Workforce Structure & Specs...")
+    print("🔍 Validating BL1NK Workforce Infrastructure (v1.7.2)...")
     all_errors = []
     
-    # 1. ตรวจสอบ Agents (Flat files)
-    if os.path.exists('agents'):
-        for f in glob.glob("agents/*.md"):
-            if os.path.basename(f).upper() in ['README.MD', 'TODO.MD']: continue
-            errs = validate_file(f, is_skill=False)
-            if errs: all_errors.extend(errs)
+    # 1. Load Schemas
+    try:
+        cap_schema = load_schema(SCHEMA_CAPABILITY)
+        pol_schema = load_schema(SCHEMA_POLICY)
+    except Exception as e:
+        print(f"❌ Failed to load schemas: {e}")
+        sys.exit(1)
 
-    # 2. ตรวจสอบ Skills (Directories + SKILL.md)
+    # 2. Validate Registry (agents.json)
+    print(f"  - Checking registry: {REGISTRY_FILE}")
+    if os.path.exists(REGISTRY_FILE):
+        try:
+            with open(REGISTRY_FILE, 'r', encoding='utf-8') as f:
+                reg_data = json.load(f)
+            validate(instance=reg_data, schema=pol_schema)
+        except ValidationError as e:
+            all_errors.append(f"Registry Policy Violation: {e.message}")
+        except Exception as e:
+            all_errors.append(f"Registry Read Error: {e}")
+
+    # 3. Validate Agents Frontmatter
+    print("  - Checking agent capabilities (.md)...")
+    for f in glob.glob("agents/*.md"):
+        if os.path.basename(f).upper() in ['README.MD', 'TODO.MD']: continue
+        errs = validate_md_file(f, cap_schema)
+        if errs: all_errors.extend(errs)
+
+    # 4. Validate Skills Frontmatter
+    print("  - Checking skill capabilities (SKILL.md)...")
     if os.path.exists('skills'):
         for skill_dir in os.listdir('skills'):
-            dir_path = os.path.join('skills', skill_dir)
-            if not os.path.isdir(dir_path): continue
-            
-            # กฎเหล็ก: ต้องมี SKILL.md
-            skill_file = os.path.join(dir_path, 'SKILL.md')
-            if not os.path.exists(skill_file):
-                all_errors.append(f"Missing mandatory 'SKILL.md' in skill directory: {dir_path}")
-                continue
-                
-            errs = validate_file(skill_file, is_skill=True)
-            if errs: all_errors.extend(errs)
+            skill_file = os.path.join('skills', skill_dir, 'SKILL.md')
+            if os.path.exists(skill_file):
+                errs = validate_md_file(skill_file, cap_schema)
+                if errs: all_errors.extend(errs)
 
+    # Final Result
     if all_errors:
-        print("\n🚩 Structure or Specification Errors:")
-        for err in all_errors: print(f"❌ {err}")
+        print("\n🚩 Infrastructure Validation Failed:")
+        for err in all_errors: print(f"  ❌ {err}")
         sys.exit(1)
     else:
-        print("\n✨ All agents and skills follow the mandatory structure and rules!")
+        print("\n✨ All systems compliant with v1.7.2 Policy & Capability standards!")
         sys.exit(0)
 
 if __name__ == "__main__":

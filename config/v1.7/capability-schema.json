@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/capability-spec.schema.json",
+  "title": "Agent Capability Specification",
+  "description": "Schema for validating agent frontmatter (.md files) - Focuses on skills and operational mode (v1.7.2 - Updated: 2026-04-20). Platform neutral.",
+  "version": "1.7.2",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Identifier for the agent or skill",
+      "pattern": "^[a-z0-9\\-]+$"
+    },
+    "description": {
+      "type": "string",
+      "description": "Purpose and behavioral constraints",
+      "minLength": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["all", "primary", "subagent"],
+      "description": "Operational scope within the orchestrator"
+    },
+    "tool": {
+      "type": "array",
+      "description": "Declared set of tools accessible to this agent",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["name", "description"],
+  "additionalProperties": true
+}

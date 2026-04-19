@@ -64,12 +64,12 @@ pub struct AgentStatusArgs {
     pub task_id: Option<String>,
 }
 
-#[derive(Debug, Serialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct AgentSummary {
     pub id: String,
     pub name: String,
     pub availability: String,
-    pub priority: u8,
+    pub priority: u16,
     pub cost: u16,
 }
 

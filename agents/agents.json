@@ -1,869 +1,882 @@
 {
-  "version": "1.7.0",
+  "version": "1.7.4",
   "agents": [
     {
       "name": "agent-sdk-verifier-py",
       "file": "agent-sdk-verifier-py.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "agent-sdk-verifier-ts",
       "file": "agent-sdk-verifier-ts.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "cloudflare",
       "file": "cloudflare.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
-      "name": "code-architect",
-      "file": "code-architect.md",
-      "type": "code",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "name": "system-architect",
+      "file": "system-architect.md",
+      "type": "architect",
+      "tier": 2,
+      "priority": 250,
+      "policies": [
+        {
+          "tool": "write",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": true,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "code-generator",
       "file": "code-generator.md",
       "type": "code",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 150,
+      "policies": [
+        {
+          "tool": "bash",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": true,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "codebase-analyzer",
       "file": "codebase-analyzer.md",
       "type": "code",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 120,
+      "policies": [
+        {
+          "tool": "bash",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": true,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "codebase-locator",
       "file": "codebase-locator.md",
       "type": "code",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "bash",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": true,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "codebase-pattern-finder",
       "file": "codebase-pattern-finder.md",
       "type": "code",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "bash",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": true,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "command-creator",
       "file": "command-creator.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "write",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": true,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "creative-writer",
       "file": "creative-writer.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "deep-reflector",
       "file": "deep-reflector.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "docbot-pro",
       "file": "docbot-pro.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "fullstack-dev",
       "file": "fullstack-dev.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 150,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "github-issue-fixer",
       "file": "github-issue-fixer.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 150,
+      "policies": [
+        {
+          "tool": "write",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": true,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "human-3-coach",
       "file": "human-3-coach.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "insight-documenter",
       "file": "insight-documenter.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "instruction-reflector",
       "file": "instruction-reflector.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "kiro-workflow",
       "file": "kiro-workflow.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "orchestrator",
       "file": "orchestrator.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 3,
+      "priority": 300,
+      "policies": [
+        {
+          "tool": "bash",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": true,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "pdf-to-ppt",
       "file": "pdf-to-ppt.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "plan-implementation-reviewer",
       "file": "plan-implementation-reviewer.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "pr-reviewer",
       "file": "pr-reviewer.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 120,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "prompt-engineering-patterns",
       "file": "prompt-engineering-patterns.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "prompt-template-system",
       "file": "prompt-template-system.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "reporter",
       "file": "reporter.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "research-analyzer",
       "file": "research-analyzer.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "skill-creator",
       "file": "skill-creator.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 150,
+      "policies": [
+        {
+          "tool": "write",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": true,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "task-management",
       "file": "task-management.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "testing-guidelines",
       "file": "testing-guidelines.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "thoughts-analyzer",
       "file": "thoughts-analyzer.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "thoughts-locator",
       "file": "thoughts-locator.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "ui-engineer",
       "file": "ui-engineer.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 150,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "web-search-researcher",
       "file": "web-search-researcher.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "workflow-diagrams",
       "file": "workflow-diagrams.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": false,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "thai-educational-commenter",
       "file": "thai-educational-commenter.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 100,
+      "policies": [
+        {
+          "tool": "write",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": true,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     },
     {
       "name": "smart-file-manager",
       "file": "smart-file-manager.md",
       "type": "general",
-      "model": "sonnet",
-      "permission": 100,
-      "permission_policy": {
-        "hierarchy": [
-          "default"
-        ],
-        "weight": {
-          "mode": 0.3,
-          "type": 0.3,
-          "tool": 0.2,
-          "evidence": 0.2
+      "tier": 2,
+      "priority": 150,
+      "policies": [
+        {
+          "tool": "write",
+          "decision": "allow",
+          "modes": [
+            "default",
+            "autoEdit"
+          ]
+        },
+        {
+          "tool": "skill",
+          "decision": "allow"
+        },
+        {
+          "tool": "ask",
+          "decision": "allow"
+        },
+        {
+          "tool": "rm",
+          "decision": "deny"
         }
-      },
-      "tool_permissions": {
-        "bash": false,
-        "write": true,
-        "skill": true,
-        "ask": true
-      }
+      ],
+      "capabilities": []
     }
-  ]
+  ],
+  "last_updated": "2026-04-19T21:43:41.443593Z"
 }

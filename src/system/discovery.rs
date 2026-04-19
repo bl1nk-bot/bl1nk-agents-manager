@@ -1,4 +1,4 @@
-use crate::config::{AgentConfig, AgentToolPermissions, RateLimit};
+use crate::config::{AgentConfig, PolicyRule, RateLimit};
 use anyhow::Result;
 use std::path::Path;
 
@@ -19,21 +19,25 @@ impl DiscoveryEngine {
         Ok(AgentConfig {
             id: slug.to_string(),
             name: slug.to_string(),
-            description: "Legacy discovered agent".to_string(),
+            description: "Discovered agent (v1.7.2 Standard)".to_string(),
             mode: "subagent".to_string(),
             agent_type: "general".to_string(),
-            model: "sonnet".to_string(),
             capabilities: Vec::new(),
+            tier: 2, // Default to Extension Tier
             priority: 100,
+            policies: vec![
+                PolicyRule {
+                    tool: "skill".to_string(),
+                    decision: "allow".to_string(),
+                    modes: vec![],
+                },
+                PolicyRule {
+                    tool: "ask".to_string(),
+                    decision: "allow".to_string(),
+                    modes: vec![],
+                },
+            ],
             enabled: true,
-            tool: AgentToolPermissions {
-                bash: false,
-                write: false,
-                skill: true,
-                ask: true,
-            },
-            permission: 100,
-            permission_policy: serde_json::json!({}),
             command: "true".to_string(),
             args: None,
             extension_name: None,
