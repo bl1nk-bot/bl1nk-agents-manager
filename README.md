@@ -16,6 +16,8 @@
 ## 🚀 ฟีเจอร์เด่น (v1.7.5.1)
 - **Universal Tool Policies**: รองรับและคุมสิทธิ์เครื่องมือกว่า 18 ชนิดผ่านโครงสร้าง Nested Map ความเร็วสูง
 - **Source Abstraction**: ระบบ polymorphic source รองรับเอเจนต์ทั้งแบบ Built-in, Git, และ Remote URL
+- **Context & Persistence**: ระบบจัดการบริบทอัจฉริยะ (Token-based Compaction) พร้อมการจัดเก็บไฟล์ JSON แบบ Atomic Write
+- **Security First**: ระบบ Secrets Masking และ Environment Variable Injection (APP_ prefix)
 - **Path Consolidation**: ย้ายการตั้งค่าและสคีมาไปที่โฟลเดอร์ `config/` (Visible) เพื่อความเป็นระเบียบ
 - **Atomic Persistence**: ระบบจัดเก็บสถานะบริบทแบบ JSON Atomic Write เพื่อความปลอดภัยของข้อมูล
 

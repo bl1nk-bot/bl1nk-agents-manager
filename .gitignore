@@ -47,3 +47,4 @@ yarn-error.log*
 custom/
 .git_backup/
 dist/
+\n# Hermes Conversation Logs\nhermes_conversation_*.json

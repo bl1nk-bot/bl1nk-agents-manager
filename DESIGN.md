@@ -89,5 +89,24 @@ Options:
 
 ---
 
+## 7. Internal Context Design
+
+To ensure long-running conversations don't exceed model context limits, the system implements a tiered management strategy:
+
+### 7.1 Lifecycle Management
+- **Persistence**: Atomic Write JSON to store state in `.omg/state/` or project-local paths.
+- **Offloading**: Archives older conversations into human-readable Markdown files (`.omg/state/archives/`) to clear memory while preserving history.
+
+### 7.2 Compaction Strategies
+- **Token Budgeting**: Each workspace tracks current token usage and warns when approaching limits.
+- **Sliding Window**: Discards oldest messages while retaining the most recent ones.
+- **Tool Compaction**: Strips large tool outputs or redundant tool results while keeping the original intent (Implementation in `src/context/tool_compaction.rs`).
+
+### 7.3 Security & Privacy
+- **Secrets Injection**: Secrets are injected as environment variables (prefixed with `APP_`).
+- **Masking**: PII and secrets are masked in logs automatically to prevent leakage.
+
+---
+
 **Document Version:** 1.0.0
 **Managed by:** Gemini CLI (Design System Skill)

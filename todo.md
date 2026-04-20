@@ -35,5 +35,17 @@
 ## 🚀 Next Focus
 - [x] **Tool Compaction TS→Rust**: ContentPart, MessageContent, compaction functions (12 tests)
 - [x] **Context Management Phase 1-2**: Context structures + JSON storage (`.bl1nk/` design)
-- [ ] **Context Management Phase 3**: Implement Token-based Compaction
+- [ ] **Context Management Phase 3: Token-based Compaction & History**
+  - [x] Implement Token Budget Management (limit + auto-select)
+  - [x] Implement Tool Use History Tracking
+  - [x] Implement Context Offload to File (Archive old messages)
+  - [ ] Implement Sliding Window Compaction (Retain top N%)
+  - [ ] Integrate Compaction into Workspace lifecycle
+- [ ] **Context Management Phase 4: Environment & Secrets Handling**
+  - [ ] Implement Secrets Masking for safe logging
+  - [ ] Implement Environment Variable Injection (APP_ prefix)
+- [ ] **Context Management Phase 5: Integration with Orchestrator**
+  - [ ] Create `ContextManager` High-level service
+  - [ ] Integrate with `AgentExecutor` for task context injection
+  - [ ] Final end-to-end verification and performance check
 - [ ] **Multi-Source Loading**: Test loading agents from external Git URLs
