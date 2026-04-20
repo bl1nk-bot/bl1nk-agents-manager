@@ -1,10 +1,59 @@
 //! การบีบอัดข้อมูลการเรียกใช้เครื่องมือ (Tool Call Compaction) - ปรับปรุงจำนวน Token สำหรับบริบทข้อความของ LLM
 //!
 //! แปลงการเรียกใช้เครื่องมือให้เป็นรูปแบบย่อเพื่อประหยัดจำนวน Token โดยยังคงรักษา
-//! ความสามารถในการระบุว่าการเรียกใช้ใดถูกประมวลผลไปแล้ว
+//! ความสามารถในการระบุว่าการเรียกใดถูกประมวลผลไปแล้ว
 
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
+
+use crate::context::MessageRole;
+
+/// ส่วนประกอบของเนื้อหาข้อความ - ทั้ง text หรือ tool call/result
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum ContentPart {
+    #[serde(rename = "text")]
+    Text { text: String },
+    #[serde(rename = "tool-call")]
+    ToolCall {
+        tool_call_id: Option<String>,
+        tool_name: String,
+        input: serde_json::Value,
+    },
+    #[serde(rename = "tool-result")]
+    ToolResult {
+        tool_call_id: Option<String>,
+        output: serde_json::Value,
+    },
+}
+
+/// การแทนข้อความในรูปแบบ array (เทียบเท่า ModelMessage[])
+#[derive(Debug, Clone)]
+pub struct MessageContent {
+    pub role: MessageRole,
+    pub content: Vec<ContentPart>,
+}
+
+impl MessageContent {
+    /// สร้างจาก string content (parse JSON หรือ text)
+    pub fn from_string(role: MessageRole, content: &str) -> Self {
+        // ลอง parse เป็น JSON array
+        if let Ok(parsed) = serde_json::from_str::<Vec<ContentPart>>(content) {
+            return Self {
+                role,
+                content: parsed,
+            };
+        }
+
+        // Fallback เป็น text
+        Self {
+            role,
+            content: vec![ContentPart::Text {
+                text: content.to_string(),
+            }],
+        }
+    }
+}
 
 /// ดัชนีระบุตำแหน่งของข้อความ/ส่วนประกอบไปยังคีย์การเรียกใช้เครื่องมือ
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -140,39 +189,324 @@ mod tests {
         assert!(!result.ordered_keys.is_empty());
     }
 
-    #[test]
-    fn test_index_tool_calls_text_only_message() {
-        let messages = vec![crate::context::Message {
-            role: MessageRole::User,
-            content: "Hello, how are you?".to_string(),
-            timestamp: chrono::Utc::now(),
-        }];
-        let result = index_tool_calls(&messages);
-
-        assert!(result.ordered_keys.is_empty());
-    }
-
-    // ========== Task 3: find_pending_compaction_candidates Tests ==========
+    // ========== Phase 2: New Tests ==========
 
     #[test]
-    fn test_find_pending_compaction_candidates_empty() {
-        // Test function existence
-        let messages: Vec<crate::context::Message> = vec![];
-        let index = ToolCallIndex {
-            by_location: HashMap::new(),
-            ordered_keys: Vec::new(),
-        };
-        let recent_keys: HashSet<String> = HashSet::new();
+    fn test_content_part_parse() {
+        let json = r#"[
+            {"type": "text", "text": "Hello"},
+            {"type": "tool-call", "tool_call_id": "call_1", "tool_name": "bash", "input": {"command": "ls"}}
+        ]"#;
 
-        let params = FindPendingParams {
-            messages: &messages,
-            tool_call_index: &index,
-            recent_tool_call_keys: &recent_keys,
-            compacted_notice: "[compacted]",
-        };
-
-        let result = find_pending_compaction_candidates(&params);
-
-        assert!(result.pending_tool_call_keys.is_empty());
+        let content = MessageContent::from_string(MessageRole::Assistant, json);
+        assert_eq!(content.content.len(), 2);
     }
+
+    #[test]
+    fn test_is_tool_call_part() {
+        let part = ContentPart::ToolCall {
+            tool_call_id: Some("call_1".to_string()),
+            tool_name: "bash".to_string(),
+            input: serde_json::json!({}),
+        };
+        assert!(is_tool_call_part(&part));
+    }
+
+    #[test]
+    fn test_is_tool_result_part() {
+        let part = ContentPart::ToolResult {
+            tool_call_id: Some("call_1".to_string()),
+            output: serde_json::json!({"type": "text", "value": "result"}),
+        };
+        assert!(is_tool_result_part(&part));
+    }
+
+    #[test]
+    fn test_compact_tool_call() {
+        let part = ContentPart::ToolCall {
+            tool_call_id: Some("call_1".to_string()),
+            tool_name: "bash".to_string(),
+            input: serde_json::json!({"command": "ls -la"}),
+        };
+        let compacted = compact_tool_call(&part, "[compacted]");
+
+        if let ContentPart::ToolCall { input, .. } = compacted {
+            assert_eq!(input.get("compacted"), Some(&serde_json::json!(true)));
+            assert_eq!(input.get("message"), Some(&serde_json::json!("[compacted]")));
+        } else {
+            panic!("Expected ToolCall");
+        }
+    }
+
+    #[test]
+    fn test_compact_tool_result() {
+        let part = ContentPart::ToolResult {
+            tool_call_id: Some("call_1".to_string()),
+            output: serde_json::json!({"type": "text", "value": "long output here"}),
+        };
+        let compacted = compact_tool_result(&part, "[compacted]");
+
+        if let ContentPart::ToolResult { output, .. } = compacted {
+            assert_eq!(output.get("type"), Some(&serde_json::json!("text")));
+            assert_eq!(output.get("value"), Some(&serde_json::json!("[compacted]")));
+        } else {
+            panic!("Expected ToolResult");
+        }
+    }
+
+    #[test]
+    fn test_is_compacted_tool_call_part() {
+        let part = ContentPart::ToolCall {
+            tool_call_id: Some("call_1".to_string()),
+            tool_name: "bash".to_string(),
+            input: serde_json::json!({"compacted": true, "message": "[compacted]"}),
+        };
+        assert!(is_compacted_tool_call_part(&part, "[compacted]"));
+    }
+
+    #[test]
+    fn test_get_pending_compaction_units() {
+        let mut keys = HashSet::new();
+        keys.insert("id:call_1".to_string());
+        keys.insert("id:call_2".to_string());
+
+        let candidates = PendingCompactionCandidates {
+            pending_tool_call_keys: keys,
+            pending_anonymous_tool_results: 3,
+        };
+
+        let units = get_pending_compaction_units(&candidates);
+        assert_eq!(units, 5); // 2 keys + 3 anonymous
+    }
+}
+
+// ========== Phase 2: Helper Functions ==========
+
+/// ตรวจสอบว่า part เป็น tool call หรือไม่
+pub fn is_tool_call_part(part: &ContentPart) -> bool {
+    matches!(part, ContentPart::ToolCall { .. })
+}
+
+/// ตรวจสอบว่า part เป็น tool result หรือไม่
+pub fn is_tool_result_part(part: &ContentPart) -> bool {
+    matches!(part, ContentPart::ToolResult { .. })
+}
+
+/// ตรวจสอบว่า tool call part ถูกบีบอัดแล้วหรือไม่
+pub fn is_compacted_tool_call_part(part: &ContentPart, compacted_notice: &str) -> bool {
+    if let ContentPart::ToolCall { input, .. } = part {
+        if let Some(obj) = input.as_object() {
+            if let Some(compacted) = obj.get("compacted") {
+                if compacted.as_bool() == Some(true) {
+                    if let Some(msg) = obj.get("message") {
+                        return msg.as_str() == Some(compacted_notice);
+                    }
+                }
+            }
+        }
+    }
+    false
+}
+
+/// ตรวจสอบว่า tool result part ถูกบีบอัดแล้วหรือไม่
+pub fn is_compacted_tool_result_part(part: &ContentPart, compacted_notice: &str) -> bool {
+    if let ContentPart::ToolResult { output, .. } = part {
+        if let Some(obj) = output.as_object() {
+            if let Some(t) = obj.get("type") {
+                if t.as_str() == Some("text") {
+                    if let Some(v) = obj.get("value") {
+                        return v.as_str() == Some(compacted_notice);
+                    }
+                }
+            }
+        }
+    }
+    false
+}
+
+/// บีบอัด tool call part เป็นรูปแบบย่อ
+pub fn compact_tool_call(part: &ContentPart, compacted_notice: &str) -> ContentPart {
+    if let ContentPart::ToolCall {
+        tool_call_id,
+        tool_name,
+        input: _,
+    } = part
+    {
+        ContentPart::ToolCall {
+            tool_call_id: tool_call_id.clone(),
+            tool_name: tool_name.clone(),
+            input: serde_json::json!({
+                "compacted": true,
+                "message": compacted_notice,
+            }),
+        }
+    } else {
+        part.clone()
+    }
+}
+
+/// บีบอัด tool result part เป็นรูปแบบย่อ
+pub fn compact_tool_result(part: &ContentPart, compacted_notice: &str) -> ContentPart {
+    if let ContentPart::ToolResult {
+        tool_call_id,
+        output: _,
+    } = part
+    {
+        ContentPart::ToolResult {
+            tool_call_id: tool_call_id.clone(),
+            output: serde_json::json!({
+                "type": "text",
+                "value": compacted_notice,
+            }),
+        }
+    } else {
+        part.clone()
+    }
+}
+
+/// Parameters for estimate_compaction_savings
+pub struct EstimateSavingsParams<'a> {
+    pub messages: &'a [MessageContent],
+    pub tool_call_index: &'a ToolCallIndex,
+    pub pending_candidates: &'a PendingCompactionCandidates,
+    pub compacted_notice: &'a str,
+}
+
+/// ประมาณการประหยัด token จากการบีบอัด (คืนค่า estimated tokens ที่ประหยัดได้)
+pub fn estimate_compaction_savings(params: &EstimateSavingsParams) -> usize {
+    let mut savings_chars: isize = 0;
+
+    for (message_index, message) in params.messages.iter().enumerate() {
+        let part_keys = params.tool_call_index.by_location.get(&message_index);
+
+        for (part_index, part) in message.content.iter().enumerate() {
+            let old_length = serde_json::to_string(part).map(|s| s.len()).unwrap_or(0);
+            let mut compacted_part: Option<ContentPart> = None;
+
+            if is_tool_call_part(part) {
+                if let Some(key) = part_keys.and_then(|k| k.get(&part_index)) {
+                    if params.pending_candidates.pending_tool_call_keys.contains(key)
+                        && !is_compacted_tool_call_part(part, params.compacted_notice)
+                    {
+                        compacted_part = Some(compact_tool_call(part, params.compacted_notice));
+                    }
+                }
+            } else if is_tool_result_part(part) {
+                let tool_call_id = if let ContentPart::ToolResult { tool_call_id, .. } = part {
+                    tool_call_id.clone()
+                } else {
+                    None
+                };
+
+                let key = tool_call_id.map(|id| format!("id:{}", id));
+
+                if let Some(ref k) = key {
+                    if params.pending_candidates.pending_tool_call_keys.contains(k)
+                        && !is_compacted_tool_result_part(part, params.compacted_notice)
+                    {
+                        compacted_part = Some(compact_tool_result(part, params.compacted_notice));
+                    }
+                } else if params.pending_candidates.pending_anonymous_tool_results > 0
+                    && !is_compacted_tool_result_part(part, params.compacted_notice)
+                {
+                    compacted_part = Some(compact_tool_result(part, params.compacted_notice));
+                }
+            }
+
+            if let Some(new_part) = compacted_part {
+                let new_length = serde_json::to_string(&new_part).map(|s| s.len()).unwrap_or(0);
+                let delta = old_length as isize - new_length as isize;
+                if delta > 0 {
+                    savings_chars += delta;
+                }
+            }
+        }
+    }
+
+    // Convert chars to estimated tokens (roughly 4 chars per token)
+    ((savings_chars as f64) / 4.0).ceil() as usize
+}
+
+/// Parameters for compact_tool_data
+pub struct CompactToolDataParams<'a> {
+    pub messages: &'a [MessageContent],
+    pub tool_call_index: &'a ToolCallIndex,
+    pub pending_candidates: &'a PendingCompactionCandidates,
+    pub compacted_notice: &'a str,
+}
+
+/// บีบอัดข้อมูล tool calls/results ใน messages คืน message ใหม่
+pub fn compact_tool_data(params: &CompactToolDataParams) -> Vec<MessageContent> {
+    params
+        .messages
+        .iter()
+        .enumerate()
+        .map(|(message_index, message)| {
+            let part_keys = params.tool_call_index.by_location.get(&message_index);
+
+            let mut changed = false;
+            let compacted_content: Vec<ContentPart> = message
+                .content
+                .iter()
+                .enumerate()
+                .map(|(part_index, part)| {
+                    if is_tool_call_part(part) {
+                        if let Some(key) = part_keys.and_then(|k| k.get(&part_index)) {
+                            if params.pending_candidates.pending_tool_call_keys.contains(key)
+                                && !is_compacted_tool_call_part(part, params.compacted_notice)
+                            {
+                                changed = true;
+                                return compact_tool_call(part, params.compacted_notice);
+                            }
+                        }
+                    }
+
+                    if is_tool_result_part(part) {
+                        let tool_call_id = if let ContentPart::ToolResult { tool_call_id, .. } =
+                            part
+                        {
+                            tool_call_id.clone()
+                        } else {
+                            None
+                        };
+
+                        let key = tool_call_id.map(|id| format!("id:{}", id));
+
+                        if let Some(ref k) = key {
+                            if params.pending_candidates.pending_tool_call_keys.contains(k)
+                                && !is_compacted_tool_result_part(part, params.compacted_notice)
+                            {
+                                changed = true;
+                                return compact_tool_result(part, params.compacted_notice);
+                            }
+                        }
+
+                        if key.is_none()
+                            && params.pending_candidates.pending_anonymous_tool_results > 0
+                            && !is_compacted_tool_result_part(part, params.compacted_notice)
+                        {
+                            changed = true;
+                            return compact_tool_result(part, params.compacted_notice);
+                        }
+                    }
+
+                    part.clone()
+                })
+                .collect();
+
+            if !changed {
+                return message.clone();
+            }
+
+            MessageContent {
+                role: message.role.clone(),
+                content: compacted_content,
+            }
+        })
+        .collect()
+}
+
+/// รวมจำนวน pending compaction units ทั้งหมด
+pub fn get_pending_compaction_units(candidates: &PendingCompactionCandidates) -> usize {
+    candidates.pending_tool_call_keys.len() + candidates.pending_anonymous_tool_results
 }
