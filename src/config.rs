@@ -1,6 +1,7 @@
 use crate::system::skill_discovery;
 use anyhow::{bail, Result};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -42,21 +43,23 @@ pub struct AgentMdHeader {
     pub tool: Vec<String>,
 }
 
-/// โครงสร้างเอเจนต์ตามมาตรฐาน Gemini CLI Policy Engine (v1.7.2)
+/// โครงสร้างเอเจนต์ตามมาตรฐาน Gemini CLI Policy Engine (v1.7.5)
+/// ปรับปรุงระบบ Source และ Nested Policies
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct AgentConfig {
     pub id: String,
     pub name: String,
+    pub version: String,
     pub description: String,
     pub mode: String,
     #[serde(rename = "type")]
     pub agent_type: String,
     pub capabilities: Vec<String>,
 
-    // มาตรฐานสิทธิ์แบบลำดับชั้น
-    pub tier: u8,      // 1-5
-    pub priority: u16, // 0-999
-    pub policies: Vec<PolicyRule>,
+    // มาตรฐานสิทธิ์แบบลำดับชั้น (Object-based)
+    pub tier: u8,                          // 1-5
+    pub priority: u16,                     // 0-999
+    pub policies: HashMap<String, String>, // mapping: "tool_name" -> "decision"
 
     #[serde(default = "default_true")]
     pub enabled: bool,
@@ -74,14 +77,6 @@ pub struct AgentConfig {
     pub cost: u16,
     #[serde(default)]
     pub rate_limit: RateLimit,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct PolicyRule {
-    pub tool: String,
-    pub decision: String, // "allow" | "deny" | "ask_user"
-    #[serde(default)]
-    pub modes: Vec<String>,
 }
 
 fn default_true() -> bool {
@@ -145,21 +140,14 @@ impl Config {
                 AgentConfig {
                     id: meta.name.clone(),
                     name: meta.name,
+                    version: e.version.clone(),
                     description: meta.description,
                     mode: meta.options.mode.clone(),
                     agent_type: e.agent_type.clone(),
                     capabilities: e.capabilities.clone(),
                     tier: e.tier,
                     priority: e.priority,
-                    policies: e
-                        .policies
-                        .iter()
-                        .map(|p| PolicyRule {
-                            tool: p.tool.clone(),
-                            decision: p.decision.clone(),
-                            modes: p.modes.clone().unwrap_or_default(),
-                        })
-                        .collect(),
+                    policies: e.policies.tools.clone(),
                     enabled: true,
                     command: "true".into(),
                     args: None,
@@ -169,27 +157,21 @@ impl Config {
                     rate_limit: RateLimit::default(),
                 }
             } else {
+                let mut default_policies = HashMap::new();
+                default_policies.insert("skill".to_string(), "allow".to_string());
+                default_policies.insert("ask".to_string(), "allow".to_string());
+
                 AgentConfig {
                     id: meta.name.clone(),
                     name: meta.name,
+                    version: "1.0.0".to_string(),
                     description: meta.description,
                     mode: meta.options.mode.clone(),
                     agent_type: "general".into(),
                     capabilities: vec![meta.filename],
-                    tier: 2, // Extension Tier
+                    tier: 2,
                     priority: 100,
-                    policies: vec![
-                        PolicyRule {
-                            tool: "skill".to_string(),
-                            decision: "allow".to_string(),
-                            modes: vec![],
-                        },
-                        PolicyRule {
-                            tool: "ask".to_string(),
-                            decision: "allow".to_string(),
-                            modes: vec![],
-                        },
-                    ],
+                    policies: default_policies,
                     enabled: true,
                     command: "true".into(),
                     args: None,

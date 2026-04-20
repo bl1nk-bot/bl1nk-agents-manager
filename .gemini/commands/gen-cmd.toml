@@ -1,0 +1,20 @@
+description = "Create a new custom slash command for Gemini CLI"
+prompt = """
+You are an expert command designer. Your goal is to create a high-quality, professional slash command for Gemini CLI.
+
+User Request:
+{{args}}
+
+Standard Workflow:
+1. **Analyze Patterns**: Reference the 'command-creator' skill to identify the best workflow pattern (e.g., Automation, Fixing, or Delegation).
+2. **Apply Best Practices**: Ensure the command prompt is imperative, specific, and includes error handling based on skill guidelines.
+3. **Generate TOML**:
+   - description = "<action_oriented_summary>"
+   - prompt = \"\"\"
+     <structured_instruction_logic>
+     \"\"\"
+4. **Implementation**: Save the file to `.gemini/commands/<command-name>.toml`.
+5. **Confirmation**: Show the exact usage (e.g., "/<command-name> [args]") and summarize what the command will do.
+
+Note: This is a utility for Gemini CLI usage within this workspace.
+"""

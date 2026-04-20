@@ -5,94 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
----
+## [1.7.5.1] - 2026-04-20
+
+### Added
+- **Universal Toolset**: รองรับและคุมสิทธิ์เครื่องมือมาตรฐานครบชุดจากทั้ง Gemini CLI (18 ตัว) และ KiloCode (12 ตัว)
+- **Source Abstraction**: เปลี่ยนระบบอ้างอิงเอเจนต์เป็นแบบ Polymorphic Object รองรับประเภท Built-in และเตรียมพร้อมสำหรับ Git/URL ในอนาคต
+- **Dynamic Learning (Trust Score)**: ระบบคำนวณน้ำหนักการเลือกเอเจนต์อิงจากประวัติการทำงานจริง (Success Rate) และการตอบรับจากผู้ใช้ (Approval Rate)
+- **Nested Policy Architecture**: จัดเก็บสิทธิ์เครื่องมือในรูปแบบ Key-Value Map เพื่อประสิทธิภาพในการเรียกดูข้อมูลระดับ O(1)
+- **Agent Versioning**: เพิ่มเลขเวอร์ชันกำกับรายเอเจนต์ใน Registry เพื่อการจัดการวงจรชีวิตที่แม่นยำ
+
+### Changed
+- **Directory Restructuring**: ย้ายจาก `.config/` เป็นโฟลเดอร์ `config/` ที่เปิดเผยชัดเจน เพื่อลดความสับสนกับไฟล์ระบบ
+- **Permission Downgrade**: ปรับระดับสิทธิ์พื้นฐานของ Extension ลงมาที่เพดาน 300 (จาก 1000) ตามมารยาทของ Gemini CLI (Extension Etiquette)
+- **Unified Schemas**: ตั้งชื่อไฟล์สคีมาใหม่ตามหน้าที่ (Capability, Policy, App) พร้อมระบุเวอร์ชัน v1.7 ชัดเจน
+- **System Architect**: รวมร่างเอเจนต์ `kiro-workflow`, `workflow-diagrams` และ `code-architect` เข้าเป็น `system-architect` ตัวเดียวที่เป็นกลางและทรงพลัง
+
+### Fixed
+- **CI/CD Reliability**: แก้ไขปัญหา Submodule หายบน GitHub Actions โดยการเปิดใช้ `submodules: recursive`
+- **Git Recovery**: ซ่อมแซมฐานข้อมูล Git ในกรณีเกิดปัญหา Corrupt Objects (Empty objects) ระหว่างทำงาน
+- **Japanese Language Consistency**: แก้ไขคำว่า '実装' เป็น 'Implement/Implemented' ตลอดทั้งเอกสารหลัก
 
 ## [1.7.1] - 2026-04-18
 
 ### Added
-
 - **JSON Context Persistence**: Implement ระบบจัดเก็บข้อมูลบริบท (Context) โดยใช้ไฟล์ JSON ในโฟลเดอร์ `.omg/state/` พร้อมระบบบันทึกแบบ Atomic เพื่อความปลอดภัยของข้อมูล.
-- **Context Offloading (Markdown Archive)**: เพิ่มความสามารถในการย้ายบริบทเก่าไปเก็บไว้ในไฟล์ Markdown (`.md`) ภายใต้โฟลเดอร์ `archives/` เพื่อให้มนุษย์อ่านได้ง่ายและประหยัดหน่วยความจำ.
-- **Enhanced Bash Tool**: พัฒนาเครื่องมือรันคำสั่งเชลล์ตัวใหม่ที่รองรับการกำหนด Timeout และ Working Directory พร้อมระบบป้องกันความผิดพลาดเบื้องต้น.
-- **Structured Logging with Tracing**: บูรณาการ Crate `tracing` เข้ากับระบบจัดเก็บข้อมูลและเครื่องมือใหม่เพื่อการตรวจสอบสถานะ (Observability) ที่ดีขึ้น.
+- **Enhanced Bash Tool**: เพิ่มความสามารถในการรันคำสั่ง Shell แบบ Async พร้อมระบบ Timeout และการจับสัญญาณ Error ที่ละเอียดขึ้น.
+- **Observability**: ผสานระบบ `tracing` เข้ากับระบบจัดเก็บข้อมูลและเครื่องมือใหม่เพื่อการตรวจสอบสถานะ (Observability) ที่ดีขึ้น.
 - **Track Plans**: เพิ่มแผนงานการพัฒนาเชิงลึกสำหรับ `context_management` และ `tool_compaction` เพื่อเป็นแนวทางให้เอเจนต์ทำงานตามลำดับความสำคัญ.
-
-### Changed
-
-- **Thai Documentation Standard**: แปลคอมเมนต์และเอกสารภายในโค้ดในโมดูล `context` และ `tools` เป็นภาษาไทยทั้งหมดตามมาตรฐานโปรเจกต์.
-- **Module Re-organization**: จัดระเบียบการส่งออก (Export) โมดูลใน `src/tools/mod.rs` เพื่อให้ระบบมีความเสถียรและเรียกใช้งานได้ง่ายขึ้น.
-
-### Fixed
-
-- **Clippy Stability**: แก้ไขข้อผิดพลาดและคำแนะนำจาก Clippy ในโมดูล `tool_compaction`, `json_store` และ `bash` (Zero warnings).
-- **Infinite Loop Risk**: ปรับเปลี่ยนการอ่านผลลัพธ์จาก Standard Stream ใน Bash Tool จาก `flatten()` เป็น `map_while(Result::ok)` เพื่อป้องกันลูปค้างกรณีเกิด I/O Error.
-
----
 
 ## [1.7.0] - 2026-04-17
 
 ### Added
-
-- **Split Metadata Architecture**: ระบบแยกข้อมูลเอเจนต์ออกเป็นสองส่วนเพื่อความสะอาดและประสิทธิภาพ (Human-readable `.md` vs Technical `.json`).
-- **Dynamic Auto-discovery Engine**: พอร์ตระบบค้นหาเอเจนต์อัตโนมัติจาก TypeScript มาเป็น Rust ช่วยให้โหลดเอเจนต์จากโฟลเดอร์ `agents/` และ `skills/` ได้ทันทีโดยไม่ต้องแก้ไขคอนฟิกแมนนวล.
-- **Strict Schema Enforcement**: เพิ่มการตรวจสอบความถูกต้องของไฟล์เอเจนต์ด้วย JSON Schema v1.7.0 ตั้งแต่ขั้นตอนการค้นพบไฟล์ (Discovery Phase).
-- **12 Core Tools Standard**: กำหนดมาตรฐานชุดเครื่องมือพื้นฐาน 12+ ชนิด (เช่น Glob, Grep, ReadFile, WriteFile) ให้กับเอเจนต์ทุกตัวเพื่อความพร้อมในการปฏิบัติงานเต็มรูปแบบ.
-- **Comprehensive Test Suite**: เพิ่มชุดการทดสอบสำหรับโมดูล `skill_discovery` ครอบคลุมทั้ง Unit, Security, และ Integration tests (6/6 passing).
-- **Documentation**: เพิ่ม `scripts/README.md` สำหรับคู่มือเครื่องมือพัฒนา และอัปเดต root `README.md` ให้ตรงตามสถาปัตยกรรมปัจจุบัน.
-
-### Changed
-
-- **Unified Registry System**: อัปเกรดระบบ Registry ใน Rust ให้สามารถผสาน (Merge) ข้อมูลระหว่าง Markdown และ JSON ได้แบบเรียลไทม์.
-- **Smart Routing & Search**: ปรับปรุงระบบ Router ให้ค้นหาเอเจนต์ตามความสามารถ (Capabilities) และชื่อ (Slug) ได้แม่นยำขึ้นผ่าน Fuzzy Search.
-- **CI/CD Consolidation**: รวมเวิร์กโฟลว์คุณภาพทั้งหมด (Fmt, Clippy, Test, Agent Validation) เข้าสู่ `ci.yml` เพียงจุดเดียวเพื่อประหยัดทรัพยากรและลดความซ้ำซ้อน.
-- **Project Restructuring**:
-  - เปลี่ยนชื่อ `extractor.rs` เป็น `executor.rs` ให้ตรงตามหน้าที่จริง.
-  - ย้าย `bl1nk-keyword-validator` จาก Submodule มาเป็น Vendor dependency ถาวรเพื่อความเสถียร.
-- **Permission Scoring**: ปรับปรุงระบบคำนวณคะแนนสิทธิ์ (Policy Evaluator) ให้รองรับโครงสร้างข้อมูลแบบแยกส่วน.
-
-### Removed
-
-- **Legacy Registry Structure**: ยกเลิกระบบการลงทะเบียนเอเจนต์แบบ Manual ในไฟล์ JSON ชุดเก่า.
-- **Obsolete Scripts**: ลบสคริปต์ Migration ชั่วคราวและสคริปต์จัดการเอเจนต์แบบเก่า (Legacy) รวมกว่า 10 ไฟล์.
-- **Outdated Tests**: ลบไฟล์เทสที่ล้าสมัยและขวางทางการ Compile ของสถาปัตยกรรมใหม่.
-
-### Fixed
-
-- **Ownership & Move Errors**: แก้ปัญหา Memory Ownership ในโมดูล Orchestrator และ Router.
-- **Compilation Deadlock**: แก้ปัญหาฟิลด์หายและ Type mismatch ทั่วทั้งโปรเจกต์ที่เกิดจากการเปลี่ยนโครงสร้างข้อมูลหลัก.
-- **Main Command Logic**: ซ่อมแซมระบบจัดการ Subcommands ใน `src/main.rs` ที่ทำงานผิดพลาด.
-
-### Security
-
-- **Anti-Shadowing Protection**: เพิ่มระบบป้องกันเอเจนต์ตั้งชื่อทับคำสั่งหลักของระบบ (เช่น model, resume, help).
-- **Enhanced Security Audit**: อัปเกรด CI ให้สแกนหา Hardcoded Secrets และเฝ้าระวังการใช้นโยบายแบบ Wildcard (*) ที่ไม่เหมาะสม.
-
----
-
-## [Unreleased] - 2026-04-12
-
-> Version: 0.1.0 | Total commits: 5
-
-### ✨ Features
-
-- feat(registry): Task 1.1 - Define Unified Registry Schema (`0780c25`) - 2026-04-12
-
-### 🐛 Bug Fixes
-
-- fix: แก้ warnings/clippy errors + adapt skills (`88b86a3`) - 2026-04-12
-
-### 📚 Documentation
-
-- docs: อัปเดต PROJECT_SUMMARY และ README ด้วยสถานะล่าสุด (`61a62f4`) - 2026-04-12
-
-### 🔧 Maintenance
-
-- chore(conductor): บันทึกสถานะก่อนเริ่ม Track Registry & Monitoring Layer (`b30428b`) - 2026-04-12
-
-### 📝 Other Changes
-
-- conductor(plan): Mark task 'Define Unified Registry Schema' as complete (`b5c465e`) - 2026-04-12
-
----
-
-*Generated by generate-changelog.sh on 2026-04-12 00:58:45 UTC*
+- **Rust Discovery Engine**: พอร์ตระบบค้นหาเอเจนต์จาก TypeScript มาเป็น Rust แบบ Async 100%.
+- **Split Metadata**: สถาปัตยกรรมแยกส่วนระหว่างเนื้อหา Prompt (.md) และ ข้อมูลเทคนิค (.json).
+- **Validation**: ระบบตรวจสอบ Schema ทันทีที่ค้นพบไฟล์เอเจนต์ใหม่.

@@ -1,11 +1,11 @@
-//! Unified Registry Schema Types
+//! Unified Registry Schema Types (v1.7.5.1)
 //!
 //! กำหนด types สำหรับ Registry และ Agent Metadata
-//! รองรับโครงสร้างแบบแยกส่วน (Split Structure) ระหว่าง .md และ agents.json
-//! อัปเดต v1.7.2: รองรับมาตรฐาน Gemini CLI Policy Engine
+//! รองรับโครงสร้างแบบแยกส่วน (Split Structure) และมาตรฐาน Universal Tools
 
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 // ============================================================================
 // Registry & Agent Types
@@ -21,38 +21,39 @@ pub struct Registry {
 }
 
 /// ข้อมูลทางเทคนิคของเอเจนต์ที่เก็บใน agents.json
-/// ปรับปรุงตามมาตรฐานสิทธิ์แบบลำดับชั้น (Hierarchical Governance)
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct AgentJsonEntry {
     pub name: String,
-    pub file: String,
+    pub version: String,
+    pub source: AgentSource,
     #[serde(rename = "type")]
     pub agent_type: String,
-
-    // มาตรฐาน Gemini CLI Policy Engine
-    pub tier: u8,      // 1-5
-    pub priority: u16, // 0-999
-    pub policies: Vec<PolicyRuleJson>,
-
+    pub tier: u8,
+    pub priority: u16,
+    pub policies: AgentPoliciesJson,
     #[serde(default)]
     pub capabilities: Vec<String>,
     #[serde(default)]
     pub color: Option<String>,
 }
 
-/// กฎการควบคุมสิทธิ์ตามมาตรฐาน TOML ของ Gemini CLI
+/// แหล่งที่มาของเอเจนต์ (Source) - รองรับ Builtin, Git, Local
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct PolicyRuleJson {
-    pub tool: String,
-    pub decision: String, // "allow" | "deny" | "ask_user"
-    #[serde(default)]
-    pub modes: Option<Vec<String>>,
+#[serde(tag = "type", rename_all = "snake_case")]
+pub enum AgentSource {
+    Builtin { path: String },
+    Git { url: String, ref_name: Option<String> },
+    Local { path: String },
+    Url { url: String },
 }
 
-// ============================================================================
-// Monitoring Layer Types (รักษาไว้เพื่อความเข้ากันได้)
-// ============================================================================
+/// กฎการควบคุมสิทธิ์แบบ Nested Map สำหรับเครื่องมือทั้งหมด
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct AgentPoliciesJson {
+    pub tools: HashMap<String, String>,
+}
 
+// ... (Rest of Monitoring Layer remains same for compatibility)
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum HumanAction {

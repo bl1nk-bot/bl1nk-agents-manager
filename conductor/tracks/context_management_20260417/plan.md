@@ -16,10 +16,17 @@
 
 ## Phase 3: Context Compaction & Size Management [checkpoint: pending]
 
+> **3 Features ที่เพิ่ม (from AI Coding Tools comparison):**
+> 1. Token Budget Management - limit + auto-select important messages
+> 2. Tool Use History Tracking - track tool calls across sessions
+> 3. Context Offload to File - archive old messages
+
 - [ ] Task: Write failing tests for context compaction logic (e.g., retaining top 20%).
 - [ ] Task: Implement sliding window or compaction logic to safely manage token limits.
+- [ ] Task: Implement token budget management (configurable limits, auto-eviction).
 - [ ] Task: Write failing tests for offloading overflow context to readable files.
 - [ ] Task: Implement file-based context offloading.
+- [ ] Task: Implement tool use history tracking (store/cached results).
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Context Compaction & Size Management' (Protocol in workflow.md)
 
 ## Phase 4: Environment & Secrets Handling [checkpoint: pending]

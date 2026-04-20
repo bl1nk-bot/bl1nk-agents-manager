@@ -1,29 +1,42 @@
 # 🤖 BL1NK Agents Manager
 
-![Version](https://img.shields.io/badge/version-1.7.1-blue.svg)
+![Version](https://img.shields.io/badge/version-1.7.5.1-blue.svg)
 ![Status](https://img.shields.io/badge/status-Active--Development-brightgreen.svg)
 
-> **Agent Orchestration & Management Center**
+> **Universal Agent Orchestration & Management System**
 
-**BL1NK Agents Manager** คือระบบหัวใจหลักในการควบคุมและจัดการเอเจนต์อัจฉริยะ (Orchestrator) พัฒนาด้วยภาษา Rust ทำหน้าที่บริหารจัดการวงจรชีวิตของ AI workforce ตั้งแต่การค้นพบ การตัดสินใจเลือกเส้นทาง (Routing) ไปจนถึงการจัดการบริบท (Context Management) ที่ซับซ้อน
+**BL1NK Agents Manager** คือระบบหัวใจหลักในการควบคุมและจัดการเอเจนต์อัจฉริยะ (Orchestrator) พัฒนาด้วยภาษา Rust (Edition 2024) ทำหน้าที่บริหารจัดการวงจรชีวิตของ AI workforce ตั้งแต่การค้นพบ การตัดสินใจเลือกเส้นทาง (Routing) ไปจนถึงการควบคุมสิทธิ์ที่เข้มงวดตามมาตรฐานสากล
 
 ## 🎯 ทิศทางการพัฒนา (Strategic Direction)
-โปรเจกต์นี้มุ่งเน้นการเป็น **Agent Hub** ที่สมบูรณ์แบบ โดยให้ความสำคัญกับ:
-- **Orchestration**: การประสานงานระหว่างเอเจนต์หลายตัว
-- **Context Integrity**: ระบบจัดเก็บและบีบอัดบริบท (Context Persistence & Compaction)
-- **Lifecycle Management**: การจัดการสถานะของงานและเอเจนต์อย่างเป็นระบบ
+โปรเจกต์นี้มุ่งเน้นการเป็น **Unified Hub** สำหรับเอเจนต์ทุกค่าย โดยเน้นที่:
+- **Hierarchical Governance**: ระบบควบคุมสิทธิ์แบบลำดับชั้น (Tier 1-5) ตามมาตรฐาน Gemini CLI
+- **Universal Compatibility**: รองรับชุดเครื่องมือมาตรฐานจากทั้ง Gemini และ KiloCode
+- **Dynamic Learning**: ปรับน้ำหนักการเลือกเอเจนต์อัตโนมัติอิงจากประวัติการทำงานจริง (Trust Score)
 
-## 🚀 ฟีเจอร์หลัก
-- **Split Metadata Architecture**: แยกข้อมูลสำหรับมนุษย์ (.md) และข้อมูลเทคนิค (.json) อย่างชัดเจน
-- **Intelligent Context Management**: จัดเก็บสถานะแบบ JSON และรองรับการ Archive บริบทเก่า
-- **Dynamic Auto-discovery**: ค้นหาเอเจนต์และทักษะใหม่เข้าสู่ระบบอัตโนมัติพร้อมการตรวจ Schema
-- **Secure Execution**: ควบคุมการใช้เครื่องมือ (Tools) และสิทธิ์การเข้าถึงผ่านระบบ Policy
+## 🚀 ฟีเจอร์เด่น (v1.7.5.1)
+- **Universal Tool Policies**: รองรับและคุมสิทธิ์เครื่องมือกว่า 18 ชนิดผ่านโครงสร้าง Nested Map ความเร็วสูง
+- **Source Abstraction**: ระบบ polymorphic source รองรับเอเจนต์ทั้งแบบ Built-in, Git, และ Remote URL
+- **Path Consolidation**: ย้ายการตั้งค่าและสคีมาไปที่โฟลเดอร์ `config/` (Visible) เพื่อความเป็นระเบียบ
+- **Atomic Persistence**: ระบบจัดเก็บสถานะบริบทแบบ JSON Atomic Write เพื่อความปลอดภัยของข้อมูล
 
 ## 📂 โครงสร้างโปรเจกต์
 - `src/`: โค้ด Rust หลัก (Registry, Router, Executor)
-- `agents/`: คลังเอเจนต์ 40+ ตัว (.md & agents.json)
-- `scripts/`: เครื่องมือช่วยพัฒนา (ดู [scripts/README.md](scripts/README.md))
-- `conductor/`: ระบบจัดการงานและแผนการพัฒนา
+- `config/`: สคีมาและไฟล์ตั้งค่ามาตรฐาน แบ่งตามเวอร์ชัน (v1.7+)
+- `agents/`: คลังเอเจนต์อัจฉริยะ (.md & agents.json)
+- `scripts/`: เครื่องมือช่วยพัฒนาและระบบ Build Release
+- `conductor/`: แผนงานสถาปัตยกรรมและการจัดการ Track พัฒนา
+
+## 🛠️ การเรียกใช้งานเบื้องต้น
+```bash
+# รันการค้นหาและตรวจสอบเอเจนต์
+make agents-check
+
+# สร้างชุดแจกจ่าย (Distribution) สำหรับเอเจนต์ทุกตัว
+make release
+
+# ตรวจสอบความถูกต้องของระบบทั้งหมด
+make parallel
+```
 
 ---
-Built with ❤️ using Rust, Tokio, and PMCP
+Built with 🦀 and ❤️ using Rust, Tokio, and PMCP

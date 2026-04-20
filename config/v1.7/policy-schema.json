@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Agent Policy Specification",
-  "description": "Schema for validating agent permissions and policies (v1.7.2 - Updated: 2026-04-20). Based on Gemini CLI Policy Engine standards.",
-  "version": "1.7.2",
+  "description": "Schema for validating agent permissions and policies (v1.7.5.1). Based on Gemini CLI and KiloCode standards.",
+  "version": "1.7.5.1",
   "type": "object",
   "properties": {
     "version": { "type": "string" },
@@ -13,41 +13,37 @@
         "type": "object",
         "properties": {
           "name": { "type": "string" },
-          "file": { "type": "string" },
+          "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+          "source": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "enum": ["builtin", "git", "local", "url"] },
+              "path": { "type": "string" },
+              "url": { "type": "string" },
+              "ref_name": { "type": "string" }
+            },
+            "required": ["type"]
+          },
           "type": { "type": "string" },
-          "tier": { 
-            "type": "integer", 
-            "minimum": 1, 
-            "maximum": 5, 
-            "description": "Policy Authority Tier (1: Default, 2: Extension, 3: Workspace, 4: User, 5: Admin)" 
-          },
-          "priority": { 
-            "type": "integer", 
-            "minimum": 0, 
-            "maximum": 999,
-            "description": "Internal priority within the tier"
-          },
+          "tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "priority": { "type": "integer", "minimum": 0, "maximum": 999 },
           "policies": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "tool": { "type": "string", "description": "Name of the tool or '*' for all" },
-                "decision": { 
-                  "type": "string", 
-                  "enum": ["allow", "deny", "ask_user"] 
-                },
-                "modes": { 
-                  "type": "array", 
-                  "items": { "type": "string", "enum": ["default", "plan", "autoEdit", "yolo"] } 
+            "type": "object",
+            "properties": {
+              "tools": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string",
+                  "enum": ["allow", "deny", "ask_user"]
                 }
-              },
-              "required": ["tool", "decision"]
-            }
+              }
+            },
+            "required": ["tools"]
           },
-          "capabilities": { "type": "array", "items": { "type": "string" } }
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "color": { "type": "string" }
         },
-        "required": ["name", "file", "tier", "priority", "policies"]
+        "required": ["name", "version", "source", "tier", "priority", "policies"]
       }
     }
   },

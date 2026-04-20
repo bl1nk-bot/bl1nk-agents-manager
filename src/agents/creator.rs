@@ -1,11 +1,12 @@
 // src/agents/creator.rs
-use crate::registry::schema::{AgentJsonEntry, PolicyRuleJson, Registry};
+use crate::registry::schema::{AgentJsonEntry, AgentPoliciesJson, AgentSource, Registry};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-/// รายละเอียดข้อกำหนดของเอเจนต์สำหรับการสร้างใหม่ (v1.7.2 Standard)
+/// รายละเอียดข้อกำหนดของเอเจนต์สำหรับการสร้างใหม่ (v1.7.5.1 Standard)
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentSpec {
     pub name: String,
@@ -15,13 +16,13 @@ pub struct AgentSpec {
     pub task_type: String,
     pub tier: u8,
     pub priority: u16,
-    pub policies: Vec<PolicyRuleJson>,
+    pub policies: HashMap<String, String>, // tool_name -> decision
     pub capabilities: Vec<String>,
     pub color: Option<String>,
     pub system_prompt: String,
 }
 
-/// ตัวสร้างเอเจนต์ - รองรับมาตรฐาน Gemini CLI Policy Engine
+/// ตัวสร้างเอเจนต์ - รองรับมาตรฐาน Universal Source & Policies
 pub struct AgentCreator {
     output_dir: String,
 }
@@ -54,17 +55,17 @@ impl AgentCreator {
         let md_content = format!("---\n{}---\n\n{}", yaml_str, spec.system_prompt);
         fs::write(&md_path, md_content)?;
 
-        // 2. อัปเดต agents.json (Policy Metadata)
+        // 2. อัปเดต agents.json (Technical Metadata v1.7.5.1)
         let mut registry: Registry = if Path::new(&json_path).exists() {
             let data = fs::read_to_string(&json_path)?;
             serde_json::from_str(&data).unwrap_or_else(|_| Registry {
-                version: "1.7.2".into(),
+                version: "1.7.5.1".into(),
                 last_updated: None,
                 agents: vec![],
             })
         } else {
             Registry {
-                version: "1.7.2".into(),
+                version: "1.7.5.1".into(),
                 last_updated: None,
                 agents: vec![],
             }
@@ -72,11 +73,14 @@ impl AgentCreator {
 
         let new_entry = AgentJsonEntry {
             name: id.to_string(),
-            file: format!("{}.md", id),
+            version: "1.0.0".to_string(),
+            source: AgentSource::Builtin {
+                path: format!("agents/{}.md", id),
+            },
             agent_type: spec.task_type,
             tier: spec.tier,
             priority: spec.priority,
-            policies: spec.policies,
+            policies: AgentPoliciesJson { tools: spec.policies },
             capabilities: spec.capabilities,
             color: spec.color,
         };

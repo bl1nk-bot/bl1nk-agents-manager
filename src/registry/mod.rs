@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 
-/// โหลดและคอมไพล์ Capability Schema (v1.7.2)
+/// โหลดและคอมไพล์ Capability Schema (v1.7.5)
 static CAPABILITY_SCHEMA: Lazy<Option<JSONSchema>> = Lazy::new(|| {
     let schema_path = "config/v1.7/capability-schema.json";
     if let Ok(content) = fs::read_to_string(schema_path) {
@@ -96,7 +96,7 @@ impl RegistryService {
 }
 
 // ============================================================================
-// Policy & Security Layer (Gemini CLI Standard)
+// Policy & Security Layer (Gemini CLI Standard v1.7.5)
 // ============================================================================
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone, Copy)]
@@ -109,20 +109,23 @@ pub enum PolicyDecision {
 
 pub struct PolicyEvaluator;
 impl PolicyEvaluator {
+    /// ประเมินความปลอดภัยตามมาตรฐาน Gemini CLI Policy Engine (Object-based lookup)
     pub fn evaluate(agent: &crate::config::AgentConfig, tool_name: &str, _args: &serde_json::Value) -> PolicyDecision {
-        let rule = agent.policies.iter().find(|p| p.tool == "*" || p.tool == tool_name);
+        // 1. O(1) Lookup สำหรับเครื่องมือที่เจาะจง หรือ '*' สำหรับเครื่องมือทั้งหมด
+        let decision_str = agent
+            .policies
+            .get(tool_name)
+            .or_else(|| agent.policies.get("*"))
+            .map(|s| s.as_str())
+            .unwrap_or("deny");
 
-        let configured_decision = if let Some(r) = rule {
-            match r.decision.as_str() {
-                "allow" => PolicyDecision::Allow,
-                "ask_user" => PolicyDecision::AskUser,
-                _ => PolicyDecision::Deny,
-            }
-        } else {
-            PolicyDecision::Deny
+        let configured_decision = match decision_str {
+            "allow" => PolicyDecision::Allow,
+            "ask_user" => PolicyDecision::AskUser,
+            _ => PolicyDecision::Deny,
         };
 
-        // Security Guard: Tier 2 (Extension) ห้าม Allow เครื่องมืออันตรายอัตโนมัติ
+        // 2. Security Guard (Hardcoded Safety Rules)
         let dangerous_tools = ["bash", "write", "rm", "shred"];
         if agent.tier <= 2 && dangerous_tools.contains(&tool_name) && configured_decision == PolicyDecision::Allow {
             return PolicyDecision::AskUser;
@@ -146,7 +149,7 @@ pub struct BehavioralStats {
     pub hidden_error_count: u32,
     pub rule_violation_count: u32,
     pub bypassed_ask_user_count: u32,
-    pub user_preference_score: f64, // ขยับตามความพอใจของผู้ใช้
+    pub user_preference_score: f64,
     pub approval_count: u32,
     pub rejection_count: u32,
 }
@@ -195,16 +198,13 @@ impl WeightRegistry {
         Ok(())
     }
 
-    /// บันทึกการตัดสินใจของผู้ใช้ (Approved/Rejected) เพื่อปรับคะแนนความพึงพอใจ
     pub fn record_user_interaction(&mut self, id: &str, approved: bool) {
         let s = self.stats.entry(id.to_string()).or_default();
         if approved {
             s.approval_count += 1;
-            // เพิ่มคะแนนความพึงพอใจขึ้น 5% (สูงสุดที่ 1.0)
             s.user_preference_score = (s.user_preference_score + 0.05).min(1.0);
         } else {
             s.rejection_count += 1;
-            // ลดคะแนนความพึงพอใจลง 10% (ขั้นต่ำที่ 0.0)
             s.user_preference_score = (s.user_preference_score - 0.10).max(0.0);
         }
     }
@@ -215,7 +215,6 @@ impl WeightRegistry {
         if success {
             s.success_count += 1;
             s.consecutive_errors = 0;
-            // งานสำเร็จทำให้ความเชื่อใจเพิ่มขึ้นเล็กน้อย
             s.user_preference_score = (s.user_preference_score + 0.01).min(1.0);
         } else {
             s.consecutive_errors += 1;
@@ -229,26 +228,20 @@ impl WeightRegistry {
             ViolationType::RuleBreak => s.rule_violation_count += 1,
             ViolationType::BypassedAskUser => s.bypassed_ask_user_count += 1,
         }
-        // การละเมิดกฎทำให้คะแนนความพึงพอใจดิ่งวูบ
         s.user_preference_score = (s.user_preference_score - 0.20).max(0.0);
     }
 
-    /// คำนวณคะแนนความเชื่อใจ (0.0 - 1.0) อิงตามประวัติการใช้งานจริง
     pub fn get_trust_score(&self, id: &str) -> f64 {
         let s = match self.stats.get(id) {
             Some(v) => v,
-            None => return 0.5, // Default score for new agents
+            None => return 0.5,
         };
-
-        // สูตรคำนวณ: ถ่วงน้ำหนักระหว่าง ความสำเร็จ (30%) และ ความพึงพอใจของผู้ใช้ (70%)
         let success_rate = if s.total_count == 0 {
             0.5
         } else {
             s.success_count as f64 / s.total_count as f64
         };
-
         let penalty = (s.consecutive_errors as f64 * 0.15) + (s.hidden_error_count as f64 * 0.3);
-
         (success_rate * 0.3 + s.user_preference_score * 0.7 - penalty).clamp(0.0, 1.0)
     }
 }

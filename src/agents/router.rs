@@ -67,7 +67,6 @@ impl AgentRouter {
         }
 
         // --- 🧠 DYNAMIC WEIGHTING LOGIC ---
-        // ดึงคะแนนความเชื่อใจ (Trust Score) มาคำนวณร่วมกับ Base Priority
         let weight_registry = crate::registry::WeightRegistry::load().await.unwrap_or_default();
 
         let mut scored_agents: Vec<(String, f64)> = capable_agents
@@ -81,7 +80,6 @@ impl AgentRouter {
             })
             .collect();
 
-        // เรียงลำดับตาม Effective Priority (สูงไปต่ำ)
         scored_agents.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
 
         let (selected_id, _score) = scored_agents.first().context("No agents available after scoring")?;
@@ -105,24 +103,25 @@ impl AgentRouter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::{AgentConfig, PolicyRule, RateLimit, RoutingConfig, RoutingTier};
+    use crate::config::{AgentConfig, RateLimit, RoutingConfig, RoutingTier};
+    use std::collections::HashMap;
 
     #[tokio::test]
     async fn test_router_basic() {
+        let mut policies = HashMap::new();
+        policies.insert("test".to_string(), "allow".to_string());
+
         let agent = AgentConfig {
             id: "test".into(),
             name: "Test Agent".into(),
+            version: "1.0.0".into(),
             description: "desc".into(),
             mode: "subagent".into(),
             agent_type: "general".into(),
             capabilities: vec!["test".into()],
             tier: 2,
             priority: 100,
-            policies: vec![PolicyRule {
-                tool: "test".to_string(),
-                decision: "allow".to_string(),
-                modes: vec![],
-            }],
+            policies,
             enabled: true,
             command: "true".into(),
             args: None,

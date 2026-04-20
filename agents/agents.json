@@ -1,882 +1,1650 @@
 {
-  "version": "1.7.4",
+  "version": "1.7.5.2",
   "agents": [
     {
       "name": "agent-sdk-verifier-py",
-      "file": "agent-sdk-verifier-py.md",
+      "version": "1.0.0",
+      "description": "Verify `claude  Check that the SDK version is reasonably current (not ancient)",
+      "source": {
+        "type": "builtin",
+        "path": "agents/agent-sdk-verifier-py.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "agent-sdk-verifier-ts",
-      "file": "agent-sdk-verifier-ts.md",
+      "version": "1.0.0",
+      "description": "Verify `@anthropic  Check that the SDK version is reasonably current (not ancient)",
+      "source": {
+        "type": "builtin",
+        "path": "agents/agent-sdk-verifier-ts.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "cloudflare",
-      "file": "cloudflare.md",
+      "version": "1.0.0",
+      "description": "Respond in a friendly and concise manner  Focus exclusively on Cloudflare Workers solutions",
+      "source": {
+        "type": "builtin",
+        "path": "agents/cloudflare.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
-      "name": "system-architect",
-      "file": "system-architect.md",
-      "type": "architect",
+      "name": "web-researcher",
+      "version": "1.1.0",
+      "description": "Expert research agent specialized in deep information retrieval, documentation analysis (via context7), and knowledge synthesis. Saves findings to local cache for efficiency.",
+      "source": {
+        "type": "builtin",
+        "path": "agents/web-researcher.md"
+      },
+      "type": "research",
       "tier": 2,
-      "priority": 250,
-      "policies": [
-        {
-          "tool": "write",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "priority": 120,
+      "policies": {
+        "tools": {
+          "google_web_search": "allow",
+          "web_fetch": "allow",
+          "read_file": "allow",
+          "list_directory": "allow",
+          "write_file": "allow",
+          "Skill": "allow",
+          "exit_plan_mode": "allow"
         }
-      ],
-      "capabilities": []
+      },
+      "capabilities": [
+        "web-search",
+        "documentation-analysis",
+        "knowledge-synthesis"
+      ]
     },
     {
       "name": "code-generator",
-      "file": "code-generator.md",
+      "version": "1.0.0",
+      "description": "**Role:** Senior Software Engineer (Implementation Specialist)  **Output:** Clean, compilable/runnable code blocks.",
+      "source": {
+        "type": "builtin",
+        "path": "agents/code-generator.md"
+      },
       "type": "code",
       "tier": 2,
       "priority": 150,
-      "policies": [
-        {
-          "tool": "bash",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "codebase-analyzer",
-      "file": "codebase-analyzer.md",
+      "version": "1.0.0",
+      "description": "Read specific files to understand logic  Identify key functions and their purposes",
+      "source": {
+        "type": "builtin",
+        "path": "agents/codebase-analyzer.md"
+      },
       "type": "code",
       "tier": 2,
       "priority": 120,
-      "policies": [
-        {
-          "tool": "bash",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "codebase-locator",
-      "file": "codebase-locator.md",
+      "version": "1.0.0",
+      "description": "Search for files containing relevant keywords  Look for directory patterns and naming conventions",
+      "source": {
+        "type": "builtin",
+        "path": "agents/codebase-locator.md"
+      },
       "type": "code",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "bash",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "codebase-pattern-finder",
-      "file": "codebase-pattern-finder.md",
+      "version": "1.0.0",
+      "description": "Search for comparable features  Locate usage examples",
+      "source": {
+        "type": "builtin",
+        "path": "agents/codebase-pattern-finder.md"
+      },
       "type": "code",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "bash",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "command-creator",
-      "file": "command-creator.md",
+      "version": "1.0.0",
+      "description": "Understand the command's purpose and use cases  Choose between project (.claude/commands/) or user",
+      "source": {
+        "type": "builtin",
+        "path": "agents/command-creator.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "write",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "creative-writer",
-      "file": "creative-writer.md",
+      "version": "1.0.0",
+      "description": "**Role:** Literary Artist & Storyteller  **Output:** Original poetry, prose, scripts, and character dialogue.",
+      "source": {
+        "type": "builtin",
+        "path": "agents/creative-writer.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "deep-reflector",
-      "file": "deep-reflector.md",
+      "version": "1.0.0",
+      "description": "Initial symptoms reported by user  Root causes discovered",
+      "source": {
+        "type": "builtin",
+        "path": "agents/deep-reflector.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "docbot-pro",
-      "file": "docbot-pro.md",
+      "version": "1.0.0",
+      "description": "สร้างเอกสาร API อ้างอิงจากโค้ด Rust  จัดการโครงสร้างไฟล์สำหรับ Mintlify",
+      "source": {
+        "type": "builtin",
+        "path": "agents/docbot-pro.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "fullstack-dev",
-      "file": "fullstack-dev.md",
+      "version": "1.0.0",
+      "description": "Write concise, technical TypeScript and Python code with correct examples  Use functional programming and declarative patterns; avoid classes unless absolutely necessary",
+      "source": {
+        "type": "builtin",
+        "path": "agents/fullstack-dev.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 150,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "github-issue-fixer",
-      "file": "github-issue-fixer.md",
+      "version": "1.0.0",
+      "description": "Search scratchpads for previous thoughts on this issue  Check existing PRs for related history using `gh pr list`",
+      "source": {
+        "type": "builtin",
+        "path": "agents/github-issue-fixer.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 150,
-      "policies": [
-        {
-          "tool": "write",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "human-3-coach",
-      "file": "human-3-coach.md",
+      "version": "1.0.0",
+      "description": "a holistic personal development system that integrates Mind, Body, Spirit, and Vocation to help individuals reach their highest potential.  |",
+      "source": {
+        "type": "builtin",
+        "path": "agents/human-3-coach.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "insight-documenter",
-      "file": "insight-documenter.md",
+      "version": "1.0.0",
+      "description": "\"What specific problem did this solve?\"  \"What was the key insight that unlocked the solution?\"",
+      "source": {
+        "type": "builtin",
+        "path": "agents/insight-documenter.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "instruction-reflector",
-      "file": "instruction-reflector.md",
+      "version": "1.0.0",
+      "description": "Inconsistencies in Claude's responses  Misunderstandings of user requests",
+      "source": {
+        "type": "builtin",
+        "path": "agents/instruction-reflector.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
-      "capabilities": []
-    },
-    {
-      "name": "kiro-workflow",
-      "file": "kiro-workflow.md",
-      "type": "general",
-      "tier": 2,
-      "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
-        }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "orchestrator",
-      "file": "orchestrator.md",
+      "version": "1.0.0",
+      "description": "วิเคราะห์คำสั่งผู้ใช้และแมปกับ Registry  ตรวจสอบสถานะและความครอบคลุมของงาน (Task Coverage)",
+      "source": {
+        "type": "builtin",
+        "path": "agents/orchestrator.md"
+      },
       "type": "general",
       "tier": 3,
       "priority": 300,
-      "policies": [
-        {
-          "tool": "bash",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "allow",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "allow",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "pdf-to-ppt",
-      "file": "pdf-to-ppt.md",
+      "version": "1.0.0",
+      "description": "Maintain original text hierarchy (headings, subheadings, body text)  Preserve image positions and aspect ratios",
+      "source": {
+        "type": "builtin",
+        "path": "agents/pdf-to-ppt.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "plan-implementation-reviewer",
-      "file": "plan-implementation-reviewer.md",
+      "version": "1.0.0",
+      "description": "Compare the actual implementation against the specified plan  Identify any deviations, missing components, or additional changes",
+      "source": {
+        "type": "builtin",
+        "path": "agents/plan-implementation-reviewer.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "pr-reviewer",
-      "file": "pr-reviewer.md",
+      "version": "1.0.0",
+      "description": "If no PR number provided: Use `gh pr list` to show open PRs  If PR number provided: Proceed to review that specific PR",
+      "source": {
+        "type": "builtin",
+        "path": "agents/pr-reviewer.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 120,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "prompt-engineering-patterns",
-      "file": "prompt-engineering-patterns.md",
+      "version": "1.0.0",
+      "description": "Design complex, production  Optimize existing prompts for performance, consistency, and token efficiency",
+      "source": {
+        "type": "builtin",
+        "path": "agents/prompt-engineering-patterns.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "prompt-template-system",
-      "file": "prompt-template-system.md",
+      "version": "1.0.0",
+      "description": "`{STORY_CONTEXT}`  ข้อมูลเรื่องราว \"Bound Fate\"",
+      "source": {
+        "type": "builtin",
+        "path": "agents/prompt-template-system.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "reporter",
-      "file": "reporter.md",
+      "version": "1.0.0",
+      "description": "การจำกัดหัวข้อ: รายงานข่าวเฉพาะที่เกี่ยวข้องกับผลประโยชน์ของสาธารณะเท่านั้น หลีกเลี่ยงการเผยแพร่ข่าวลือไร้มูลหรือข้อมูลเท็จ  รูปแบบการนำเสนอ: เนื้อหารายงานต้องปฏิบัติตามรูปแบบที่กำหนด รักษาความสม่ำเสมอทางโครงสร้าง",
+      "source": {
+        "type": "builtin",
+        "path": "agents/reporter.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "research-analyzer",
-      "file": "research-analyzer.md",
+      "version": "1.0.0",
+      "description": "Identify main decisions and conclusions  Find actionable recommendations",
+      "source": {
+        "type": "builtin",
+        "path": "agents/research-analyzer.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "skill-creator",
-      "file": "skill-creator.md",
+      "version": "1.0.0",
+      "description": "Focus on information Claude doesn't already have  Match specificity to task fragility",
+      "source": {
+        "type": "builtin",
+        "path": "agents/skill-creator.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 150,
-      "policies": [
-        {
-          "tool": "write",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "task-management",
-      "file": "task-management.md",
+      "version": "1.0.0",
+      "description": "เปลี่ยนสถานะจาก \"🔄\" เป็น \"✅\"  เพิ่มวันที่เสร็จสิ้น",
+      "source": {
+        "type": "builtin",
+        "path": "agents/task-management.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "testing-guidelines",
-      "file": "testing-guidelines.md",
+      "version": "1.0.0",
+      "description": "[test_system.py](mdc:test_system.py)  ทดสอบระบบหลัก",
+      "source": {
+        "type": "builtin",
+        "path": "agents/testing-guidelines.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "thoughts-analyzer",
-      "file": "thoughts-analyzer.md",
+      "version": "1.0.0",
+      "description": "Identify main decisions and conclusions  Find actionable recommendations",
+      "source": {
+        "type": "builtin",
+        "path": "agents/thoughts-analyzer.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "thoughts-locator",
-      "file": "thoughts-locator.md",
+      "version": "1.0.0",
+      "description": "Check thoughts/architecture/ for important architectural design and decisions  Check thoughts/research/ for previous research",
+      "source": {
+        "type": "builtin",
+        "path": "agents/thoughts-locator.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "ui-engineer",
-      "file": "ui-engineer.md",
+      "version": "1.0.0",
+      "description": "Modern JavaScript/TypeScript with latest ES features and best practices  React, Vue, Angular, and other contemporary frontend frameworks",
+      "source": {
+        "type": "builtin",
+        "path": "agents/ui-engineer.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 150,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
-      "capabilities": []
-    },
-    {
-      "name": "web-search-researcher",
-      "file": "web-search-researcher.md",
-      "type": "general",
-      "tier": 2,
-      "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
-        }
-      ],
-      "capabilities": []
-    },
-    {
-      "name": "workflow-diagrams",
-      "file": "workflow-diagrams.md",
-      "type": "general",
-      "tier": 2,
-      "priority": 100,
-      "policies": [
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
-        }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "thai-educational-commenter",
-      "file": "thai-educational-commenter.md",
+      "version": "1.0.0",
+      "description": "Detect and preserve the original file encoding (UTF  Use only QWERTY keyboard characters",
+      "source": {
+        "type": "builtin",
+        "path": "agents/thai-educational-commenter.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 100,
-      "policies": [
-        {
-          "tool": "write",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "ask_user",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "ask_user",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "ask_user",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
       "capabilities": []
     },
     {
       "name": "smart-file-manager",
-      "file": "smart-file-manager.md",
+      "version": "1.0.0",
+      "description": "Organization Request  Duplicate Detection",
+      "source": {
+        "type": "builtin",
+        "path": "agents/smart-file-manager.md"
+      },
       "type": "general",
       "tier": 2,
       "priority": 150,
-      "policies": [
-        {
-          "tool": "write",
-          "decision": "allow",
-          "modes": [
-            "default",
-            "autoEdit"
-          ]
-        },
-        {
-          "tool": "skill",
-          "decision": "allow"
-        },
-        {
-          "tool": "ask",
-          "decision": "allow"
-        },
-        {
-          "tool": "rm",
-          "decision": "deny"
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "AskUserQuestion": "allow",
+          "ExitPlanMode": "allow"
         }
-      ],
+      },
+      "capabilities": []
+    },
+    {
+      "name": "system-architect",
+      "version": "1.0.0",
+      "description": "Principal Software Architect responsible for technical governance, structural integrity, and the end-to-end development workflow from requirements to implementation planning.",
+      "source": {
+        "type": "builtin",
+        "path": "agents/system-architect.md"
+      },
+      "type": "architect",
+      "tier": 2,
+      "priority": 250,
+      "policies": {
+        "tools": {
+          "Bash": "deny",
+          "Glob": "allow",
+          "Grep": "allow",
+          "ListFiles": "allow",
+          "Read": "allow",
+          "ReadFile": "allow",
+          "SaveMemory": "allow",
+          "Skill": "allow",
+          "TodoWrite": "allow",
+          "WebFetch": "allow",
+          "WebSearch": "allow",
+          "WriteFile": "allow",
+          "activate_skill": "allow",
+          "ask_user": "allow",
+          "complete_task": "allow",
+          "enter_plan_mode": "allow",
+          "exit_plan_mode": "allow",
+          "get_internal_docs": "allow",
+          "glob": "allow",
+          "google_web_search": "allow",
+          "grep_search": "allow",
+          "list_directory": "allow",
+          "read_file": "allow",
+          "read_many_files": "allow",
+          "replace": "allow",
+          "run_shell_command": "deny",
+          "save_memory": "allow",
+          "web_fetch": "allow",
+          "write_file": "allow",
+          "write_todos": "allow",
+          "ExitPlanMode": "allow"
+        }
+      },
       "capabilities": []
     }
   ],
-  "last_updated": "2026-04-19T21:43:41.443593Z"
+  "last_updated": "2026-04-19T23:17:39.213758Z"
 }
