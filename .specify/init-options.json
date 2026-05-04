@@ -1,0 +1,10 @@
+{
+  "ai": "gemini",
+  "branch_numbering": "sequential",
+  "context_file": "GEMINI.md",
+  "here": true,
+  "integration": "gemini",
+  "preset": null,
+  "script": "sh",
+  "speckit_version": "0.7.4.dev0"
+}

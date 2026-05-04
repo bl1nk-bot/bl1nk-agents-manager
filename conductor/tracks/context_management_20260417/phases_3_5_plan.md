@@ -398,6 +398,12 @@ git commit -m "feat(context): add secrets to env map conversion"
 
 ## Phase 5: Integration with Orchestrator
 
+> **BRIEF: Production-Grade Integration & Differentiation**
+> - **Heavy Testing:** Must test heavily, covering all edge cases.
+> - **Quality:** The end result must NOT be just a prototype. It must be robust and production-ready.
+> - **Differentiation (5-10%):** Refer to **`docs/IDEAS_LAB.md`** for ideas on Cost Efficiency (Path Mapping) and Adaptive UX (Hermes Style).
+> - **Actionable Idea:** *[Select and refine an idea from IDEAS_LAB.md to achieve differentiation before execution.]*
+
 ### Task 1: Create ContextManager service
 
 **Objective:** High-level service for managing context lifecycle
