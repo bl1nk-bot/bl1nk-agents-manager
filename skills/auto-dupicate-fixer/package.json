@@ -1,0 +1,22 @@
+{
+  "name": "@skill/auto-duplicate-fixer",
+  "version": "1.0.0",
+  "description": "Automated duplicate file detection, removal, and refactoring for TS/JS/Python projects",
+  "scripts": {
+    "check": "node scripts/detect.js",
+    "decide": "node scripts/decide.js",
+    "refactor": "node scripts/refactor.js",
+    "validate": "bash scripts/validate.sh",
+    "deploy": "node scripts/deploy.js",
+    "run": "node scripts/run.js",
+    "daily": "node scripts/run.js . daily",
+    "aggressive": "node scripts/run.js . aggressive",
+    "dry-run": "node scripts/run.js . daily --dry-run"
+  },
+  "dependencies": {
+    "jscpd": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

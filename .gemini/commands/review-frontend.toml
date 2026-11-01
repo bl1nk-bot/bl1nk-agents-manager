@@ -1,0 +1,71 @@
+description="Reviews a pull request based on issue number for Bl1nk Agents Manager."
+prompt = """
+Please provide a detailed pull request review on GitHub issue: {{args}}.
+
+Follow these steps:
+
+1. Use `gh pr view {{args}}` to pull the information of the PR.
+2. Use `gh pr diff {{args}}` to view the diff of the PR.
+3. Understand the intent of the PR using the PR description.
+4. If PR description is not detailed enough to understand the intent of the PR,
+   make sure to note it in your review.
+5. Make sure the PR title follows Conventional Commits, here are the last five
+   commits to the repo as examples: !{git log --pretty=format:"%s" -n 5}
+6. Search the codebase if required.
+7. Write a concise review of the PR, keeping in mind to encourage strong code
+   quality and best practices. Pay particular attention to the agent definitions
+   and system prompt files in the repo.
+8. Consider ways the code may not be consistent with existing code in the repo.
+   In particular it is critical that the Rust code uses patterns consistent
+   with existing code in the repo.
+9. Evaluate all tests on the PR and make sure that they are doing the following:
+   * Using `tokio::test` attribute for async tests instead of blocking code.
+   * Properly handling async/await patterns with tokio runtime.
+   * Using proper error handling with `Result` types and the `anyhow` crate.
+   * Following existing patterns for integration tests that verify HTTP endpoints and Rocket routes.
+   * Ensuring tests properly mock external dependencies where appropriate.
+   * Using proper async testing patterns without blocking operations.
+10. Evaluate all backend logic carefully keeping in mind that the author of the PR
+    is not likely an expert on Rust. Key areas to audit carefully are:
+    * Whether async/await patterns are used correctly with proper tokio runtime integration.
+    * Whether proper error handling is implemented using `Result` types and the `anyhow` crate.
+    * Whether shared state is properly managed using `Arc<Mutex<T>>` or `tokio::sync` primitives.
+    * Ensure code does not use `println!` or `dbg!` macros as these indicate debug logging that was accidentally left in the code.
+    * Avoid blocking operations in async contexts as they will hang the async runtime.
+    * Ensure proper use of Rust idioms and follow the Rust book guidelines.
+    * Carefully manage memory and resource usage, ensuring proper cleanup.
+    * NEVER disable Rust lints without proper justification.
+    * Follow the existing project architecture patterns for HTTP handling with Rocket framework.
+    * Ensure proper serialization/deserialization with serde and proper error handling.
+11. General Bl1nk Agents Manager design principles:
+    * Make sure that configuration options are only used for options that a user might
+      consider changing.
+    * Do not add new command line arguments unnecessarily and suggest configuration settings instead.
+    * New settings must be added to crates/core/src/config.rs.
+    * If a setting has documentation requirements, it MUST be documented in
+      docs/CONFIGURATION.md.
+    * Ensure proper TOML serialization is maintained for new settings.
+    * Use `tracing` crate for rethrown errors to avoid duplicate logging.
+    * All new agent definitions MUST be documented in
+      agents/agents.json with proper metadata.
+    * Ensure new agents are properly registered and follow the existing
+      agent definition patterns.
+    * If new agents are added, ensure they follow the proper YAML frontmatter format.
+12. Rust Best Practices:
+    * Use exhaustive pattern matching in `match` statements to ensure all cases are handled.
+    * Avoid using `unwrap()` or `expect()` unless absolutely necessary and you are confident the value is valid.
+    * Follow Rust naming conventions (snake_case for functions/variables, PascalCase for types).
+    * Use proper error propagation with `?` operator.
+    * Implement proper trait bounds and generics where appropriate.
+13. If the change might at all impact the MCP/ACP protocols, flagged
+    that the change could impact communication protocols and make sure proper
+    testing has been done.
+14. Discuss with me before making any comments on the issue. I will clarify
+    which possible issues you identified are problems, which ones you need to
+    investigate further, and which ones I do not care about.
+15. If I request you to add comments to the issue, use
+    `gh pr comment {{args}} --body {{review}}` to post the review to the PR.
+
+Remember to use the GitHub CLI (`gh`) with the Shell tool for all
+GitHub-related tasks.
+"""

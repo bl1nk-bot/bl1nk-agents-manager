@@ -1,0 +1,115 @@
+# Bl1nk Agents Manager Configuration
+# Save this as: ~/.config/bl1nk-agents-manager/config.toml
+
+[server]
+host = "127.0.0.1"
+port = 3000
+max_concurrent_tasks = 5
+
+[main_agent]
+name = "gemini"
+type = "gemini-cli"
+# Session token location (ACP style)
+session_token_path = "~/.config/gemini-cli/session.json"
+
+# ----------------------------------------------------
+# Sub-agents configuration
+# แต่ละ Agent มีความสามารถและ Priority ของตัวเอง
+# ----------------------------------------------------
+[[agents]]
+id = "pmat-architect-internal"
+name = "PMAT Code Architect (Bundled)"
+type = "internal" # Agent ที่บันเดิลมากับโปรแกรม
+command = "pmat-internal"
+rate_limit = { requests_per_minute = 60, requests_per_day = 10000 }
+capabilities = ["context-generation", "code-analysis", "technical-debt-grading"]
+priority = 255 # Priority ของ Agent เอง (ใช้เป็น Fallback) สูงที่สุด
+
+[[agents]]
+id = "qwen-coder"
+name = "Qwen Code Assistant"
+type = "cli"
+command = "qwencode"
+args = ["--mode", "agent"]
+rate_limit = { requests_per_minute = 60, requests_per_day = 2000 }
+capabilities = ["code-generation", "refactoring", "debugging"]
+priority = 150
+
+[[agents]]
+id = "codex-helper"
+name = "Codex Helper"
+type = "cli"
+command = "codex"
+args = ["--interactive"]
+rate_limit = { requests_per_minute = 60, requests_per_day = 2000 }
+capabilities = ["code-completion", "documentation"]
+priority = 100
+
+[[agents]]
+id = "jules-agent"
+name = "Jules Extension"
+type = "gemini-extension"
+extension_name = "jules"
+capabilities = ["research", "analysis"]
+priority = 120
+
+
+# ----------------------------------------------------
+# Task routing rules (ยกระดับด้วยระบบ Priority และ Tier)
+# ----------------------------------------------------
+[routing]
+# กำหนด Tier สำหรับไฟล์นี้ (user, admin, default)
+# กฎในไฟล์ที่มี Tier สูงกว่าจะถูกพิจารณาก่อนเสมอ
+tier = "user"
+
+# --- กฎสำหรับงานวิเคราะห์และทำความเข้าใจโค้ด ---
+[[routing.rules]]
+task_type = "code-analysis"
+keywords = ["analyze", "review", "grade", "understand"]
+# ระบุให้ใช้ pmat ก่อนเสมอสำหรับงานนี้
+preferred_agents = ["pmat-architect-internal"] 
+# ให้ Priority ของ Rule นี้สูงมาก เพื่อให้แน่ใจว่างานวิเคราะห์จะถูกส่งไปที่ pmat เสมอ
+priority = 900 
+
+# --- กฎสำหรับงานสร้างโค้ด (Code Generation) ---
+[[routing.rules]]
+task_type = "code-generation"
+# กฎที่เฉพาะเจาะจงสำหรับ Rust จะมี Priority สูงกว่า
+keywords = ["rust", "cargo", "macro"]
+preferred_agents = ["qwen-coder", "pmat-architect-internal"] # ลอง qwen ก่อน, ถ้าไม่ว่างให้ pmat ช่วยวิเคราะห์
+priority = 250
+
+[[routing.rules]]
+task_type = "code-generation"
+# กฎทั่วไปสำหรับการสร้างโค้ด
+keywords = ["write code", "implement", "create function"]
+preferred_agents = ["qwen-coder", "codex-helper"]
+priority = 200 # Priority ต่ำกว่ากฎที่เฉพาะเจาะจง
+
+[[routing.rules]]
+task_type = "code-generation"
+# กฎ Fallback สำหรับ code-generation (ไม่มี keyword)
+# จะถูกใช้เมื่อ prompt ไม่เข้ากับกฎอื่นที่มี keyword
+keywords = []
+preferred_agents = ["codex-helper"]
+priority = 50 # Priority ต่ำที่สุดในกลุ่ม
+
+# --- กฎสำหรับงานค้นคว้าข้อมูล ---
+[[routing.rules]]
+task_type = "research"
+keywords = ["search", "find", "lookup", "documentation"]
+preferred_agents = ["jules-agent", "codex-helper"]
+priority = 100
+
+
+# ----------------------------------------------------
+# ส่วนที่เหลือของ Config
+# ----------------------------------------------------
+[rate_limiting]
+strategy = "round-robin"
+track_usage = true
+usage_db_path = "~/.config/bl1nk-agents-manager/usage.db"
+
+[logging]
+level = "info"
+output = "stdout"

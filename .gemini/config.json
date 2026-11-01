@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developers.google.com/gemini-code-assist/docs/config-schema",
+  "codeReview": {
+    "enabled": true,
+    "autoReview": true,
+    "maxFilesToReview": 50,
+    "excludePatterns": [
+      "**/target/**",
+      "**/*.min.js", 
+      "**/*.min.css", 
+      "**/*.lock",
+      "**/Cargo.lock"
+    ]
+  },
+  "pullRequestSummary": {
+    "enabled": true,
+    "includeStats": true
+  }
+}

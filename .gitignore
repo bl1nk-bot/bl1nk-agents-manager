@@ -1,0 +1,59 @@
+# Rust Build Artifacts
+target/
+**/*.rs.bk
+
+# Zone Identifier (Windows Metadata)
+*:Zone.Identifier
+
+# Claude Code settings
+.claude/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Thumbnails
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.gemini_security/
+
+# System Config (Local dev)
+.config/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Project Specific
+.agent/
+.qwen/
+.Openai/
+custom/
+config/Config.toml
+discovery.json
+
+# Credentials
+gha-creds-*.json

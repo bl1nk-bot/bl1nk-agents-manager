@@ -1,0 +1,7 @@
+description = "List all available system agents with descriptions"
+prompt = """
+Use `run_shell_command` to execute the Python manager script:
+`python3 ${extensionPath}/scripts/agent_manager.py list`
+
+Task: Display the output directly to the user.
+"""

@@ -1,0 +1,23 @@
+identity:
+  name: {tool_name}
+  label: {tool_label}
+  description: {tool_description}
+  icon: icon.svg
+
+parameters:
+  {%- for param in parameters %}
+  - name: {{ param.name }}
+    type: {{ param.type }}
+    required: {{ param.required }}
+    description: {{ param.description }}
+  {%- endfor %}
+
+output:
+  type: object
+  properties:
+    status:
+      type: string
+      description: Operation status
+    data:
+      type: object
+      description: Tool output

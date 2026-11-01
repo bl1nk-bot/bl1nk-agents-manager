@@ -1,0 +1,7 @@
+{
+  "name": "{{EXTENSION_NAME}}",
+  "version": "1.0.0",
+  "description": "Created via Extension Creator",
+  "skills": [],
+  "mcpServers": {}
+}

@@ -1,0 +1,23 @@
+identity:
+  author: {author}
+  name: {plugin_name}
+  label:
+    en_US: {display_name}
+  description:
+    en_US: {description}
+  icon: icon.svg
+  version: {version}
+
+tools:
+  {%- for tool in tools %}
+  - tools/{{ tool }}.yaml
+  {%- endfor %}
+
+features:
+  {%- for feature in features %}
+  - {{ feature }}
+  {%- endfor %}
+
+extra:
+  python:
+    source: src/provider.py

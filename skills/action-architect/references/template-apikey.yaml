@@ -1,0 +1,23 @@
+openapi: 3.1.0
+info:
+  title: API with API Key Authentication
+  description: Template for APIs that require an API Key.
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /secure-data:
+    get:
+      operationId: getSecureData
+      summary: Retrieve secure data using API Key
+      responses:
+        '200':
+          description: Successful response
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+security:
+  - ApiKeyAuth: []

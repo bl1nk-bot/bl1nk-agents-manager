@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #020617; /* OLED black */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #020617; /* OLED black */
+  color: #F8FAFC; /* Light text */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #F8FAFC;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0F172A; /* Primary dark */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E293B; /* Secondary dark */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #34D399; /* CTA green */
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #34D399; /* CTA green */
+  outline-offset: 2px;
+}
+
+/* Agent card hover effect */
+.agent-card {
+  transition: all 0.2s ease;
+}
+
+.agent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(56, 189, 248, 0.1), 0 2px 4px -1px rgba(56, 189, 248, 0.06);
+}
+
+/* Button styles */
+.btn-primary {
+  @apply bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 px-4 rounded;
+}
+
+.btn-secondary {
+  @apply bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded;
+}
+
+.btn-success {
+  @apply bg-green-600 hover:bg-green-500 text-white font-medium py-2 px-4 rounded;
+}
+
+.btn-danger {
+  @apply bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded;
+}
+
+/* Card styles */
+.card {
+  @apply bg-gray-800 border border-gray-700 rounded-lg p-4 shadow;
+}
+
+/* Badge styles */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply bg-emerald-100 text-emerald-800;
+}
+
+.badge-secondary {
+  @apply bg-gray-100 text-gray-800;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.dark .badge-primary {
+  @apply bg-emerald-800 text-emerald-100;
+}
+
+.dark .badge-secondary {
+  @apply bg-gray-800 text-gray-100;
+}
+
+.dark .badge-success {
+  @apply bg-green-800 text-green-100;
+}

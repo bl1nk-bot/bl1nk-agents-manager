@@ -1,0 +1,29 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 8080,
+    "ssl": false
+  },
+  "database": {
+    "driver": "postgresql",
+    "connection": {
+      "host": "db.example.com",
+      "port": 5432,
+      "name": "myapp"
+    },
+    "pool": {
+      "min_size": 5,
+      "max_size": 20
+    }
+  },
+  "features": [
+    "authentication",
+    "caching",
+    "logging"
+  ],
+  "api": {
+    "version": "1.0",
+    "base_path": "/api/v1",
+    "rate_limit": 1000
+  }
+}

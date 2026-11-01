@@ -1,0 +1,7 @@
+description = "Initialize a new Gemini Extension"
+prompt = """
+Run the extension initialization script using python.
+
+Command:
+`python .gemini/extensions/extension-creator/skills/extension-architect/scripts/init_extension.py {{args}}`
+"""

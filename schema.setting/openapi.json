@@ -1,0 +1,540 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Visual Story Planner - Skills API",
+    "description": "API for discovering and managing story analysis skills in the Visual Story Planner extension. Provides endpoints for browsing available skills, searching by category, and retrieving skill details.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Visual Story Planner Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.bl1nk.site",
+      "description": "Production API server"
+    },
+    {
+      "url": "https://api.bl1nk.site/v1",
+      "description": "API v1 endpoint"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "skills",
+      "description": "Discover and search story analysis skills"
+    },
+    {
+      "name": "audit",
+      "description": "Structural audit and validation operations"
+    }
+  ],
+  "paths": {
+    "/skills": {
+      "get": {
+        "tags": ["skills"],
+        "summary": "List or search skills",
+        "description": "Search and browse reusable story analysis skills. Supports filtering by category, namespace, or search query.",
+        "operationId": "getSkills",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "q",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query for full-text search across skill names and descriptions."
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string",
+              "enum": ["structure", "character", "conflict", "pacing", "all"]
+            },
+            "description": "Filter by skill category."
+          },
+          {
+            "in": "query",
+            "name": "namespace",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by the namespace that owns the skill."
+          },
+          {
+            "in": "query",
+            "name": "slug",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by exact skill slug."
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "Page number (1-indexed)."
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Number of results per page."
+          },
+          {
+            "in": "query",
+            "name": "fields",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated list of fields to include in response."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsListError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsListError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsListError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/skills/{namespace}/{slug}": {
+      "get": {
+        "tags": ["skills"],
+        "summary": "Get skill details",
+        "description": "Retrieve detailed information about a specific skill including its prompt template and configuration.",
+        "operationId": "getSkillBySlug",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "namespace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The namespace that owns this skill."
+          },
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The skill slug within the namespace."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Skill not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsListError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/skills/{namespace}/{slug}/execute": {
+      "post": {
+        "tags": ["skills", "audit"],
+        "summary": "Execute a skill",
+        "description": "Execute a skill with the provided input data. For example, run structural-audit on a story graph.",
+        "operationId": "executeSkill",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "namespace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The namespace that owns this skill."
+          },
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The skill slug within the namespace."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SkillExecutionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful execution",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillExecutionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsListError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Execution failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillsListError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SkillsListResponse": {
+        "type": "object",
+        "properties": {
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillSummary"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "currentPage": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Current page number (1-indexed)."
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Number of results per page."
+              },
+              "totalPages": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Total number of pages available."
+              },
+              "totalCount": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Total number of matching skills."
+              }
+            },
+            "required": ["currentPage", "pageSize", "totalPages", "totalCount"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["skills", "pagination"],
+        "additionalProperties": false
+      },
+      "SkillsListError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code for programmatic handling."
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details."
+          }
+        },
+        "required": ["error"],
+        "additionalProperties": false
+      },
+      "SkillSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "Namespace that owns this skill."
+          },
+          "slug": {
+            "type": "string",
+            "description": "URL-friendly short name within the namespace."
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["structure", "character", "conflict", "pacing"],
+            "description": "Primary category of this skill."
+          },
+          "triggers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of trigger phrases that activate this skill."
+          },
+          "qualityScore": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Computed quality score from 0 to 1."
+          },
+          "totalActivations": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of times this skill has been activated."
+          },
+          "uniqueUsers": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of distinct users who have activated this skill."
+          },
+          "upvotes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of upvotes for this skill."
+          },
+          "downvotes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of downvotes for this skill."
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether this skill's namespace is verified."
+          },
+          "listed": {
+            "type": "boolean",
+            "description": "Whether this skill is publicly listed."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of when the skill was created."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of last update."
+          }
+        },
+        "required": [
+          "id",
+          "namespace",
+          "slug",
+          "displayName",
+          "description",
+          "verified",
+          "listed",
+          "createdAt"
+        ],
+        "additionalProperties": false
+      },
+      "SkillDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SkillSummary"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "The prompt template for this skill."
+              },
+              "configuration": {
+                "type": "object",
+                "description": "Skill-specific configuration options."
+              },
+              "inputs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "required": {
+                      "type": "boolean"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "description": "Expected input parameters for this skill."
+              },
+              "outputs": {
+                "type": "object",
+                "description": "Expected output schema for this skill."
+              }
+            }
+          }
+        ]
+      },
+      "SkillExecutionRequest": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "object",
+            "description": "Input data for the skill execution."
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "depth": {
+                "type": "string",
+                "enum": ["shallow", "medium", "deep"],
+                "default": "medium",
+                "description": "Analysis depth for audit skills."
+              },
+              "format": {
+                "type": "string",
+                "enum": ["json", "markdown", "text"],
+                "default": "json",
+                "description": "Output format preference."
+              }
+            },
+            "description": "Execution options."
+          }
+        },
+        "required": ["input"],
+        "additionalProperties": false
+      },
+      "SkillExecutionResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "description": "The skill execution result."
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "executionTime": {
+                "type": "number",
+                "description": "Execution time in milliseconds."
+              },
+              "skillVersion": {
+                "type": "string",
+                "description": "Version of the skill that was executed."
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Execution timestamp."
+              }
+            }
+          },
+          "error": {
+            "type": "string",
+            "description": "Error message if execution failed."
+          }
+        },
+        "required": ["success"],
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "BL1NK API key as Bearer token"
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+description = "Validate a Gemini Extension structure"
+prompt = """
+Run the extension validation script using python.
+
+Command:
+`python .gemini/extensions/extension-creator/skills/extension-architect/scripts/validate_extension.py {{args}}`
+"""
